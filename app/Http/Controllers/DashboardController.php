@@ -36,4 +36,9 @@ class DashboardController extends Controller
     {
         return view('question_bank.list');
     }
+
+    public function addExam(Request $request)
+    {
+        return view('exam.add');
+    }
 }

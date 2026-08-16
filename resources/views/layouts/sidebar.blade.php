@@ -70,7 +70,7 @@
              </a>
              <div id="collapseQuiz" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                  <div class="bg-white py-2 collapse-inner rounded">
-                     <a class="collapse-item" href="">Add New</a>
+                     <a class="collapse-item" href="{{ route('addExam') }}">Add New</a>
 
                      <a class="collapse-item" href="">Exam List</a>
                  </div>

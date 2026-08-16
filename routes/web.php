@@ -19,3 +19,6 @@ Route::get('/appointment', [DashboardController::class, 'showAppointment'])->nam
 // Question Bank Routes
 Route::get('/add-question', [DashboardController::class, 'addQuestion'])->name('addQuestion');
 Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name('listQuestion');
+
+// Exam Routes
+Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam');
