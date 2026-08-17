@@ -13,7 +13,7 @@ class DashboardController extends Controller
 
     public function addUser(Request $request)
     {
-        
+
         return view('users.add');
     }
 
@@ -40,5 +40,15 @@ class DashboardController extends Controller
     public function addExam(Request $request)
     {
         return view('exam.add');
+    }
+
+    public function listExam(Request $request)
+    {
+        return view('exam.list');
+    }
+
+    public function listMark(Request $request)
+    {
+        return view('valuation.list');
     }
 }

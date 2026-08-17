@@ -72,7 +72,7 @@
                  <div class="bg-white py-2 collapse-inner rounded">
                      <a class="collapse-item" href="{{ route('addExam') }}">Add New</a>
 
-                     <a class="collapse-item" href="">Exam List</a>
+                     <a class="collapse-item" href="{{ route('listExam') }}">Exam List</a>
                  </div>
              </div>
          </li>
@@ -95,7 +95,7 @@
              </a>
              <div id="collapseMark" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                  <div class="bg-white py-2 collapse-inner rounded">
-                     <a class="collapse-item" href="">Mark List</a>
+                     <a class="collapse-item" href="{{ route('listMark') }}">Mark List</a>
                  </div>
              </div>
          </li>

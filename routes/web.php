@@ -8,7 +8,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
-// Index
+// Dashboard Routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // User Routes
@@ -22,3 +22,7 @@ Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name
 
 // Exam Routes
 Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam');
+Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');
+
+// Valuation Routes
+Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
