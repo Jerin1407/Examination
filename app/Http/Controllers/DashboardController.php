@@ -51,4 +51,24 @@ class DashboardController extends Controller
     {
         return view('valuation.list');
     }
+
+    public function addStudyMaterial(Request $request)
+    {
+        return view('study_material.add');
+    }
+
+    public function listStudyMaterial(Request $request)
+    {
+        return view('study_material.list');
+    }
+
+    public function editStudyMaterial(Request $request)
+    {
+        return view('study_material.edit');
+    }
+
+    public function viewStudyMaterial(Request $request)
+    {
+        return view('study_material.view');
+    }
 }

@@ -109,7 +109,7 @@
              </a>
              <div id="collapseStudy" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                  <div class="bg-white py-2 collapse-inner rounded">
-                     <a class="collapse-item" href="">Study Material</a>
+                     <a class="collapse-item" href="{{ route('listStudyMaterial') }}">Study Material</a>
                  </div>
              </div>
          </li>
