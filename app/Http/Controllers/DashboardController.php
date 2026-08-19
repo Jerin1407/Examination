@@ -71,4 +71,9 @@ class DashboardController extends Controller
     {
         return view('study_material.view');
     }
+
+    public function editSetting(Request $request)
+    {
+        return view('setting.edit');
+    }
 }

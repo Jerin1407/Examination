@@ -32,3 +32,6 @@ Route::get('/add-study-material', [DashboardController::class, 'addStudyMaterial
 Route::get('/list-study-material', [DashboardController::class, 'listStudyMaterial'])->name('listStudyMaterial');
 Route::get('/edit-study-material', [DashboardController::class, 'editStudyMaterial'])->name('editStudyMaterial');
 Route::get('/view-study-material', [DashboardController::class, 'viewStudyMaterial'])->name('viewStudyMaterial');
+
+// Setting Routes
+Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('editSetting');
