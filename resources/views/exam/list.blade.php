@@ -10,10 +10,11 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <form method="post" action="">
+                <form method="get" action="{{ route('listExam') }}">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="Search...">
+                        <input type="text" class="form-control" name="search" placeholder="Search..."
+                            value="{{ request('search') }}">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Search</button>
                         </span>
@@ -32,12 +33,10 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">
-                            Active Exam
-                        </a>
+                        <a href="">Active Exam</a>
                     </div>
                     <div class="card-body">
-                        1
+                        {{ $activeCount }}
                     </div>
                 </div>
             </div>
@@ -45,12 +44,10 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">
-                            Upcoming Exam
-                        </a>
+                        <a href="">Upcoming Exam</a>
                     </div>
                     <div class="card-body">
-                        2
+                        {{ $upcomingCount }}
                     </div>
                 </div>
             </div>
@@ -58,12 +55,10 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">
-                            Archived Exam
-                        </a>
+                        <a href="">Archived Exam</a>
                     </div>
                     <div class="card-body">
-                        3
+                        {{ $archivedCount }}
                     </div>
                 </div>
             </div>
@@ -82,38 +77,70 @@
                         <th>Action</th>
                     </tr>
 
-                    {{-- <tr>
-                        <td colspan="3">No records found</td>
-                    </tr> --}}
+                    @forelse ($exams as $index => $exam)
+                        @php
+                            $today = \Carbon\Carbon::now();
+                            $start = \Carbon\Carbon::parse($exam->start_date);
+                            $end = \Carbon\Carbon::parse($exam->end_date);
 
-                    <tr>
-                        <td>1</td>
-                        <td>Exam 1</td>
-                        <td>10</td>
-                        <td>
-                            <a href="" class="btn btn-success">Attempt</a>
-                            <a href="#" class="btn btn-warning">Expired</a>
-                            <a href="#" class="btn btn-default">Upcoming</a>
-                            <a href="" class="btn btn-primary">
-                                paynow
-                            </a>
+                            if ($today->lt($start)) {
+                                $status = 'upcoming';
+                            } elseif ($today->gt($end)) {
+                                $status = 'expired';
+                            } else {
+                                $status = 'active';
+                            }
+                        @endphp
+                        <tr>
+                            <td>{{ $exams->firstItem() + $index }}</td>
+                            <td>{{ $exam->quiz_name }}</td>
+                            <td>{{ $exam->noq }}</td>
+                            <td>
+                                @if ($status === 'active')
+                                    <a href="" class="btn btn-success">Attempt</a>
+                                @elseif ($status === 'expired')
+                                    <a href="#" class="btn btn-warning disabled">Expired</a>
+                                @else
+                                    <a href="#" class="btn btn-default disabled">Upcoming</a>
+                                @endif
 
-                            <a href=""><img src="{{ asset('images/edit.png') }}"></a>
+                                @if ($exam->quiz_price > 0)
+                                    <a href="" class="btn btn-primary">
+                                        Pay Now
+                                    </a>
+                                @endif
 
-                            <a href="">
-                                <img src="{{ asset('images/cross.png') }}">
-                            </a>
-                        </td>
-                    </tr>
+                                <a href="">
+                                    <img src="{{ asset('images/edit.png') }}">
+                                </a>
+
+                                <a href="" onclick="return confirm('Are you sure you want to delete this exam?');">
+                                    <img src="{{ asset('images/cross.png') }}">
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4">No records found</td>
+                        </tr>
+                    @endforelse
                 </table>
 
             </div>
         </div>
         <br><br>
 
-        <a href="" class="btn btn-primary">Back</a>
+        @if ($exams->previousPageUrl())
+            <a href="{{ $exams->previousPageUrl() }}" class="btn btn-primary">Back</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Back</a>
+        @endif
         &nbsp;&nbsp;
-        <a href="" class="btn btn-primary">Next</a>
+        @if ($exams->nextPageUrl())
+            <a href="{{ $exams->nextPageUrl() }}" class="btn btn-primary">Next</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Next</a>
+        @endif
 
     </div>
 

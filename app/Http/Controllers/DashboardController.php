@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SavsoftQuizModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -44,7 +46,28 @@ class DashboardController extends Controller
 
     public function listExam(Request $request)
     {
-        return view('exam.list');
+        $query = SavsoftQuizModel::query();
+
+        if ($request->filled('search')) {
+            $query->where('quiz_name', 'like', '%' . $request->search . '%');
+        }
+
+        $exams = $query->orderBy('quid', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        // Counts for the summary cards
+        $activeCount = SavsoftQuizModel::whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->count();
+
+        $upcomingCount = SavsoftQuizModel::whereDate('start_date', '>', now())
+            ->count();
+
+        $archivedCount = SavsoftQuizModel::whereDate('end_date', '<', now())
+            ->count();
+
+        return view('exam.list', compact('exams', 'activeCount', 'upcomingCount', 'archivedCount'));
     }
 
     public function listMark(Request $request)
