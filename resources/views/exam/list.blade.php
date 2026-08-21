@@ -31,9 +31,11 @@
         <div class="row">
 
             <div class="col-lg-4">
-                <div class="card mb-4">
+                <div class="card mb-4 {{ $status === 'active' ? 'border-success' : '' }}">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">Active Exam</a>
+                        <a href="{{ route('listExam', ['status' => 'active']) }}">
+                            Active Exam
+                        </a>
                     </div>
                     <div class="card-body">
                         {{ $activeCount }}
@@ -42,9 +44,11 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card mb-4">
+                <div class="card mb-4 {{ $status === 'upcoming' ? 'border-success' : '' }}">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">Upcoming Exam</a>
+                        <a href="{{ route('listExam', ['status' => 'upcoming']) }}">
+                            Upcoming Exam
+                        </a>
                     </div>
                     <div class="card-body">
                         {{ $upcomingCount }}
@@ -53,9 +57,11 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card mb-4">
+                <div class="card mb-4 {{ $status === 'archived' ? 'border-success' : '' }}">
                     <div class="card-header" style="background:#eeeeee;">
-                        <a href="">Archived Exam</a>
+                        <a href="{{ route('listExam', ['status' => 'archived']) }}">
+                            Archived Exam
+                        </a>
                     </div>
                     <div class="card-body">
                         {{ $archivedCount }}
@@ -64,6 +70,13 @@
             </div>
 
         </div>
+
+        @if ($status)
+            <p>
+                Showing: <strong>{{ ucfirst($status) }}</strong> exams
+                <a href="{{ route('listExam') }}" class="btn btn-sm btn-default">Clear filter</a>
+            </p>
+        @endif
 
         <div class="row">
             <div class="col-md-12">
@@ -80,15 +93,15 @@
                     @forelse ($exams as $index => $exam)
                         @php
                             $today = \Carbon\Carbon::now();
-                            $start = \Carbon\Carbon::parse($exam->start_date);
-                            $end = \Carbon\Carbon::parse($exam->end_date);
+                            $start = \Carbon\Carbon::createFromTimestamp($exam->start_date);
+                            $end = \Carbon\Carbon::createFromTimestamp($exam->end_date);
 
                             if ($today->lt($start)) {
-                                $status = 'upcoming';
+                                $rowStatus = 'upcoming';
                             } elseif ($today->gt($end)) {
-                                $status = 'expired';
+                                $rowStatus = 'expired';
                             } else {
-                                $status = 'active';
+                                $rowStatus = 'active';
                             }
                         @endphp
                         <tr>
@@ -96,9 +109,9 @@
                             <td>{{ $exam->quiz_name }}</td>
                             <td>{{ $exam->noq }}</td>
                             <td>
-                                @if ($status === 'active')
+                                @if ($rowStatus === 'active')
                                     <a href="" class="btn btn-success">Attempt</a>
-                                @elseif ($status === 'expired')
+                                @elseif ($rowStatus === 'expired')
                                     <a href="#" class="btn btn-warning disabled">Expired</a>
                                 @else
                                     <a href="#" class="btn btn-default disabled">Upcoming</a>
@@ -121,7 +134,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4">No records found</td>
+                            <td colspan="4">No records found!</td>
                         </tr>
                     @endforelse
                 </table>

@@ -21,8 +21,9 @@ Route::get('/add-question', [DashboardController::class, 'addQuestion'])->name('
 Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name('listQuestion');
 
 // Exam Routes
-Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam');
 Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');
+Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam');
+Route::get('/save-exam', [DashboardController::class, 'saveExam'])->name('saveExam');
 
 // Valuation Routes
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
