@@ -9,7 +9,7 @@
         <h3>Add New Exam</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('saveExam') }}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="col-md-8">
@@ -208,5 +208,27 @@
         </div>
 
     </div>
+
+    {{-- <script>
+    tinymce.init({
+        selector: '.tinymce_textarea',
+        height: 350,
+        menubar: 'file edit insert view format table tools',
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+            'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
+            'fullscreen', 'insertdatetime', 'media', 'table', 'help',
+            'wordcount', 'emoticons', 'quickbars'
+        ],
+        toolbar1: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image',
+        toolbar2: 'image | fontfamily forecolor backcolor | emoticons | code help',
+        image_title: true,
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        images_upload_url: '',
+        branding: false,
+        statusbar: true
+    });
+</script> --}}
 
 @endsection

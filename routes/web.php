@@ -5,7 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 
 // Authentication Routes
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
+Route::post('/login-user', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
 // Dashboard Routes
@@ -23,7 +24,7 @@ Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name
 // Exam Routes
 Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');
 Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam');
-Route::get('/save-exam', [DashboardController::class, 'saveExam'])->name('saveExam');
+Route::post('/save-exam', [DashboardController::class, 'saveExam'])->name('saveExam');
 
 // Valuation Routes
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
@@ -36,3 +37,6 @@ Route::get('/view-study-material', [DashboardController::class, 'viewStudyMateri
 
 // Setting Routes
 Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('editSetting');
+
+// Notification Routes
+Route::get('/list-notification', [DashboardController::class, 'listNotification'])->name('listNotification');

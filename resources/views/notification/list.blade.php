@@ -13,7 +13,7 @@
                 <form method="post" action="">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="{{ __('lang.search') }}...">
+                        <input type="text" class="form-control" name="search" placeholder="Search...">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Search</button>
                         </span>
@@ -38,44 +38,25 @@
                         <th>Date</th>
                     </tr>
 
-                    <tr>
+                    {{-- <tr>
                         <td colspan="6">No records found!</td>
+                    </tr> --}}
+
+                    <tr>
+                        <td>1</td>
+                        <td><a href="" target="fcmclick">Developer</a></td>
+                        <td>Hello</td>
+                        <td>https..</td>
+                        <td>All users</td>
+                        <td>22-08-2026</td>
                     </tr>
-
-                    @foreach ($result as $val)
-                        <tr>
-                            <td>{{ $val['nid'] }}</td>
-                            <td><a href="{{ $val['click_action'] }}" target="fcmclick">{{ $val['title'] }}</a></td>
-                            <td>{{ $val['message'] }}</td>
-
-                            @if ($loggedIn['su'] == '1')
-                                <td>{{ $val['click_action'] }}</td>
-                                <td>
-                                    @if ($val['uid'] == 0)
-                                        {{ __('lang.all_users') }}
-                                    @else
-                                        <a href="{{ route('user.edit_user', $val['uid']) }}">{{ $val['first_name'] }}
-                                            {{ $val['last_name'] }}</a>
-                                    @endif
-                                </td>
-                            @endif
-
-                            <td>{{ $val['notification_date'] }}</td>
-                        </tr>
-                    @endforeach
                 </table>
             </div>
         </div>
 
-        @php
-            $rowsPerPage = config('app.number_of_rows');
-            $back = $limit - $rowsPerPage >= 0 ? $limit - $rowsPerPage : 0;
-            $next = $limit + $rowsPerPage;
-        @endphp
-
-        <a href="{{ route('notification.index', $back) }}" class="btn btn-primary">{{ __('lang.back') }}</a>
+        <a href="" class="btn btn-primary">Back</a>
         &nbsp;&nbsp;
-        <a href="{{ route('notification.index', $next) }}" class="btn btn-primary">{{ __('lang.next') }}</a>
+        <a href="" class="btn btn-primary">Next</a>
 
     </div>
 

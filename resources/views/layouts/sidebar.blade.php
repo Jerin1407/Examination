@@ -125,7 +125,7 @@
                  data-parent="#accordionSidebar">
                  <div class="bg-white py-2 collapse-inner rounded">
                      <a class="collapse-item" href="{{ route('editSetting') }}">Setting</a>
-                     <a class="collapse-item" href="">Notification</a>
+                     <a class="collapse-item" href="{{ route('listNotification') }}">Notification</a>
                      <a class="collapse-item" href="">User Group</a>
                      <a class="collapse-item" href="">Category List</a>
                      <a class="collapse-item" href="">Level List</a>

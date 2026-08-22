@@ -21,6 +21,9 @@
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
+    <!-- TinyMCE Text Editor -->
+    {{-- <script src="https://cdn.tiny.cloud/1/YOUR-API-KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> --}}
+
     <style>
         html,
         body,

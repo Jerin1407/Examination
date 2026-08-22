@@ -50,24 +50,14 @@
                                         </h1>
                                     </div>
 
-                                    <form class="user" method="POST" action="">
+                                    <form class="user" method="POST" action="{{ route('login') }}">
                                         @csrf
 
-                                        {{-- @if (session('message'))
-                                            <div class="alert alert-danger">
-                                                {!! str_replace('{resend_url}', route('login.resend'), session('message')) !!}
-                                            </div>
-                                        @endif
-
-                                        @if ($errors->any())
-                                            <div class="alert alert-danger">
-                                                <ul class="mb-0">
-                                                    @foreach ($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif --}}
+                                         @if (session('message'))
+        <div class="alert alert-danger">
+            {{ session('message') }}
+        </div>
+    @endif
 
                                         <div class="form-group">
                                             <input type="email" name="email" value=""
