@@ -41,6 +41,44 @@ class DashboardController extends Controller
         return view('question_bank.list');
     }
 
+    public function listExam(Request $request)
+    {
+        $query = SavsoftQuizModel::query();
+
+        if ($request->filled('search')) {
+            $query->where('quiz_name', 'like', '%' . $request->search . '%');
+        }
+
+        $status = $request->get('status');
+        $now = now()->timestamp;
+
+        if ($status === 'active') {
+            $query->where('start_date', '<=', $now)
+                ->where('end_date', '>=', $now);
+        } elseif ($status === 'upcoming') {
+            $query->where('start_date', '>', $now);
+        } elseif ($status === 'archived') {
+            $query->where('end_date', '<', $now);
+        }
+
+        $exams = $query->orderBy('quid', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        // Counts for the summary cards
+        $activeCount = SavsoftQuizModel::where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->count();
+
+        $upcomingCount = SavsoftQuizModel::where('start_date', '>', $now)
+            ->count();
+
+        $archivedCount = SavsoftQuizModel::where('end_date', '<', $now)
+            ->count();
+
+        return view('exam.list', compact('exams', 'activeCount', 'upcomingCount', 'archivedCount', 'status'));
+    }
+
     public function addExam(Request $request)
     {
         $groups = SavsoftGroupModel::all();
@@ -113,42 +151,17 @@ class DashboardController extends Controller
         return redirect()->route('listExam')->with('success', 'Exam created successfully.');
     }
 
-    public function listExam(Request $request)
+    public function editExam(Request $request)
     {
-        $query = SavsoftQuizModel::query();
+        return view('exam.edit');
+    }
 
-        if ($request->filled('search')) {
-            $query->where('quiz_name', 'like', '%' . $request->search . '%');
-        }
+    public function updateExam(Request $request)
+    {
+    }
 
-        $status = $request->get('status');
-        $now = now()->timestamp;
-
-        if ($status === 'active') {
-            $query->where('start_date', '<=', $now)
-                ->where('end_date', '>=', $now);
-        } elseif ($status === 'upcoming') {
-            $query->where('start_date', '>', $now);
-        } elseif ($status === 'archived') {
-            $query->where('end_date', '<', $now);
-        }
-
-        $exams = $query->orderBy('quid', 'desc')
-            ->paginate(10)
-            ->withQueryString();
-
-        // Counts for the summary cards
-        $activeCount = SavsoftQuizModel::where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->count();
-
-        $upcomingCount = SavsoftQuizModel::where('start_date', '>', $now)
-            ->count();
-
-        $archivedCount = SavsoftQuizModel::where('end_date', '<', $now)
-            ->count();
-
-        return view('exam.list', compact('exams', 'activeCount', 'upcomingCount', 'archivedCount', 'status'));
+    public function deleteExam(Request $request)
+    {
     }
 
     public function listMark(Request $request)
