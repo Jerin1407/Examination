@@ -27,7 +27,7 @@ Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam'
 Route::post('/save-exam', [DashboardController::class, 'saveExam'])->name('saveExam');
 Route::get('/edit-exam', [DashboardController::class, 'editExam'])->name('editExam');
 Route::post('/update-exam', [DashboardController::class, 'updateExam'])->name('updateExam');
-Route::delete('/delete-exam', [DashboardController::class, 'deleteExam'])->name('deleteExam');
+Route::post('/delete-exam', [DashboardController::class, 'deleteExam'])->name('deleteExam');
 
 // Valuation Routes
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
@@ -43,3 +43,4 @@ Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('
 
 // Notification Routes
 Route::get('/list-notification', [DashboardController::class, 'listNotification'])->name('listNotification');
+Route::get('/add-notification', [DashboardController::class, 'addNotification'])->name('addNotification');

@@ -26,7 +26,7 @@
             <div class="col-md-12">
                 <br>
 
-                <a href="" class="btn btn-success">Add New</a><br><br>
+                <a href="{{ route('addNotification') }}" class="btn btn-success">Add New</a><br><br>
 
                 <table class="table table-bordered">
                     <tr>

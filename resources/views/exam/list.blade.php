@@ -123,7 +123,7 @@
                                     </a>
                                 @endif
 
-                                <a href="">
+                                <a href="{{ route('editExam') }}">
                                     <img src="{{ asset('images/edit.png') }}">
                                 </a>
 

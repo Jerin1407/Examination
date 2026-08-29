@@ -153,7 +153,10 @@ class DashboardController extends Controller
 
     public function editExam(Request $request)
     {
-        return view('exam.edit');
+        $groups = SavsoftGroupModel::all();
+        $users = SavsoftUsersModel::all();
+
+        return view('exam.edit', compact('groups', 'users'));
     }
 
     public function updateExam(Request $request)
@@ -197,5 +200,10 @@ class DashboardController extends Controller
     public function listNotification(Request $request)
     {
         return view('notification.list');
+    }
+
+    public function addNotification(Request $request)
+    {
+        return view('notification.add');
     }
 }

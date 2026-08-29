@@ -112,168 +112,120 @@
 
                                 <div class="form-group">
                                     <label>Assign to groups</label> <br>
-                                    <input type="checkbox" name="gids[]" value="" </div>
-
-                                    <div class="form-group">
-                                        <label>Or
-                                            Assign to users</label> <br>
-                                        <select class="js-example-basic-multiple form-control" name="uids[]"
-                                            multiple="multiple" style="width:100%">
-                                            <option value="{{ $uval['uid'] }}">
-                                                first_name last_name email
-                                            </option>
-                                        </select>
-                                        <script type="text/javascript">
-                                            $(".js-example-basic-multiple").select2();
-                                        </script>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Exam Template</label> <br>
-                                        <select name="quiz_template">
-                                            <option value="">
-                                                    </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="quiz_price">Quiz Price (Set 0 for free)</label> <br>
-                                        <input type="text" id="quiz_price" name="quiz_price"
-                                            value="" class="form-control"
-                                            placeholder="Quiz Price" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Generate Certificate</label> <br>
-                                        <input type="radio" name="gen_certificate" value="1"
-                                            > Yes<br>
-                                        <input type="radio" name="gen_certificate" value="0"
-                                            > No
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="certificate_text">Certificate Text</label>
-                                        <textarea id="certificate_text" name="certificate_text" class="form-control" style="height:250px;"></textarea><br>
-                                        You can use following tags:
-                                        {{ '<br>  <center></center>  <b></b>  <h1></h1>  <h2></h2>  <h3></h3>  <font></font>' }}<br>
-                                        {email}, {first_name}, {last_name}, {quiz_name}, {percentage_obtained},
-                                        {score_obtained}, {result}, {generated_date}, {result_id}, {qr_code}
-
-                                        <br><br>
-                                        <a href=""
-                                            target="preview_cert" class="btn btn-warning">Preview</a>
-                                        <span style="color:#ff0000">First click submit button (at bottom of page) to get updated Preview</span>
-                                    </div>
-
+                                    @forelse ($groups as $group)
+                                        <label class="d-inline-block mr-3">
+                                            <input type="checkbox" name="gids[]" value="{{ $group->gid }}">
+                                            {{ $group->group_name }}
+                                        </label>
+                                        &nbsp;&nbsp;&nbsp;
+                                    @empty
+                                        <p>No groups found</p>
+                                    @endforelse
                                 </div>
-                                <br><br>
 
-                                @if ($quiz['question_selection'] == '0')
+                                <div class="form-group">
+                                    <label>Or
+                                        Assign to users</label> <br>
+                                    <select class="js-example-basic-multiple form-control" name="uids[]"
+                                        multiple="multiple" style="width:100%">
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->uid }}">
+                                                {{ $user->first_name }} {{ $user->last_name }} ({{ $user->email }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <script type="text/javascript">
+                                        $(".js-example-basic-multiple").select2();
+                                    </script>
+                                </div>
 
-                                    @if (count($questions) == 0)
-                                        @if (!session('addquestion'))
-                                            <div class="alert alert-warning">Questions added in to this exam</div>
-                                        @endif
-                                        <a href="{{ route('quiz.add_question', $quiz['quid']) }}"
-                                            class="btn btn-danger">Add questions into exam</a>
-                                    @else
-                                        <h4>{{ __('lang.questions_added_into_quiz') }}</h4>
-                                        <a href="{{ route('quiz.add_question', $quiz['quid']) }}"
-                                            class="btn btn-danger">{{ __('lang.add_question_into_quiz') }}</a>
+                                <div class="form-group">
+                                    <label>Exam Template</label> <br>
+                                    <select name="quiz_template">
+                                        <option value="Default">Default
+                                        </option>
+                                        <option value="Practice">Practice</option>
+                                    </select>
+                                </div>
 
-                                        <table class="table table-bordered" style="margin-top:10px;">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>{{ __('lang.question') }}</th>
-                                                <th>{{ __('lang.question_type') }}</th>
-                                                <th>{{ __('lang.category_name') }}</th>
-                                                <th>{{ __('lang.level_name') }}</th>
-                                                <th>{{ __('lang.correct') }}</th>
-                                                <th>{{ __('lang.incorrect') }}</th>
-                                                <th>{{ __('lang.action') }}</th>
-                                            </tr>
+                                <div class="form-group">
+                                    <label for="quiz_price">Quiz Price (Set 0 for free)</label> <br>
+                                    <input type="text" id="quiz_price" name="quiz_price" value=""
+                                        class="form-control" placeholder="Quiz Price" required>
+                                </div>
 
-                                            @if (count($questions) == 0)
-                                                <tr>
-                                                    <td colspan="6">{{ __('lang.no_question_added') }}</td>
-                                                </tr>
-                                            @endif
+                                <div class="form-group">
+                                    <label>Generate Certificate</label> <br>
+                                    <input type="radio" name="gen_certificate" value="1"> Yes<br>
+                                    <input type="radio" name="gen_certificate" value="0"> No
+                                </div>
 
-                                            @php
-                                                // NOTE: the original indexed $quiz['correct_score'] /
-                                                // $quiz['incorrect_score'] as if they were arrays
-                                                // ($quiz['correct_score'][$key]), but every other use of
-                                                // these two fields in this same view treats them as plain
-                                                // scalar strings (see the single correct_score/
-                                                // incorrect_score inputs above). That's inconsistent in the
-// original — isset() on a string offset in PHP checks
-// string character position, not a per-question value, so
-// this almost certainly wasn't doing what it looked like it
-                                                // was doing. I'm guessing the actual intent was a
-// comma-separated per-question score list (parallel to
-// qids/gids/uids elsewhere in this view), so I've exploded
-                                                // both on comma here to get a real per-question array.
-                                                // Please double check this matches how your quiz model
-                                                // actually stores per-question correct/incorrect scores —
-                                                // I can't verify that without the controller/model.
-$correctScores = explode(',', $quiz['correct_score']);
-$incorrectScores = explode(',', $quiz['incorrect_score']);
-$qidsCount = count(explode(',', $quiz['qids']));
-                                            @endphp
+                                <div class="form-group">
+                                    <label for="certificate_text">Certificate Text</label>
+                                    <textarea id="certificate_text" name="certificate_text" class="form-control" style="height:250px;"></textarea><br>
+                                    You can use following tags:
+                                    {{ '<br>  <center></center>  <b></b>  <h1></h1>  <h2></h2>  <h3></h3>  <font></font>' }}<br>
+                                    {email}, {first_name}, {last_name}, {quiz_name}, {percentage_obtained},
+                                    {score_obtained}, {result}, {generated_date}, {result_id}, {qr_code}
 
-                                            @foreach ($questions as $key => $val)
-                                                <tr>
-                                                    <td>{{ $val['qid'] }}</td>
-                                                    <td>{{ \Illuminate\Support\Str::limit(strip_tags($val['question']), 50, '') }}
-                                                    </td>
-                                                    <td>{{ $val['question_type'] }}</td>
-                                                    <td>{{ $val['category_name'] }}</td>
-                                                    <td>{{ $val['level_name'] }}</td>
-                                                    <td>
-                                                        <input type="text" style="width:60px;" name="i_correct[]"
-                                                            value="{{ $correctScores[$key] ?? '1' }}">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" style="width:60px;" name="i_incorrect[]"
-                                                            value="{{ $incorrectScores[$key] ?? '0' }}">
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('quiz.remove_qid', [$quiz['quid'], $val['qid']]) }}"
-                                                            title="{{ __('lang.remove_from_quiz') }}"><img
-                                                                src="{{ asset('images/cross.png') }}"></a>
+                                    <br><br>
+                                    <a href="" target="preview_cert" class="btn btn-warning">Preview</a>
+                                    <span style="color:#ff0000">First click submit button (at bottom of page) to get
+                                        updated Preview</span>
+                                </div>
 
-                                                        @if ($key == 0)
-                                                            <img src="{{ asset('images/empty.png') }}" title="">
-                                                        @else
-                                                            <a
-                                                                href="javascript:cancelmove('Up','{{ $quiz['quid'] }}','{{ $val['qid'] }}','{{ $key + 1 }}');">
-                                                                <img src="{{ asset('images/up.png') }}"
-                                                                    title="{{ __('lang.up') }}">
-                                                            </a>
-                                                        @endif
+                            </div>
+                            <br><br>
 
-                                                        @if ($key != $qidsCount - 1)
-                                                            <a
-                                                                href="javascript:cancelmove('Down','{{ $quiz['quid'] }}','{{ $val['qid'] }}','{{ $key + 1 }}');">
-                                                                <img src="{{ asset('images/down.png') }}"
-                                                                    title="{{ __('lang.down') }}">
-                                                            </a>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </table>
-                                    @endif
-                                @else
-                                    @if (count($qcl) == 0)
-                                        @if (!session('addquestion'))
-                                            <div class="alert alert-warning">{{ __('lang.no_question_warning') }}</div>
-                                        @endif
-                                    @else
-                                        <h4>{{ __('lang.questions_added_into_quiz') }}</h4><br>
-                                    @endif
+                            <div class="alert alert-warning">Questions added in to this exam</div>
+                            <a href="" class="btn btn-danger">Add questions into exam</a>
 
-                                    @foreach ($qcl as $vall)
+                            <table class="table table-bordered" style="margin-top:10px;">
+                                <tr>
+                                    <th>SI.No</th>
+                                    <th>Question</th>
+                                    <th>Question Type</th>
+                                    <th>Category Name</th>
+                                    <th>Level Name</th>
+                                    <th>Correct</th>
+                                    <th>InCorrect</th>
+                                    <th>Action</th>
+                                </tr>
+
+                                {{-- <tr>
+                                                    <td colspan="6">No Questions added</td>
+                                                </tr> --}}
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>Question 1
+                                    </td>
+                                    <td>short answer</td>
+                                    <td>catogory</td>
+                                    <td>level</td>
+                                    <td>
+                                        <input type="text" style="width:60px;" name="i_correct[]" value="">
+                                    </td>
+                                    <td>
+                                        <input type="text" style="width:60px;" name="i_incorrect[]" value="">
+                                    </td>
+                                    <td>
+                                        <a href="" title=""><img src="{{ asset('images/cross.png') }}"></a>
+
+                                        <img src="{{ asset('images/empty.png') }}" title="">
+                                        <a href="javascript:cancelmove('Up','');">
+                                            <img src="{{ asset('images/up.png') }}" title="">
+                                        </a>
+
+                                        <a href="javascript:cancelmove('Down','');">
+                                            <img src="{{ asset('images/down.png') }}" title="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="alert alert-warning">Warning! Your exam doesn't have any question.</div>
+
+                            {{-- @foreach ($qcl as $vall)
                                         <div class="form-group">
                                             <select name="cid[]">
                                                 <option value="0">{{ __('lang.select') }}
@@ -332,22 +284,18 @@ $qidsCount = count(explode(',', $quiz['qids']));
                                             name="i_incorrect[]" value="0">
                                     </div>
 
-                                @endif
+                                @endif --}}
 
-                                @if (session('addquestion') && $quiz['question_selection'] == '0')
-                                    <a class="btn btn-success"
-                                        href="{{ route('quiz.index') }}">{{ __('lang.back') }}</a>
-                                @else
-                                    <button class="btn btn-success" type="submit">{{ __('lang.update') }}
-                                        {{ __('lang.quiz') }}</button>
-                                @endif
+                            <a class="btn btn-success" href="">Back</a>
+                            <button class="btn btn-success" type="submit">Update Exam</button>
 
-                                <br><br><br>
-                                {{ __('lang.open_quiz_warning') }}
+                            <br><br><br>
+                            *Some validation and features will not work in Open Quiz, however it will work if user
+                            logged in.
 
-                            </div>
                         </div>
                     </div>
+                </div>
             </form>
         </div>
 
