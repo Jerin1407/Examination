@@ -44,3 +44,8 @@ Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('
 // Notification Routes
 Route::get('/list-notification', [DashboardController::class, 'listNotification'])->name('listNotification');
 Route::get('/add-notification', [DashboardController::class, 'addNotification'])->name('addNotification');
+
+// User Group Routes
+Route::get('/list-user-group', [DashboardController::class, 'listUserGroup'])->name('listUserGroup');
+Route::get('/add-user-group', [DashboardController::class, 'addUserGroup'])->name('addUserGroup');
+Route::get('/edit-user-group', [DashboardController::class, 'editUserGroup'])->name('editUserGroup');

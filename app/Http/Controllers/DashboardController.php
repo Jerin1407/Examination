@@ -206,4 +206,19 @@ class DashboardController extends Controller
     {
         return view('notification.add');
     }
+
+    public function listUserGroup(Request $request)
+    {
+        return view('user_group.list');
+    }
+
+    public function addUserGroup(Request $request)
+    {
+        return view('user_group.add');
+    }
+
+    public function editUserGroup(Request $request)
+    {
+        return view('user_group.edit');
+    }
 }
