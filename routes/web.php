@@ -49,3 +49,23 @@ Route::get('/add-notification', [DashboardController::class, 'addNotification'])
 Route::get('/list-user-group', [DashboardController::class, 'listUserGroup'])->name('listUserGroup');
 Route::get('/add-user-group', [DashboardController::class, 'addUserGroup'])->name('addUserGroup');
 Route::get('/edit-user-group', [DashboardController::class, 'editUserGroup'])->name('editUserGroup');
+
+// Category Routes
+Route::get('/list-category', [DashboardController::class, 'listCategory'])->name('listCategory');
+Route::post('/save-category', [DashboardController::class, 'saveCategory'])->name('saveCategory');
+
+// Level Routes
+Route::get('/list-level', [DashboardController::class, 'listLevel'])->name('listLevel');
+Route::post('/save-level', [DashboardController::class, 'saveLevel'])->name('saveLevel');
+
+// Account Type Routes
+Route::get('/list-account-type', [DashboardController::class, 'listAccountType'])->name('listAccountType');
+Route::get('/add-account-type', [DashboardController::class, 'addAccountType'])->name('addAccountType');
+Route::post('/save-account-type', [DashboardController::class, 'saveAccountType'])->name('saveAccountType');
+Route::get('/edit-account-type', [DashboardController::class, 'editAccountType'])->name('editAccountType');
+Route::get('/update-account-type', [DashboardController::class, 'updateAccountType'])->name('updateAccountType');
+
+// Custom Registration Fields Routes
+Route::get('/list-custom-fields', [DashboardController::class, 'listCustomFields'])->name('listCustomFields');
+Route::get('/add-custom-fields', [DashboardController::class, 'addCustomFields'])->name('addCustomFields');
+Route::post('/save-custom-fields', [DashboardController::class, 'saveCustomFields'])->name('saveCustomFields');

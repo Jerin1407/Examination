@@ -221,4 +221,34 @@ class DashboardController extends Controller
     {
         return view('user_group.edit');
     }
+
+    public function listCategory(Request $request)
+    {
+        return view('category.list');
+    }
+
+    public function listLevel(Request $request)
+    {
+        return view('level.list');
+    }
+
+    public function listAccountType(Request $request)
+    {
+        return view('account_type.list');
+    }
+
+    public function editAccountType(Request $request)
+    {
+        return view('account_type.edit');
+    }
+
+    public function listCustomFields(Request $request)
+    {
+        return view('custom_fields.list');
+    }
+
+    public function addCustomFields(Request $request)
+    {
+        return view('custom_fields.add');
+    }
 }

@@ -16,7 +16,7 @@
 
          <!-- Nav Item - Dashboard -->
          <li class="nav-item active">
-             <a class="nav-link" href="">
+             <a class="nav-link" href="{{ route('dashboard') }}">
                  <i class="fas fa-fw fa-tachometer-alt"></i>
                  <span>Dashboard</span>
              </a>
@@ -127,10 +127,10 @@
                      <a class="collapse-item" href="{{ route('editSetting') }}">Setting</a>
                      <a class="collapse-item" href="{{ route('listNotification') }}">Notification</a>
                      <a class="collapse-item" href="{{ route('listUserGroup') }}">User Group</a>
-                     <a class="collapse-item" href="">Category List</a>
-                     <a class="collapse-item" href="">Level List</a>
-                     <a class="collapse-item" href="">Account Type</a>
-                     <a class="collapse-item" href="">Custom Registration Fields</a>
+                     <a class="collapse-item" href="{{ route('listCategory') }}">Category List</a>
+                     <a class="collapse-item" href="{{ route('listLevel') }}">Level List</a>
+                     <a class="collapse-item" href="{{ route('listAccountType') }}">Account Type</a>
+                     <a class="collapse-item" href="{{ route('listCustomFields') }}">Custom Registration Fields</a>
                      <a class="collapse-item" href="">Payment History</a>
                      <a class="collapse-item" href="">Advertisment</a>
                  </div>
