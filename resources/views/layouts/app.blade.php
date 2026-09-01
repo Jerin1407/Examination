@@ -22,7 +22,7 @@
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <!-- TinyMCE Text Editor -->
-    {{-- <script src="https://cdn.tiny.cloud/1/YOUR-API-KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <style>
         html,
@@ -107,6 +107,9 @@
 
     <! -- Index -->
         @yield('content')
+
+        <!-- Scripts -->
+        @stack('scripts')
 
 </body>
 

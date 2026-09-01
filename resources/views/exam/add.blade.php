@@ -209,26 +209,34 @@
 
     </div>
 
-    {{-- <script>
+@endsection
+
+@push('scripts')
+<script>
     tinymce.init({
         selector: '.tinymce_textarea',
-        height: 350,
+        height: 300,
         menubar: 'file edit insert view format table tools',
         plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
-            'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
-            'fullscreen', 'insertdatetime', 'media', 'table', 'help',
-            'wordcount', 'emoticons', 'quickbars'
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste help wordcount emoticons codesample'
         ],
-        toolbar1: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image',
-        toolbar2: 'image | fontfamily forecolor backcolor | emoticons | code help',
-        image_title: true,
-        automatic_uploads: true,
-        file_picker_types: 'image',
-        images_upload_url: '',
-        branding: false,
-        statusbar: true
-    });
-</script> --}}
+        toolbar:
+            'undo redo | blocks | bold italic | ' +
+            'alignleft aligncenter alignright alignjustify | ' +
+            'bullist numlist outdent indent | link image | ' +
+            'print preview fullscreen forecolor backcolor emoticons codesample help',
+        toolbar_mode: 'sliding',
 
-@endsection
+        images_upload_credentials: true,
+        automatic_uploads: true,
+
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+            });
+        }
+    });
+</script>
+@endpush

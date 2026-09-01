@@ -314,3 +314,33 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    tinymce.init({
+        selector: '.tinymce_textarea',
+        height: 300,
+        menubar: 'file edit insert view format table tools',
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste help wordcount emoticons codesample'
+        ],
+        toolbar:
+            'undo redo | blocks | bold italic | ' +
+            'alignleft aligncenter alignright alignjustify | ' +
+            'bullist numlist outdent indent | link image | ' +
+            'print preview fullscreen forecolor backcolor emoticons codesample help',
+        toolbar_mode: 'sliding',
+
+        images_upload_credentials: true,
+        automatic_uploads: true,
+
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+            });
+        }
+    });
+</script>
+@endpush
