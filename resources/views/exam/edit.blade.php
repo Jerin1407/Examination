@@ -9,7 +9,7 @@
         <h3>Edit Exam</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('updateExam', $quiz->quid) }}">
                 @csrf
 
                 <div class="col-md-12">
@@ -28,12 +28,12 @@
 
                             <div class="form-group">
                                 <label for="quiz_name">Exam Name</label>
-                                <input type="text" id="quiz_name" name="quiz_name" value="" class="form-control"
+                                <input type="text" id="quiz_name" name="quiz_name" value="{{ $quiz->quiz_name }}" class="form-control"
                                     placeholder="Exam Name" required autofocus>
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control tinymce_textarea"></textarea>
+                                <textarea id="description" name="description" class="form-control tinymce_textarea">{{ $quiz->description }}</textarea>
                             </div>
                             <a href="#" data-toggle="collapse" data-target="#advance_options">Advance options</a>
 
@@ -42,38 +42,38 @@
                                 <div class="form-group">
                                     <label for="start_date">Start Date (Exam can be attempted after this date. YYYY-MM-DD
                                         HH:II:SS )</label>
-                                    <input type="text" id="start_date" name="start_date" value=""
+                                    <input type="text" id="start_date" name="start_date" value="{{ $quiz->start_date }}"
                                         class="form-control" placeholder="Start Date" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="end_date">End Date (Exam can be attempted before this date. eg. 2017-12-31
                                         23:59:00 )</label>
-                                    <input type="text" id="end_date" name="end_date" value="" class="form-control"
+                                    <input type="text" id="end_date" name="end_date" value="{{ $quiz->end_date }}" class="form-control"
                                         placeholder="End Date" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="duration">Duration (in min.)</label>
-                                    <input type="text" id="duration" name="duration" value="" class="form-control"
+                                    <input type="text" id="duration" name="duration" value="{{ $quiz->duration }}" class="form-control"
                                         placeholder="Duration" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="maximum_attempts">Allow Maximum Attempts</label>
-                                    <input type="text" id="maximum_attempts" name="maximum_attempts" value=""
+                                    <input type="text" id="maximum_attempts" name="maximum_attempts" value="{{ $quiz->maximum_attempts }}"
                                         class="form-control" placeholder="Allow Maximum Attempts" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pass_percentage">Minimum Percentage Required to Pass</label>
-                                    <input type="text" id="pass_percentage" name="pass_percentage" value=""
+                                    <input type="text" id="pass_percentage" name="pass_percentage" value="{{ $quiz->pass_percentage }}"
                                         class="form-control" placeholder="Minimum Percentage Required to Pass" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="correct_score">Correct Score</label>
-                                    <input type="text" id="correct_score" name="correct_score" value=""
+                                    <input type="text" id="correct_score" name="correct_score" value="{{ $quiz->correct_score }}    "
                                         class="form-control" placeholder="Correct Score" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="incorrect_score">InCorrect Score</label>
-                                    <input type="text" id="incorrect_score" name="incorrect_score" value=""
+                                    <input type="text" id="incorrect_score" name="incorrect_score" value="{{ $quiz->incorrect_score }}"
                                         class="form-control" placeholder="InCorrect Score" required>
                                 </div>
                                 <div class="form-group">
@@ -177,7 +177,7 @@
                             </div>
                             <br><br>
 
-                            <div class="alert alert-warning">Questions added in to this exam</div>
+                            {{-- <div class="alert alert-warning">Questions added in to this exam</div>
                             <a href="" class="btn btn-danger">Add questions into exam</a>
 
                             <table class="table table-bordered" style="margin-top:10px;">
@@ -191,10 +191,6 @@
                                     <th>InCorrect</th>
                                     <th>Action</th>
                                 </tr>
-
-                                {{-- <tr>
-                                                    <td colspan="6">No Questions added</td>
-                                                </tr> --}}
 
                                 <tr>
                                     <td>1</td>
@@ -225,66 +221,52 @@
                             </table>
                             <div class="alert alert-warning">Warning! Your exam doesn't have any question.</div>
 
-                            {{-- @foreach ($qcl as $vall)
-                                        <div class="form-group">
-                                            <select name="cid[]">
-                                                <option value="0">{{ __('lang.select') }}
-                                                    {{ __('lang.category_name') }}</option>
-                                                @foreach ($category_list as $val)
-                                                    <option value="{{ $val['cid'] }}" @selected($val['cid'] == $vall['cid'])>
-                                                        {{ $val['category_name'] }}</option>
-                                                @endforeach
-                                            </select>
-                                            <select name="lid[]">
-                                                <option value="0">{{ __('lang.select') }}
-                                                    {{ __('lang.level_name') }}</option>
-                                                @foreach ($level_list as $val)
-                                                    <option value="{{ $val['lid'] }}" @selected($val['lid'] == $vall['lid'])>
-                                                        {{ $val['level_name'] }}</option>
-                                                @endforeach
-                                            </select>
+                            <div class="form-group">
+                                <select name="cid[]">
+                                    <option value="0">select
+                                        category name</option>
+                                    <option value="">
+                                        category_name</option>
+                                </select>
+                                <select name="lid[]">
+                                    <option value="0">select level name</option>
+                                    <option value="">
+                                        level_name</option>
+                                </select>
 
-                                            {{ __('lang.no_questions_added') }}
-                                            <select name="noq[]">
-                                                <option value="{{ $vall['noq'] }}">{{ $vall['noq'] }}</option>
-                                                <option value="0">0</option>
-                                            </select>
+                                no questions added
+                                <select name="noq[]">
+                                    <option value="">noq</option>
+                                    <option value="0">0</option>
+                                </select>
 
-                                            {{ __('lang.correct') }} <input type="text" name="i_correct[]"
-                                                style="width:40px;" value="{{ $vall['i_correct'] }}">
-                                            | {{ __('lang.incorrect') }} <input type="text" style="width:40px;"
-                                                name="i_incorrect[]" value="{{ $vall['i_incorrect'] }}">
-                                        </div>
-                                        <hr>
-                                    @endforeach
+                                correct <input type="text" name="i_correct[]" style="width:40px;" value="">
+                                | incorrect <input type="text" style="width:40px;" name="i_incorrect[]"
+                                    value="">
+                            </div>
+                            <hr>
 
-                                    <div class="form-group">
-                                        <select name="cid[]" id="cid">
-                                            <option value="0">{{ __('lang.select') }} {{ __('lang.category_name') }}
-                                            </option>
-                                            @foreach ($category_list as $val)
-                                                <option value="{{ $val['cid'] }}">{{ $val['category_name'] }}</option>
-                                            @endforeach
-                                        </select>
-                                        <select name="lid[]" onchange="no_q_available(this.value);">
-                                            <option value="0">{{ __('lang.select') }} {{ __('lang.level_name') }}
-                                            </option>
-                                            @foreach ($level_list as $val)
-                                                <option value="{{ $val['lid'] }}">{{ $val['level_name'] }}</option>
-                                            @endforeach
-                                        </select>
+                            <div class="form-group">
+                                <select name="cid[]" id="cid">
+                                    <option value="0">select category name
+                                    </option>
+                                    <option value="">category name</option>
+                                </select>
+                                <select name="lid[]" onchange="no_q_available(this.value);">
+                                    <option value="0">select level name
+                                    </option>
+                                    <option value="">level name</option>
+                                </select>
 
-                                        {{ __('lang.no_questions_available') }}
-                                        <span id="no_q_available"></span>
+                                no questions available
+                                <span id="no_q_available"></span>
 
-                                        <br><br>
-                                        {{ __('lang.correct_score') }} <input type="text" name="i_correct[]"
-                                            style="width:40px;" value="1">
-                                        | {{ __('lang.incorrect_score') }} <input type="text" style="width:40px;"
-                                            name="i_incorrect[]" value="0">
-                                    </div>
-
-                                @endif --}}
+                                <br><br>
+                                correct score <input type="text" name="i_correct[]" style="width:40px;"
+                                    value="1">
+                                | incorrect score <input type="text" style="width:40px;" name="i_incorrect[]"
+                                    value="0">
+                            </div> --}}
 
                             <a class="btn btn-success" href="">Back</a>
                             <button class="btn btn-success" type="submit">Update Exam</button>
@@ -304,43 +286,41 @@
     <div id="warning_div"
         style="padding:10px; position:fixed;z-index:100;display:none;width:100%;border-radius:5px;height:200px; border:1px solid #dddddd;left:4px;top:70px;background:#ffffff;">
         <center>
-            <b>{{ __('lang.to_which_position') }}</b><br>
+            <b>to which position</b><br>
             <input type="text" style="width:30px" id="qposition" value=""><br><br>
-            <a href="javascript:cancelmove();" class="btn btn-danger"
-                style="cursor:pointer;">{{ __('lang.cancel') }}</a>
+            <a href="javascript:cancelmove();" class="btn btn-danger" style="cursor:pointer;">Cancel</a>
             &nbsp; &nbsp; &nbsp; &nbsp;
-            <a href="javascript:movequestion();" class="btn btn-info" style="cursor:pointer;">{{ __('lang.move') }}</a>
+            <a href="javascript:movequestion();" class="btn btn-info" style="cursor:pointer;">Move</a>
         </center>
     </div>
 
 @endsection
 
 @push('scripts')
-<script>
-    tinymce.init({
-        selector: '.tinymce_textarea',
-        height: 300,
-        menubar: 'file edit insert view format table tools',
-        plugins: [
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste help wordcount emoticons codesample'
-        ],
-        toolbar:
-            'undo redo | blocks | bold italic | ' +
-            'alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist outdent indent | link image | ' +
-            'print preview fullscreen forecolor backcolor emoticons codesample help',
-        toolbar_mode: 'sliding',
+    <script>
+        tinymce.init({
+            selector: '.tinymce_textarea',
+            height: 300,
+            menubar: 'file edit insert view format table tools',
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste help wordcount emoticons codesample'
+            ],
+            toolbar: 'undo redo | blocks | bold italic | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image | ' +
+                'print preview fullscreen forecolor backcolor emoticons codesample help',
+            toolbar_mode: 'sliding',
 
-        images_upload_credentials: true,
-        automatic_uploads: true,
+            images_upload_credentials: true,
+            automatic_uploads: true,
 
-        setup: function (editor) {
-            editor.on('change', function () {
-                editor.save(); // syncs HTML back into the underlying <textarea> before form submit
-            });
-        }
-    });
-</script>
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                });
+            }
+        });
+    </script>
 @endpush

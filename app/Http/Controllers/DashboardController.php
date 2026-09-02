@@ -151,21 +151,72 @@ class DashboardController extends Controller
         return redirect()->route('listExam')->with('success', 'Exam created successfully.');
     }
 
-    public function editExam(Request $request)
+    public function editExam(Request $request, $id)
     {
+        $quiz = SavsoftQuizModel::findOrFail($id);
         $groups = SavsoftGroupModel::all();
         $users = SavsoftUsersModel::all();
 
-        return view('exam.edit', compact('groups', 'users'));
+        $selectedGroupIds = $quiz->gids ? explode(',', $quiz->gids) : [];
+        $selectedUserIds  = $quiz->uids ? explode(',', $quiz->uids) : [];
+
+        return view('exam.edit', compact('groups', 'users', 'quiz', 'selectedGroupIds', 'selectedUserIds'));
     }
 
-    public function updateExam(Request $request)
+    public function updateExam(Request $request, $id)
     {
+        $quiz = SavsoftQuizModel::findOrFail($id);
+
+        $validated = $request->validate([
+            'quiz_name'         => 'required|string|max:255',
+            'description'       => 'nullable|string',
+            'start_date'        => 'required',
+            'end_date'          => 'required',
+            'duration'          => 'required|integer',
+            'maximum_attempts'  => 'required|integer',
+            'pass_percentage'   => 'required|numeric',
+            'correct_score'     => 'required|numeric',
+            'incorrect_score'   => 'required|numeric',
+            'ip_address'        => 'nullable|string',
+            'view_answer'       => 'required|in:0,1',
+            'with_login'        => 'required|in:0,1',
+            'show_chart_rank'   => 'required|in:0,1',
+            'camera_req'        => 'required|in:0,1',
+            'quiz_template'     => 'required|string',
+            'quiz_price'        => 'required|numeric',
+            'gen_certificate'   => 'required|in:0,1',
+            'certificate_text'  => 'nullable|string',
+            'gids'              => 'nullable|array',
+            'uids'              => 'nullable|array',
+        ]);
+
+        $quiz->update([
+            'quiz_name'        => $validated['quiz_name'],
+            'description'      => $validated['description'] ?? null,
+            'start_date'       => $validated['start_date'],
+            'end_date'         => $validated['end_date'],
+            'duration'         => $validated['duration'],
+            'maximum_attempts' => $validated['maximum_attempts'],
+            'pass_percentage'  => $validated['pass_percentage'],
+            'correct_score'    => $validated['correct_score'],
+            'incorrect_score'  => $validated['incorrect_score'],
+            'ip_address'       => $validated['ip_address'] ?? null,
+            'view_answer'      => $validated['view_answer'],
+            'with_login'       => $validated['with_login'],
+            'show_chart_rank'  => $validated['show_chart_rank'],
+            'camera_req'       => $validated['camera_req'],
+            'quiz_template'    => $validated['quiz_template'],
+            'quiz_price'       => $validated['quiz_price'],
+            'gen_certificate'  => $validated['gen_certificate'],
+            'certificate_text' => $validated['certificate_text'] ?? null,
+            'gids'             => isset($validated['gids']) ? implode(',', $validated['gids']) : null,
+            'uids'             => isset($validated['uids']) ? implode(',', $validated['uids']) : null,
+        ]);
+
+        return redirect()->route('editExam', $id)->with('success', 'Exam updated successfully.');
     }
 
-    public function deleteExam(Request $request)
-    {
-    }
+    public function deleteExam(Request $request) {}
 
     public function listMark(Request $request)
     {
