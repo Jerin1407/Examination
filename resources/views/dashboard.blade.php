@@ -13,11 +13,11 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    <a href="">
+                                    <a href="{{ route('listUser') }}">
                                         NUMBER OF USER REGISTERED
                                     </a>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $userCount }}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -53,11 +53,11 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    <a href="">
+                                    <a href="{{ route('listExam') }}">
                                         NUMBER OF EXAM AVAILABLE
                                     </a>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $examCount }}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
@@ -82,11 +82,11 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            <a href="">
+                                            <a href="{{ route('listUser') }}">
                                                 ACTIVE USERS
                                             </a>
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $activeUserCount }}</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -102,11 +102,11 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            <a href="">
+                                            <a href="{{ route('listUser') }}">
                                                 INACTIVE USERS
                                             </a>
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $inactiveUserCount }}</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-ban fa-2x text-gray-300"></i>
@@ -137,16 +137,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @if (count($result) == 0)
-                                <tr>
-                                    <td colspan="3">No records found</td>
-                                </tr>
-                            @endif --}}
+                                @forelse ($recentUsers as $user)
+                                    <tr>
+                                        <td>{{ $user->email }}</td>
+                                        <td class="text-xs-right">{{ $user->first_name }} {{ $user->last_name }}</td>
+                                        <td class="text-xs-right">{{ $user->group_name ?? '—' }}</td>
+                                        <td class="text-xs-right">{{ $user->contact_no }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5">No records found</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <!-- / recent users -->
 
             </div>
 

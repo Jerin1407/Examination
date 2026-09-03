@@ -12,7 +12,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard');
+        $userCount = SavsoftUsersModel::count();
+        $examCount = SavsoftQuizModel::count();
+        $activeUserCount = SavsoftUsersModel::where('user_status', 'Active')->count();
+        $inactiveUserCount = SavsoftUsersModel::where('user_status', 'Inactive')->count();
+
+        $recentUsers = SavsoftUsersModel::query()
+            ->leftJoin('savsoft_group', 'savsoft_group.gid', '=', 'savsoft_users.gid')
+            ->select('savsoft_users.*', 'savsoft_group.group_name')
+            ->orderBy('savsoft_users.uid', 'desc')
+            ->limit(15)
+            ->get();
+
+        return view('dashboard', compact('userCount', 'examCount', 'activeUserCount', 'inactiveUserCount', 'recentUsers'));
     }
 
     public function addUser(Request $request)
@@ -23,7 +35,21 @@ class DashboardController extends Controller
 
     public function listUser(Request $request)
     {
-        return view('users.list');
+        $search = $request->input('search');
+
+        $users = SavsoftUsersModel::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('email', 'like', "%{$search}%")
+                        ->orWhere('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('uid', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('users.list', compact('users', 'search'));
     }
 
     public function showAppointment(Request $request)
@@ -169,9 +195,8 @@ class DashboardController extends Controller
 
         $validated = $request->validate([
             'quiz_name'         => 'required|string|max:255',
-            'description'       => 'nullable|string',
-            'start_date'        => 'required',
-            'end_date'          => 'required',
+            'start_date' => 'required|date',
+            'end_date'   => 'required|date|after:start_date',
             'duration'          => 'required|integer',
             'maximum_attempts'  => 'required|integer',
             'pass_percentage'   => 'required|numeric',
@@ -190,9 +215,12 @@ class DashboardController extends Controller
             'uids'              => 'nullable|array',
         ]);
 
+        $validated['start_date'] = \Carbon\Carbon::parse($validated['start_date'])->timestamp;
+        $validated['end_date']   = \Carbon\Carbon::parse($validated['end_date'])->timestamp;
+
         $quiz->update([
             'quiz_name'        => $validated['quiz_name'],
-            'description'      => $validated['description'] ?? null,
+            'description'      => $validated['description'] ?? '',
             'start_date'       => $validated['start_date'],
             'end_date'         => $validated['end_date'],
             'duration'         => $validated['duration'],
@@ -200,7 +228,7 @@ class DashboardController extends Controller
             'pass_percentage'  => $validated['pass_percentage'],
             'correct_score'    => $validated['correct_score'],
             'incorrect_score'  => $validated['incorrect_score'],
-            'ip_address'       => $validated['ip_address'] ?? null,
+            'ip_address'       => $validated['ip_address'] ?? '',
             'view_answer'      => $validated['view_answer'],
             'with_login'       => $validated['with_login'],
             'show_chart_rank'  => $validated['show_chart_rank'],
@@ -208,12 +236,12 @@ class DashboardController extends Controller
             'quiz_template'    => $validated['quiz_template'],
             'quiz_price'       => $validated['quiz_price'],
             'gen_certificate'  => $validated['gen_certificate'],
-            'certificate_text' => $validated['certificate_text'] ?? null,
+            'certificate_text' => $validated['certificate_text'] ?? '',
             'gids'             => isset($validated['gids']) ? implode(',', $validated['gids']) : null,
             'uids'             => isset($validated['uids']) ? implode(',', $validated['uids']) : null,
         ]);
 
-        return redirect()->route('editExam', $id)->with('success', 'Exam updated successfully.');
+        return redirect()->route('listExam', $id)->with('success', 'Exam updated successfully.');
     }
 
     public function deleteExam(Request $request) {}
