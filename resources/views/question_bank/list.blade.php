@@ -10,10 +10,11 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <form method="post" action="">
+                <form method="get" action="{{ route('listQuestion') }}">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="Search...">
+                        <input type="text" class="form-control" name="search" placeholder="Search..."
+                            {{ request('search') }}>
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Search</button>
                         </span>
@@ -27,16 +28,27 @@
                 <br>
 
                 <div class="form-group">
-                    <form method="post" action="">
+                    <form method="get" action="{{ route('listQuestion') }}">
                         @csrf
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+
                         <select name="cid">
                             <option value="0">All Category</option>
-                            <option value="0">All Category</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->cid }}"
+                                    {{ request('cid') == $category->cid ? 'selected' : '' }}>
+                                    {{ $category->category_name }}
+                                </option>
+                            @endforeach
                         </select>
 
                         <select name="lid">
                             <option value="0">All Level</option>
-                            <option value="0">All Level</option>
+                            @foreach ($levels as $level)
+                                <option value="{{ $level->lid }}" {{ request('lid') == $level->lid ? 'selected' : '' }}>
+                                    {{ $level->level_name }}
+                                </option>
+                            @endforeach
                         </select>
 
                         <button class="btn btn-default" type="submit">Filter</button>
@@ -53,58 +65,77 @@
                         <th>Action</th>
                     </tr>
 
-                    {{-- <tr>
-                        <td colspan="3">No questions found</td>
-                    </tr> --}}
+                    @forelse ($questions as $index => $question)
+                        @php
+                            $percentCorrected =
+                                $question->no_time_served > 0
+                                    ? round(($question->no_time_corrected / $question->no_time_served) * 100)
+                                    : 0;
+                        @endphp
+                        <tr>
+                            <td>
+                                <a href="javascript:void(0);" onclick="$('#stats_{{ $question->qid }}').toggle();">+</a>
+                                {{ $questions->firstItem() + $index }}
+                            </td>
+                            <td>
+                                {{ \Illuminate\Support\Str::words(strip_tags($question->question), 6, '...') }}
 
-                    <tr>
-                        <td>
-                            <a href="">+</a>
-                            1000
-                        </td>
-                        <td>
+                                <span id="stats_{{ $question->qid }}" style="display:none;">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td>No. of Times Corrected</td>
+                                            <td>{{ $question->no_time_corrected }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>No. of Times Incorrected</td>
+                                            <td>{{ $question->no_time_incorrected }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>No. of Times Unattempted</td>
+                                            <td>{{ $question->no_time_unattempted }}</td>
+                                        </tr>
+                                    </table>
+                                </span>
+                            </td>
+                            <td>{{ $question->question_type }}</td>
+                            <td>{{ $question->category_name ?? '—' }} / {{ $question->level_name ?? '—' }}</td>
+                            <td>
+                                <div style="background:#eeeeee;width:100%;height:10px;">
+                                    <div style="background:#449d44;width:{{ $percentCorrected }}%;height:10px;"></div>
+                                    <span style="font-size:10px;">{{ $percentCorrected }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="">
+                                    <img src="{{ asset('images/edit.png') }}">
+                                </a>
 
-                            <span style="display:none;">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <td>No. of Times Corrected</td>
-                                        <td>0</td>
-                                    </tr>
-                                    <tr>
-                                        <td>No. of Times Incorrected</td>
-                                        <td>0</td>
-                                    </tr>
-                                    <tr>
-                                        <td>No. of Times Unattempted</td>
-                                        <td>0</td>
-                                    </tr>
-                                </table>
-                            </span>
-                        </td>
-                        <td>Long Answer</td>
-                        <td>PART-1 / FOUNDATION- P1: ACCOUNTING</span></td>
-                        <td>
-                            <div style="background:#eeeeee;width:100%;height:10px;">
-                                <div style="background:#449d44;width:10%;height:10px;"></div>
-                                <span style="font-size:10px;">10%</span>
-                            </div>
-                            {{-- Not Used --}}
-                        </td>
-                        <td>
-                            <a href=""><img src="{{ asset('images/edit.png') }}"></a>
-
-                            <a href="">
-                                <img src="{{ asset('images/cross.png') }}">
-                            </a>
-                        </td>
-                    </tr>
+                                <a href=""
+                                    onclick="return confirm('Are you sure you want to delete this question?');">
+                                    <img src="{{ asset('images/cross.png') }}">
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6">No questions found!</td>
+                        </tr>
+                    @endforelse
                 </table>
             </div>
         </div>
 
-        <a href="" class="btn btn-primary">Back</a>
+        @if ($questions->previousPageUrl())
+            <a href="{{ $questions->previousPageUrl() }}" class="btn btn-primary">Back</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Back</a>
+        @endif
         &nbsp;&nbsp;
-        <a href="" class="btn btn-primary">Next</a>
+        @if ($questions->nextPageUrl())
+            <a href="{{ $questions->nextPageUrl() }}" class="btn btn-primary">Next</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Next</a>
+        @endif
 
         <br><br><br><br>
 
@@ -134,7 +165,8 @@
                     <div style="clear:both;margin-bottom:15px;"></div>
                     <input type="submit" value="Import" style="margin-top:5px;" class="btn btn-default">
 
-                    <a href="{{ asset('sample/sample.xls') }}" target="new">Click here</a> to download sample file to know
+                    <a href="{{ asset('sample/sample.xls') }}" target="new">Click here</a> to download sample file to
+                    know
                     file format.
                 </form>
             </div>

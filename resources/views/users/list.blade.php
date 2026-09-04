@@ -47,7 +47,7 @@
                                 <a href="">send new notification</a>
                             </td>
                             <td>
-                                <a href=""><i class="fa fa-eye" title="View Profile"></i></a>
+                                <a href="{{ route('viewUser') }}"><i class="fa fa-eye" title="View Profile"></i></a>
 
                                 <a href="">
                                     <img src="{{ asset('images/edit.png') }}">

@@ -15,6 +15,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // User Routes
 Route::get('/add-user', [DashboardController::class, 'addUser'])->name('addUser');
 Route::get('/list-user', [DashboardController::class, 'listUser'])->name('listUser');
+Route::get('/view-user', [DashboardController::class, 'viewUser'])->name('viewUser');
+Route::get('/edit-user', [DashboardController::class, 'editUser'])->name('editUser');
+Route::post('/update-user', [DashboardController::class, 'updateUser'])->name('updateUser');
+Route::post('/delete-user', [DashboardController::class, 'deleteUser'])->name('deleteUser');
 Route::get('/appointment', [DashboardController::class, 'showAppointment'])->name('showAppointment');
 
 // Question Bank Routes
