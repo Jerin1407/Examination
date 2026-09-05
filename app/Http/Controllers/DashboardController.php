@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountTypeModel;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
 use App\Models\SavsoftLevelModel;
+use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizModel;
 use App\Models\SavsoftUsersModel;
@@ -61,14 +63,53 @@ class DashboardController extends Controller
         return view('users.view');
     }
 
-    public function editUser(Request $request)
+    public function editUser(Request $request, $id)
     {
-        return view('users.edit');
+        $user = SavsoftUsersModel::findOrFail($id);
+        $groups = SavsoftGroupModel::all();
+        $accountTypes = AccountTypeModel::all();
+        $payments = SavsoftPaymentModel::where('uid', $id)
+            ->orderBy('paid_date', 'desc')
+            ->get();
+
+        return view('users.edit', compact('user', 'groups', 'accountTypes', 'payments'));
     }
 
-    public function updateUser(Request $request)
+    public function updateUser(Request $request, $id)
     {
-        // Logic to update user details
+        $user = SavsoftUsersModel::findOrFail($id);
+
+        $validated = $request->validate([
+            'email'                 => 'required|email|max:255',
+            'password'              => 'nullable|string|min:6',
+            'first_name'            => 'nullable|string|max:255',
+            'last_name'             => 'nullable|string|max:255',
+            'contact_no'            => 'nullable|string|max:20',
+            'skype_id'              => 'nullable|string|max:255',
+            'gid'                   => 'nullable|integer',
+            'subscription_expired'  => 'nullable|date',
+            'su'                    => 'nullable|integer',
+            'user_status'           => 'required|in:Active,Inactive',
+        ]);
+
+        $user->email                = $validated['email'];
+        $user->first_name           = $validated['first_name'] ?? '';
+        $user->last_name            = $validated['last_name'] ?? '';
+        $user->contact_no           = $validated['contact_no'] ?? '';
+        $user->skype_id             = $validated['skype_id'] ?? '';
+        $user->gid                  = $validated['gid'] ?? null;
+        $user->subscription_expired = $validated['subscription_expired'] ?? null;
+        $user->su                   = $validated['su'] ?? null;
+        $user->user_status          = $validated['user_status'];
+
+        // Only update the password if a new one was actually entered
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('listUser', $id)->with('success', 'User updated successfully.');
     }
 
     public function deleteUser(Request $request)
