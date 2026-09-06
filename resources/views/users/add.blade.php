@@ -8,7 +8,7 @@
         <h3>Add New User</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('saveUser') }}">
                 @csrf
 
                 <div class="col-md-8">
@@ -50,6 +50,11 @@
                                 <label for="gid">Select Group</label>
                                 <select class="form-control" name="gid" id="gid" onchange="getexpiry();">
                                     <option value="0">Select Group</option>
+                                    @foreach ($groups as $group)
+                                        <option value="{{ $group->gid }}">
+                                            {{ $group->group_name }} (Price: {{ $group->price }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -63,6 +68,11 @@
                                 <label for="su">Account Type</label>
                                 <select class="form-control" name="su" id="su">
                                     <option value="0">Select Account Type</option>
+                                    @foreach ($accountTypes as $accountType)
+                                        <option value="{{ $accountType->account_id }}">
+                                            {{ $accountType->account_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 

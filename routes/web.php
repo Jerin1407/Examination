@@ -14,6 +14,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 // User Routes
 Route::get('/add-user', [DashboardController::class, 'addUser'])->name('addUser');
+Route::post('/save-user', [DashboardController::class, 'saveUser'])->name('saveUser');
 Route::get('/list-user', [DashboardController::class, 'listUser'])->name('listUser');
 Route::get('/view-user/{id}', [DashboardController::class, 'viewUser'])->name('viewUser');
 Route::get('/edit-user/{id}', [DashboardController::class, 'editUser'])->name('editUser');

@@ -17,6 +17,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $userCount = SavsoftUsersModel::count();
         $examCount = SavsoftQuizModel::count();
         $questionCount = SavsoftQbankModel::count();
@@ -35,12 +39,57 @@ class DashboardController extends Controller
 
     public function addUser(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
 
-        return view('users.add');
+        $groups = SavsoftGroupModel::all();
+        $accountTypes = AccountTypeModel::all();
+
+        return view('users.add', compact('groups', 'accountTypes'));
+    }
+
+    public function saveUser(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
+        $validated = $request->validate([
+            'email'                 => 'required|email|max:255|unique:savsoft_users,email',
+            'password'              => 'required|string|min:6',
+            'first_name'            => 'nullable|string|max:255',
+            'last_name'             => 'nullable|string|max:255',
+            'contact_no'            => 'nullable|string|max:20',
+            'gid'                   => 'nullable|integer',
+            'subscription_expired'  => 'nullable|date',
+            'su'                    => 'nullable|integer',
+        ]);
+
+        SavsoftUsersModel::create([
+            'email'                => $validated['email'],
+            'password'             => bcrypt($validated['password']),
+            'first_name'           => $validated['first_name'] ?? '',
+            'last_name'            => $validated['last_name'] ?? '',
+            'contact_no'           => $validated['contact_no'] ?? '',
+            'gid'                  => $validated['gid'] ?? null,
+            'subscription_expired' => !empty($validated['subscription_expired'])
+                ? \Carbon\Carbon::parse($validated['subscription_expired'])->timestamp
+                : null,
+            'su'                   => $validated['su'] ?? null,
+            'user_status'          => 'Active',
+            'registered_date'      => now()->timestamp,
+        ]);
+
+        return redirect()->route('listUser')->with('success', 'User created successfully.');
     }
 
     public function listUser(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $search = $request->input('search');
 
         $users = SavsoftUsersModel::query()
@@ -60,11 +109,19 @@ class DashboardController extends Controller
 
     public function viewUser(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         return view('users.view');
     }
 
     public function editUser(Request $request, $id)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $user = SavsoftUsersModel::findOrFail($id);
         $groups = SavsoftGroupModel::all();
         $accountTypes = AccountTypeModel::all();
@@ -77,6 +134,10 @@ class DashboardController extends Controller
 
     public function updateUser(Request $request, $id)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $user = SavsoftUsersModel::findOrFail($id);
 
         $validated = $request->validate([
@@ -114,21 +175,37 @@ class DashboardController extends Controller
 
     public function deleteUser(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         // Logic to delete a user
     }
 
     public function showAppointment(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         return view('users.appoinment');
     }
 
     public function addQuestion(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         return view('question_bank.add');
     }
 
     public function listQuestion(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $categories = SavsoftCategoryModel::all();
         $levels = SavsoftLevelModel::all();
 
@@ -162,6 +239,10 @@ class DashboardController extends Controller
 
     public function listExam(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $query = SavsoftQuizModel::query();
 
         if ($request->filled('search')) {
@@ -200,6 +281,10 @@ class DashboardController extends Controller
 
     public function addExam(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+        
         $groups = SavsoftGroupModel::all();
         $users = SavsoftUsersModel::all();
 
@@ -208,9 +293,8 @@ class DashboardController extends Controller
 
     public function saveExam(Request $request)
     {
-        // Check login session
         if (!session()->has('uid')) {
-            return redirect()->route('login')->with('error', 'Please login before adding a exam.');
+            return redirect()->route('showLogin')->with('error', 'Please login before adding a exam.');
         }
 
         $validated = $request->validate([
@@ -272,6 +356,10 @@ class DashboardController extends Controller
 
     public function editExam(Request $request, $id)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $quiz = SavsoftQuizModel::findOrFail($id);
         $groups = SavsoftGroupModel::all();
         $users = SavsoftUsersModel::all();
@@ -284,6 +372,10 @@ class DashboardController extends Controller
 
     public function updateExam(Request $request, $id)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+        }
+
         $quiz = SavsoftQuizModel::findOrFail($id);
 
         $validated = $request->validate([
