@@ -45,4 +45,12 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
+
+    public function logout(Request $request)
+    {
+        // Clear session data
+        $request->session()->flush();
+
+        return redirect()->route('showLogin')->with('success_logout', 'You have been logged out successfully.');
+    }
 }

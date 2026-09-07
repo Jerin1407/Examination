@@ -81,7 +81,7 @@ class DashboardController extends Controller
             'registered_date'      => now()->timestamp,
         ]);
 
-        return redirect()->route('listUser')->with('success', 'User created successfully.');
+        return redirect()->route('listUser')->with('success_add', 'User created successfully.');
     }
 
     public function listUser(Request $request)
@@ -170,7 +170,7 @@ class DashboardController extends Controller
 
         $user->save();
 
-        return redirect()->route('listUser', $id)->with('success', 'User updated successfully.');
+        return redirect()->route('listUser', $id)->with('success_update', 'User updated successfully.');
     }
 
     public function deleteUser(Request $request)
@@ -284,7 +284,7 @@ class DashboardController extends Controller
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
         }
-        
+
         $groups = SavsoftGroupModel::all();
         $users = SavsoftUsersModel::all();
 
@@ -325,7 +325,7 @@ class DashboardController extends Controller
 
         $exam = SavsoftQuizModel::create([
             'quiz_name'          => $validated['quiz_name'],
-            'description'        => $validated['description'] ?? '',
+            'description'        => strip_tags($validated['description']) ?? '',
             'start_date'         => strtotime($validated['start_date']),
             'end_date'           => strtotime($validated['end_date']),
             'gids'               => !empty($validated['gids']) ? implode(',', $validated['gids']) : '',
@@ -351,7 +351,7 @@ class DashboardController extends Controller
             'quiz_price'         => $validated['quiz_price'],
         ]);
 
-        return redirect()->route('listExam')->with('success', 'Exam created successfully.');
+        return redirect()->route('listExam')->with('success_add', 'Exam created successfully.');
     }
 
     public function editExam(Request $request, $id)
@@ -380,8 +380,9 @@ class DashboardController extends Controller
 
         $validated = $request->validate([
             'quiz_name'         => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after:start_date',
+            'description'       => 'nullable|string',
+            'start_date'        => 'required|date',
+            'end_date'          => 'required|date|after:start_date',
             'duration'          => 'required|integer',
             'maximum_attempts'  => 'required|integer',
             'pass_percentage'   => 'required|numeric',
@@ -405,7 +406,7 @@ class DashboardController extends Controller
 
         $quiz->update([
             'quiz_name'        => $validated['quiz_name'],
-            'description'      => $validated['description'] ?? '',
+            'description'      => strip_tags($validated['description']) ?? '',
             'start_date'       => $validated['start_date'],
             'end_date'         => $validated['end_date'],
             'duration'         => $validated['duration'],
@@ -426,7 +427,7 @@ class DashboardController extends Controller
             'uids'             => isset($validated['uids']) ? implode(',', $validated['uids']) : null,
         ]);
 
-        return redirect()->route('listExam', $id)->with('success', 'Exam updated successfully.');
+        return redirect()->route('listExam', $id)->with('success_update', 'Exam updated successfully.');
     }
 
     public function deleteExam(Request $request) {}

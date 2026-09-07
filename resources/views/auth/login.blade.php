@@ -53,12 +53,6 @@
                                     <form class="user" method="POST" action="{{ route('login') }}">
                                         @csrf
 
-                                         @if (session('message'))
-        <div class="alert alert-danger">
-            {{ session('message') }}
-        </div>
-    @endif
-
                                         <div class="form-group">
                                             <input type="email" name="email" value=""
                                                 class="form-control form-control-user" id="exampleInputEmail"
@@ -109,6 +103,52 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+    <script>
+        // alert message for error
+        @if (session('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#EF4444', // red color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                title: '{{ session('error') }}'
+            });
+        @endif
+
+        // alert success for logout
+        @if (session('success_logout'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_logout') }}'
+            });
+        @endif
+    </script>
 
 </body>
 
