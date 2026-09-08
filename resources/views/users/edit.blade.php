@@ -88,11 +88,6 @@
                                         Inactive </option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label>Field Title </label>
-                                <input type="text" name="field_name" class="form-control" value=""
-                                    placeholder="Field Title" field_validate>
-                            </div>
                             <button class="btn btn-default" type="submit">
                                 Submit
                             </button>

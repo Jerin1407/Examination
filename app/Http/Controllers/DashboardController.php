@@ -78,7 +78,8 @@ class DashboardController extends Controller
                 : null,
             'su'                   => $validated['su'] ?? null,
             'user_status'          => 'Active',
-            'registered_date'      => now()->timestamp,
+            'inserted_by'          => session('uid'),
+            'registered_date'      => now()->format('Y-m-d H:i:s'),
         ]);
 
         return redirect()->route('listUser')->with('success_add', 'User created successfully.');
@@ -107,11 +108,21 @@ class DashboardController extends Controller
         return view('users.list', compact('users', 'search'));
     }
 
-    public function viewUser(Request $request)
+    public function viewUser(Request $request, $id)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
         }
+
+        $user = SavsoftUsersModel::findOrFail($id);
+        $group = SavsoftGroupModel::find($user->gid);
+        $accountType = AccountTypeModel::find($user->su);
+
+        $payments = SavsoftPaymentModel::where('uid', $id)
+            ->orderBy('paid_date', 'desc')
+            ->get();
+
+        return view('users.view', compact('user', 'group', 'accountType', 'payments'));
 
         return view('users.view');
     }
@@ -159,9 +170,12 @@ class DashboardController extends Controller
         $user->contact_no           = $validated['contact_no'] ?? '';
         $user->skype_id             = $validated['skype_id'] ?? '';
         $user->gid                  = $validated['gid'] ?? null;
-        $user->subscription_expired = $validated['subscription_expired'] ?? null;
+        $user->subscription_expired = !empty($validated['subscription_expired'])
+            ? \Carbon\Carbon::parse($validated['subscription_expired'])->timestamp
+            : null;
         $user->su                   = $validated['su'] ?? null;
         $user->user_status          = $validated['user_status'];
+        $user->inserted_by          = session('uid');
 
         // Only update the password if a new one was actually entered
         if (!empty($validated['password'])) {

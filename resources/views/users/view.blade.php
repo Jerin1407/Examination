@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-10">
-                <h1>first name last name</h1>
+                <h1>{{ $user->first_name }} {{ $user->last_name }}</h1>
             </div>
             <div class="col-sm-2">
                 <a href="" class="pull-right">
@@ -22,20 +22,21 @@
 
                 <ul class="list-group">
                     <li class="list-group-item text-muted">Profile</li>
-                    <li class="list-group-item text-right"><span class="pull-left"><strong>Joined</strong></span> 2024-11-25
-                        14:20:22</li>
+                    <li class="list-group-item text-right"><span class="pull-left"><strong>Joined</strong></span>
+                        {{ $user->registered_date ? \Carbon\Carbon::createFromTimestamp($user->registered_date)->format('Y-m-d H:i:s') : '—' }}
+                    </li>
                     <li class="list-group-item text-right"><span class="pull-left"><strong>Group Name</strong></span>
-                        group_name</li>
+                        {{ $group->group_name ?? '—' }}</li>
                     <li class="list-group-item text-right">
                         <span class="pull-left"><strong>Account Type</strong></span>
-                        User
+                        {{ $accountType->account_name ?? '—' }}
                     </li>
                 </ul>
 
                 <div class="card shadow py-2">
                     <div class="card-heading" style="padding:5px;">Contact</div>
-                    <div class="card-body"><i class="fa fa-envelope fa-1x"></i> email</div>
-                    <div class="card-body"><i class="fa fa-phone fa-1x"></i> contact_no</div>
+                    <div class="card-body"><i class="fa fa-envelope fa-1x"></i> {{ $user->email }}</div>
+                    <div class="card-body"><i class="fa fa-phone fa-1x"></i> {{ $user->contact_no }}</div>
                 </div>
 
                 <ul class="list-group">
@@ -110,21 +111,20 @@
                                 <th>Status</th>
                             </tr>
 
-                            {{-- <tr>
-                                <td colspan="5">No record found!</td>
-                            </tr> --}}
-
-                            <tr>
-                                <td>payment_gateway</td>
-                                {{-- Same timestamp assumption flagged in the quiz views:
-                                     date('Y-m-d H:i:s', $val['paid_date']) implies paid_date is
-                                     a raw Unix timestamp. Using Carbon here on that same
-                                     assumption — confirm against your payments model. --}}
-                                <td>paid_date</td>
-                                <td>amount</td>
-                                <td>transaction_id</td>
-                                <td>payment_status</td>
-                            </tr>
+                            @forelse ($payments as $payment)
+                                <tr>
+                                    <td>{{ $payment->payment_gateway }}</td>
+                                    <td>{{ $payment->paid_date ? \Carbon\Carbon::createFromTimestamp($payment->paid_date)->format('Y-m-d H:i:s') : '—' }}
+                                    </td>
+                                    <td>{{ $payment->amount }}</td>
+                                    <td>{{ $payment->transaction_id }}</td>
+                                    <td>{{ $payment->payment_status }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5">No record found!</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

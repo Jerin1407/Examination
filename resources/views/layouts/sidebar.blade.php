@@ -233,13 +233,45 @@
                              </a>
 
                              <div class="dropdown-divider"></div>
-                             <a class="dropdown-item" href="">
-                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                 Logout
-                             </a>
+                             <form method="POST" action="{{ route('logout') }}" class="d-inline" id="logoutForm">
+                                 @csrf
+
+                                 <button type="button" class="dropdown-item" id="logoutBtn"
+                                     style="border: none; background: none; width: 100%; text-align: left;">
+                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                     Logout
+                                 </button>
+                             </form>
                          </div>
                      </li>
 
                  </ul>
              </nav>
              <!-- End of Topbar -->
+
+             <script>
+                 // Logout Alert
+                 document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                     const Toast = Swal.mixin({
+                         toast: true,
+                         position: 'top',
+                         showConfirmButton: true,
+                         showCancelButton: true,
+                         confirmButtonText: 'Yes, logout',
+                         cancelButtonText: 'Cancel',
+                         timerProgressBar: true,
+                         background: '#EF4444', // red
+                         color: '#fff',
+                         iconColor: '#fff'
+                     });
+
+                     Toast.fire({
+                         icon: 'warning',
+                         title: 'Are you sure you want to logout?'
+                     }).then((result) => {
+                         if (result.isConfirmed) {
+                             document.getElementById('logoutForm').submit();
+                         }
+                     });
+                 });
+             </script>
