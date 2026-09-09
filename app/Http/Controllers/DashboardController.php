@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountTypeModel;
+use App\Models\AppointmentRequestModel;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
 use App\Models\SavsoftLevelModel;
@@ -18,7 +19,7 @@ class DashboardController extends Controller
     public function index()
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $userCount = SavsoftUsersModel::count();
@@ -40,7 +41,7 @@ class DashboardController extends Controller
     public function addUser(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $groups = SavsoftGroupModel::all();
@@ -52,7 +53,7 @@ class DashboardController extends Controller
     public function saveUser(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $validated = $request->validate([
@@ -88,7 +89,7 @@ class DashboardController extends Controller
     public function listUser(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $search = $request->input('search');
@@ -111,7 +112,7 @@ class DashboardController extends Controller
     public function viewUser(Request $request, $id)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $user = SavsoftUsersModel::findOrFail($id);
@@ -130,7 +131,7 @@ class DashboardController extends Controller
     public function editUser(Request $request, $id)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $user = SavsoftUsersModel::findOrFail($id);
@@ -146,7 +147,7 @@ class DashboardController extends Controller
     public function updateUser(Request $request, $id)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $user = SavsoftUsersModel::findOrFail($id);
@@ -190,7 +191,7 @@ class DashboardController extends Controller
     public function deleteUser(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         // Logic to delete a user
@@ -199,25 +200,79 @@ class DashboardController extends Controller
     public function showAppointment(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('users.appoinment');
+        $uid = session('uid');
+
+        $appointments = AppointmentRequestModel::query()
+            ->where('request_by', $uid)
+            ->orWhere('to_id', $uid)
+            ->leftJoin('savsoft_users as requester', 'requester.uid', '=', 'appointment_request.request_by')
+            ->leftJoin('savsoft_users as recipient', 'recipient.uid', '=', 'appointment_request.to_id')
+            ->select(
+                'appointment_request.*',
+                'requester.first_name as requester_first_name',
+                'requester.last_name as requester_last_name',
+                'requester.skype_id as requester_skype',
+                'recipient.first_name as recipient_first_name',
+                'recipient.last_name as recipient_last_name',
+                'recipient.skype_id as recipient_skype'
+            )
+            ->orderBy('appointment_request.appointment_id', 'desc')
+            ->paginate(15);
+
+        return view('users.appoinment', compact('appointments'));
     }
 
     public function addQuestion(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         return view('question_bank.add');
     }
 
+    public function saveQuestion(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
+    }
+
+    public function editQuestion(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('question_bank.edit');
+    }
+
+    public function updateQuestion(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
+    }
+
+    public function deleteQuestion(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+    }
+
     public function listQuestion(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $categories = SavsoftCategoryModel::all();
@@ -254,7 +309,7 @@ class DashboardController extends Controller
     public function listExam(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $query = SavsoftQuizModel::query();
@@ -296,7 +351,7 @@ class DashboardController extends Controller
     public function addExam(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $groups = SavsoftGroupModel::all();
@@ -308,7 +363,7 @@ class DashboardController extends Controller
     public function saveExam(Request $request)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login before adding a exam.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login before adding a exam.');
         }
 
         $validated = $request->validate([
@@ -371,7 +426,7 @@ class DashboardController extends Controller
     public function editExam(Request $request, $id)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $quiz = SavsoftQuizModel::findOrFail($id);
@@ -387,7 +442,7 @@ class DashboardController extends Controller
     public function updateExam(Request $request, $id)
     {
         if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('error', 'Please login to access the page.');
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
         $quiz = SavsoftQuizModel::findOrFail($id);
@@ -444,90 +499,163 @@ class DashboardController extends Controller
         return redirect()->route('listExam', $id)->with('success_update', 'Exam updated successfully.');
     }
 
-    public function deleteExam(Request $request) {}
+    public function deleteExam(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+    }
 
     public function listMark(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('valuation.list');
     }
 
     public function addStudyMaterial(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('study_material.add');
     }
 
     public function listStudyMaterial(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('study_material.list');
     }
 
     public function editStudyMaterial(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('study_material.edit');
     }
 
     public function viewStudyMaterial(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('study_material.view');
     }
 
     public function editSetting(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('setting.edit');
     }
 
     public function listNotification(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('notification.list');
     }
 
     public function addNotification(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('notification.add');
     }
 
     public function listUserGroup(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('user_group.list');
     }
 
     public function addUserGroup(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('user_group.add');
     }
 
     public function editUserGroup(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('user_group.edit');
     }
 
     public function listCategory(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('category.list');
     }
 
     public function listLevel(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('level.list');
     }
 
     public function listAccountType(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('account_type.list');
     }
 
     public function editAccountType(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('account_type.edit');
     }
 
     public function listCustomFields(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('custom_fields.list');
     }
 
     public function addCustomFields(Request $request)
     {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
         return view('custom_fields.add');
     }
 }

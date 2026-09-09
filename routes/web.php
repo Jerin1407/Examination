@@ -14,18 +14,24 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // User Routes
+Route::get('/list-user', [DashboardController::class, 'listUser'])->name('listUser');
 Route::get('/add-user', [DashboardController::class, 'addUser'])->name('addUser');
 Route::post('/save-user', [DashboardController::class, 'saveUser'])->name('saveUser');
-Route::get('/list-user', [DashboardController::class, 'listUser'])->name('listUser');
 Route::get('/view-user/{id}', [DashboardController::class, 'viewUser'])->name('viewUser');
 Route::get('/edit-user/{id}', [DashboardController::class, 'editUser'])->name('editUser');
 Route::post('/update-user/{id}', [DashboardController::class, 'updateUser'])->name('updateUser');
 Route::post('/delete-user', [DashboardController::class, 'deleteUser'])->name('deleteUser');
+
+// Appointment Routes
 Route::get('/appointment', [DashboardController::class, 'showAppointment'])->name('showAppointment');
 
 // Question Bank Routes
-Route::get('/add-question', [DashboardController::class, 'addQuestion'])->name('addQuestion');
 Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name('listQuestion');
+Route::get('/add-question', [DashboardController::class, 'addQuestion'])->name('addQuestion');
+Route::post('/save-question', [DashboardController::class, 'saveQuestion'])->name('saveQuestion');
+Route::get('/edit-question', [DashboardController::class, 'editQuestion'])->name('editQuestion');
+Route::post('/update-question', [DashboardController::class, 'updateQuestion'])->name('updateQuestion');
+Route::post('/delete-question', [DashboardController::class, 'deleteQuestion'])->name('deleteQuestion');
 
 // Exam Routes
 Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');

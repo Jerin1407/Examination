@@ -37,7 +37,7 @@ class AuthController extends Controller
 
             return redirect()->route('dashboard')->with('success_login', 'Login successfull! Welcome back...');
         } else {
-            return redirect()->back()->with('error', 'Invalid username or password');
+            return redirect()->back()->with('error_login', 'Invalid username or password');
         }
     }
 

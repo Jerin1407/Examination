@@ -15,6 +15,10 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <style>
@@ -106,7 +110,7 @@
 
     <script>
         // alert message for error
-        @if (session('error'))
+        @if (session('error_login'))
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -123,7 +127,29 @@
             });
             Toast.fire({
                 icon: 'error',
-                title: '{{ session('error') }}'
+                title: '{{ session('error_login') }}'
+            });
+        @endif
+
+        // alert message for login first
+        @if (session('login_first'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#EF4444', // red color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                title: '{{ session('login_first') }}'
             });
         @endif
 

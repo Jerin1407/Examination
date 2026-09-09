@@ -21,36 +21,48 @@
                         <th>Status</th>
                     </tr>
 
-                    {{-- <tr>
-                            <td colspan="6">No record found</td>
-                        </tr> --}}
+                    @forelse ($appointments as $index => $appointment)
+                        <tr>
+                            <td>{{ $appointments->firstItem() + $index }}</td>
+                            <td>
+                                {{ $appointment->requester_first_name }} {{ $appointment->requester_last_name }}
+                                <br>Skype ID: {{ $appointment->requester_skype }}
+                            </td>
+                            <td>
+                                {{ $appointment->recipient_first_name }} {{ $appointment->recipient_last_name }}
+                                <br>Skype ID: {{ $appointment->recipient_skype }}
+                            </td>
+                            <td>{{ $appointment->appointment_timing }}</td>
+                            <td>
+                                {{ $appointment->appointment_status }}
 
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            Admin
-                            <br>Skype ID :
-                        </td>
-                        <td>
-                            Admin
-                            <br>Skype ID:
-                        </td>
-                        <td>2019-03-18 11:48:40</td>
-                        <td>
-                            Accepted
+                                @if ($appointment->appointment_status == 'Pending')
+                                    <a href="" class="btn btn-success btn-sm">accept</a>
 
-                            <a href="" class="btn btn-success btn-sm">accept</a>
-
-                            <a href="" class="btn btn-danger btn-sm">reject</a>
-                        </td>
-                    </tr>
+                                    <a href="" class="btn btn-danger btn-sm">reject</a>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5">No record found</td>
+                        </tr>
+                    @endforelse
                 </table>
             </div>
         </div>
 
-        <a href="" class="btn btn-primary">Back</a>
+        @if ($appointments->previousPageUrl())
+            <a href="{{ $appointments->previousPageUrl() }}" class="btn btn-primary">Back</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Back</a>
+        @endif
         &nbsp;&nbsp;
-        <a href="" class="btn btn-primary">Next</a>
+        @if ($appointments->nextPageUrl())
+            <a href="{{ $appointments->nextPageUrl() }}" class="btn btn-primary">Next</a>
+        @else
+            <a href="#" class="btn btn-primary disabled">Next</a>
+        @endif
 
     </div>
 @endsection
