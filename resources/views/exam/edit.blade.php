@@ -28,8 +28,8 @@
 
                             <div class="form-group">
                                 <label for="quiz_name">Exam Name</label>
-                                <input type="text" id="quiz_name" name="quiz_name" value="{{ $quiz->quiz_name }}" class="form-control"
-                                    placeholder="Exam Name" required autofocus>
+                                <input type="text" id="quiz_name" name="quiz_name" value="{{ $quiz->quiz_name }}"
+                                    class="form-control" placeholder="Exam Name" required autofocus>
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>
@@ -42,39 +42,45 @@
                                 <div class="form-group">
                                     <label for="start_date">Start Date (Exam can be attempted after this date. YYYY-MM-DD
                                         HH:II:SS )</label>
-                                    <input type="text" id="start_date" name="start_date" value="{{ $quiz->start_date ? \Carbon\Carbon::createFromTimestamp($quiz->start_date)->format('Y-m-d H:i:s') : '' }}"
+                                    <input type="text" id="start_date" name="start_date"
+                                        value="{{ $quiz->start_date ? \Carbon\Carbon::createFromTimestamp($quiz->start_date)->format('Y-m-d H:i:s') : '' }}"
                                         class="form-control" placeholder="Start Date" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="end_date">End Date (Exam can be attempted before this date. eg. 2017-12-31
                                         23:59:00 )</label>
-                                    <input type="text" id="end_date" name="end_date" value="{{ $quiz->end_date ? \Carbon\Carbon::createFromTimestamp($quiz->end_date)->format('Y-m-d H:i:s') : '' }}" class="form-control"
-                                        placeholder="End Date" required>
+                                    <input type="text" id="end_date" name="end_date"
+                                        value="{{ $quiz->end_date ? \Carbon\Carbon::createFromTimestamp($quiz->end_date)->format('Y-m-d H:i:s') : '' }}"
+                                        class="form-control" placeholder="End Date" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="duration">Duration (in min.)</label>
-                                    <input type="text" id="duration" name="duration" value="{{ $quiz->duration }}" class="form-control"
-                                        placeholder="Duration" required>
+                                    <input type="text" id="duration" name="duration" value="{{ $quiz->duration }}"
+                                        class="form-control" placeholder="Duration" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="maximum_attempts">Allow Maximum Attempts</label>
-                                    <input type="text" id="maximum_attempts" name="maximum_attempts" value="{{ $quiz->maximum_attempts }}"
-                                        class="form-control" placeholder="Allow Maximum Attempts" required>
+                                    <input type="text" id="maximum_attempts" name="maximum_attempts"
+                                        value="{{ $quiz->maximum_attempts }}" class="form-control"
+                                        placeholder="Allow Maximum Attempts" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pass_percentage">Minimum Percentage Required to Pass</label>
-                                    <input type="text" id="pass_percentage" name="pass_percentage" value="{{ $quiz->pass_percentage }}"
-                                        class="form-control" placeholder="Minimum Percentage Required to Pass" required>
+                                    <input type="text" id="pass_percentage" name="pass_percentage"
+                                        value="{{ $quiz->pass_percentage }}" class="form-control"
+                                        placeholder="Minimum Percentage Required to Pass" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="correct_score">Correct Score</label>
-                                    <input type="text" id="correct_score" name="correct_score" value="{{ $quiz->correct_score }}    "
-                                        class="form-control" placeholder="Correct Score" required>
+                                    <input type="text" id="correct_score" name="correct_score"
+                                        value="{{ $quiz->correct_score }}    " class="form-control"
+                                        placeholder="Correct Score" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="incorrect_score">InCorrect Score</label>
-                                    <input type="text" id="incorrect_score" name="incorrect_score" value="{{ $quiz->incorrect_score }}"
-                                        class="form-control" placeholder="InCorrect Score" required>
+                                    <input type="text" id="incorrect_score" name="incorrect_score"
+                                        value="{{ $quiz->incorrect_score }}" class="form-control"
+                                        placeholder="InCorrect Score" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="ip_address">Allowed ip address to attempt this exam. To allow all, leave
@@ -86,25 +92,33 @@
 
                                 <div class="form-group">
                                     <label>Allow to view correct answers after submitting exam</label> <br>
-                                    <input type="radio" name="view_answer" value="1" {{ $quiz->view_answer == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
-                                    <input type="radio" name="view_answer" value="0" {{ $quiz->view_answer == 0 ? 'checked' : '' }}> No
+                                    <input type="radio" name="view_answer" value="1"
+                                        {{ $quiz->view_answer == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="view_answer" value="0"
+                                        {{ $quiz->view_answer == 0 ? 'checked' : '' }}> No
                                 </div>
                                 <div class="form-group">
                                     <label>Open exam - can be attempted without login?*</label> <br>
-                                    <input type="radio" name="with_login" value="0" {{ $quiz->with_login == 0 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
-                                    <input type="radio" name="with_login" value="1" {{ $quiz->with_login == 1 ? 'checked' : '' }}> No
+                                    <input type="radio" name="with_login" value="0"
+                                        {{ $quiz->with_login == 0 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="with_login" value="1"
+                                        {{ $quiz->with_login == 1 ? 'checked' : '' }}> No
                                 </div>
                                 <div class="form-group">
                                     <label>Show ranking on result page</label> <br>
-                                    <input type="radio" name="show_chart_rank" value="1" {{ $quiz->show_chart_rank == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
-                                    <input type="radio" name="show_chart_rank" value="0" {{ $quiz->show_chart_rank == 0 ? 'checked' : '' }}> No
+                                    <input type="radio" name="show_chart_rank" value="1"
+                                        {{ $quiz->show_chart_rank == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="show_chart_rank" value="0"
+                                        {{ $quiz->show_chart_rank == 0 ? 'checked' : '' }}> No
                                 </div>
 
                                 {{-- @if (config('app.webcam') == true) --}}
                                 <div class="form-group">
                                     <label>Capture Photo</label> <br>
-                                    <input type="radio" name="camera_req" value="1" {{ $quiz->camera_req == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
-                                    <input type="radio" name="camera_req" value="0" {{ $quiz->camera_req == 0 ? 'checked' : '' }}> No
+                                    <input type="radio" name="camera_req" value="1"
+                                        {{ $quiz->camera_req == 1 ? 'checked' : '' }}> Yes&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="camera_req" value="0"
+                                        {{ $quiz->camera_req == 0 ? 'checked' : '' }}> No
                                 </div>
                                 {{-- @else
                                 <input type="hidden" name="camera_req" value="0">
@@ -114,7 +128,8 @@
                                     <label>Assign to groups</label> <br>
                                     @forelse ($groups as $group)
                                         <label class="d-inline-block mr-3">
-                                            <input type="checkbox" name="gids[]" value="{{ $group->gid }}" {{ in_array($group->gid, $selectedGroupIds) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="gids[]" value="{{ $group->gid }}"
+                                                {{ in_array($group->gid, $selectedGroupIds) ? 'checked' : '' }}>
                                             {{ $group->group_name }}
                                         </label>
                                         &nbsp;&nbsp;&nbsp;
@@ -129,7 +144,8 @@
                                     <select class="js-example-basic-multiple form-control" name="uids[]"
                                         multiple="multiple" style="width:100%">
                                         @foreach ($users as $user)
-                                            <option value="{{ $user->uid }}" {{ in_array($user->uid, $selectedUserIds) ? 'selected' : '' }}>
+                                            <option value="{{ $user->uid }}"
+                                                {{ in_array($user->uid, $selectedUserIds) ? 'selected' : '' }}>
                                                 {{ $user->first_name }} {{ $user->last_name }} ({{ $user->email }})
                                             </option>
                                         @endforeach
@@ -145,7 +161,8 @@
                                         <option value="Default" {{ $quiz->quiz_template == 'Default' ? 'selected' : '' }}>
                                             Default
                                         </option>
-                                        <option value="Practice" {{ $quiz->quiz_template == 'Practice' ? 'selected' : '' }}>
+                                        <option value="Practice"
+                                            {{ $quiz->quiz_template == 'Practice' ? 'selected' : '' }}>
                                             Practice
                                         </option>
                                     </select>
@@ -153,14 +170,17 @@
 
                                 <div class="form-group">
                                     <label for="quiz_price">Quiz Price (Set 0 for free)</label> <br>
-                                    <input type="text" id="quiz_price" name="quiz_price" value="{{ $quiz->quiz_price }}"
-                                        class="form-control" placeholder="Quiz Price" required>
+                                    <input type="text" id="quiz_price" name="quiz_price"
+                                        value="{{ $quiz->quiz_price }}" class="form-control" placeholder="Quiz Price"
+                                        required>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Generate Certificate</label> <br>
-                                    <input type="radio" name="gen_certificate" value="1" {{ $quiz->gen_certificate == 1 ? 'checked' : '' }}> Yes<br>
-                                    <input type="radio" name="gen_certificate" value="0" {{ $quiz->gen_certificate == 0 ? 'checked' : '' }}> No
+                                    <input type="radio" name="gen_certificate" value="1"
+                                        {{ $quiz->gen_certificate == 1 ? 'checked' : '' }}> Yes<br>
+                                    <input type="radio" name="gen_certificate" value="0"
+                                        {{ $quiz->gen_certificate == 0 ? 'checked' : '' }}> No
                                 </div>
 
                                 <div class="form-group">
@@ -304,6 +324,8 @@
         tinymce.init({
             selector: '.tinymce_textarea',
             height: 300,
+            promotion: false,
+            branding: false,
             menubar: 'file edit insert view format table tools',
             plugins: [
                 'advlist autolink lists link image charmap print preview anchor',

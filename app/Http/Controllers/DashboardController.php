@@ -4,16 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountTypeModel;
 use App\Models\AppointmentRequestModel;
-use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
-use App\Models\SavsoftLevelModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizModel;
 use App\Models\SavsoftUsersModel;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-
 class DashboardController extends Controller
 {
     public function index()
@@ -223,87 +219,6 @@ class DashboardController extends Controller
             ->paginate(15);
 
         return view('users.appoinment', compact('appointments'));
-    }
-
-    public function addQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-        return view('question_bank.add');
-    }
-
-    public function saveQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
-    }
-
-    public function editQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-        return view('question_bank.edit');
-    }
-
-    public function updateQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
-    }
-
-    public function deleteQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-    }
-
-    public function listQuestion(Request $request)
-    {
-        if (!session()->has('uid')) {
-            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
-        }
-
-        $categories = SavsoftCategoryModel::all();
-        $levels = SavsoftLevelModel::all();
-
-        $search = $request->input('search');
-        $cid = $request->input('cid');
-        $lid = $request->input('lid');
-
-        $questions = SavsoftQbankModel::query()
-            ->leftJoin('savsoft_category', 'savsoft_category.cid', '=', 'savsoft_qbank.cid')
-            ->leftJoin('savsoft_level', 'savsoft_level.lid', '=', 'savsoft_qbank.lid')
-            ->select(
-                'savsoft_qbank.*',
-                'savsoft_category.category_name',
-                'savsoft_level.level_name'
-            )
-            ->when($search, function ($query, $search) {
-                $query->where('savsoft_qbank.question', 'like', "%{$search}%");
-            })
-            ->when($cid, function ($query, $cid) {
-                $query->where('savsoft_qbank.cid', $cid);
-            })
-            ->when($lid, function ($query, $lid) {
-                $query->where('savsoft_qbank.lid', $lid);
-            })
-            ->orderBy('savsoft_qbank.qid', 'desc')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('question_bank.list', compact('categories', 'levels', 'questions', 'search', 'cid', 'lid'));
     }
 
     public function listExam(Request $request)

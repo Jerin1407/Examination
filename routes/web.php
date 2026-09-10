@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\QuestionBankController;
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
@@ -26,12 +27,17 @@ Route::post('/delete-user', [DashboardController::class, 'deleteUser'])->name('d
 Route::get('/appointment', [DashboardController::class, 'showAppointment'])->name('showAppointment');
 
 // Question Bank Routes
-Route::get('/list-question', [DashboardController::class, 'listQuestion'])->name('listQuestion');
-Route::get('/add-question', [DashboardController::class, 'addQuestion'])->name('addQuestion');
-Route::post('/save-question', [DashboardController::class, 'saveQuestion'])->name('saveQuestion');
-Route::get('/edit-question', [DashboardController::class, 'editQuestion'])->name('editQuestion');
-Route::post('/update-question', [DashboardController::class, 'updateQuestion'])->name('updateQuestion');
-Route::post('/delete-question', [DashboardController::class, 'deleteQuestion'])->name('deleteQuestion');
+Route::get('/list-question', [QuestionBankController::class, 'listQuestion'])->name('listQuestion');
+Route::get('/add-question', [QuestionBankController::class, 'addQuestion'])->name('addQuestion');
+Route::post('/save-question', [QuestionBankController::class, 'saveQuestion'])->name('saveQuestion');
+Route::get('/edit-question', [QuestionBankController::class, 'editQuestion'])->name('editQuestion');
+Route::post('/update-question', [QuestionBankController::class, 'updateQuestion'])->name('updateQuestion');
+Route::post('/delete-question', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
+Route::get('/new-question-1', [QuestionBankController::class, 'newQuestion1'])->name('newQuestion1');
+Route::get('/new-question-2', [QuestionBankController::class, 'newQuestion2'])->name('newQuestion2');
+Route::get('/new-question-3', [QuestionBankController::class, 'newQuestion3'])->name('newQuestion3');
+Route::get('/new-question-4', [QuestionBankController::class, 'newQuestion4'])->name('newQuestion4');
+Route::get('/new-question-5', [QuestionBankController::class, 'newQuestion5'])->name('newQuestion5');
 
 // Exam Routes
 Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');

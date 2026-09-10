@@ -36,45 +36,51 @@
                                 <div class="form-group">
                                     <label for="start_date">Start Date (Exam can be attempted after this date. YYYY-MM-DD
                                         HH:II:SS )</label>
-                                    <input type="text" id="start_date" name="start_date" value="{{ old('start_date', now()->format('Y-m-d H:i:s')) }}"
-                                        class="form-control" placeholder="Start Date" required>
+                                    <input type="text" id="start_date" name="start_date"
+                                        value="{{ old('start_date', now()->format('Y-m-d H:i:s')) }}" class="form-control"
+                                        placeholder="Start Date" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="end_date">End Date (Exam can be attempted before this date. eg. 2017-12-31
                                         23:59:00 )</label>
-                                    <input type="text" id="end_date" name="end_date" value="{{ old('end_date', now()->addYear()->format('Y-m-d H:i:s')) }}" class="form-control"
-                                        placeholder="End Date" required>
+                                    <input type="text" id="end_date" name="end_date"
+                                        value="{{ old('end_date', now()->addYear()->format('Y-m-d H:i:s')) }}"
+                                        class="form-control" placeholder="End Date" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="duration">Duration (in min.)</label>
-                                    <input type="text" id="duration" name="duration" value="{{ old('duration', 10) }}" class="form-control"
-                                        placeholder="Duration (in min.)" required>
+                                    <input type="text" id="duration" name="duration" value="{{ old('duration', 10) }}"
+                                        class="form-control" placeholder="Duration (in min.)" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="maximum_attempts">Allow Maximum Attempts</label>
-                                    <input type="text" id="maximum_attempts" name="maximum_attempts" value="{{ old('maximum_attempts', 10) }}"
-                                        class="form-control" placeholder="Allow Maximum Attempts" required>
+                                    <input type="text" id="maximum_attempts" name="maximum_attempts"
+                                        value="{{ old('maximum_attempts', 10) }}" class="form-control"
+                                        placeholder="Allow Maximum Attempts" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="pass_percentage">Minimum Percentage Required to Pass</label>
-                                    <input type="text" id="pass_percentage" name="pass_percentage" value="{{ old('pass_percentage', 50) }}"
-                                        class="form-control" placeholder="Minimum Percentage Required to Pass" required>
+                                    <input type="text" id="pass_percentage" name="pass_percentage"
+                                        value="{{ old('pass_percentage', 50) }}" class="form-control"
+                                        placeholder="Minimum Percentage Required to Pass" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="correct_score">Correct Score</label>
-                                    <input type="text" id="correct_score" name="correct_score" value="{{ old('correct_score', 1) }}"
-                                        class="form-control" placeholder="Correct Score" required>
+                                    <input type="text" id="correct_score" name="correct_score"
+                                        value="{{ old('correct_score', 1) }}" class="form-control"
+                                        placeholder="Correct Score" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="incorrect_score">InCorrect Score</label>
-                                    <input type="text" id="incorrect_score" name="incorrect_score" value="{{ old('incorrect_score', 0) }}"
-                                        class="form-control" placeholder="InCorrect Score" required>
+                                    <input type="text" id="incorrect_score" name="incorrect_score"
+                                        value="{{ old('incorrect_score', 0) }}" class="form-control"
+                                        placeholder="InCorrect Score" required>
                                 </div>
 
                                 <div class="form-group">
@@ -212,31 +218,32 @@
 @endsection
 
 @push('scripts')
-<script>
-    tinymce.init({
-        selector: '.tinymce_textarea',
-        height: 300,
-        menubar: 'file edit insert view format table tools',
-        plugins: [
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste help wordcount emoticons codesample'
-        ],
-        toolbar:
-            'undo redo | blocks | bold italic | ' +
-            'alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist outdent indent | link image | ' +
-            'print preview fullscreen forecolor backcolor emoticons codesample help',
-        toolbar_mode: 'sliding',
+    <script>
+        tinymce.init({
+            selector: '.tinymce_textarea',
+            height: 300,
+            promotion: false,
+            branding: false,
+            menubar: 'file edit insert view format table tools',
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste help wordcount emoticons codesample'
+            ],
+            toolbar: 'undo redo | blocks | bold italic | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image | ' +
+                'print preview fullscreen forecolor backcolor emoticons codesample help',
+            toolbar_mode: 'sliding',
 
-        images_upload_credentials: true,
-        automatic_uploads: true,
+            images_upload_credentials: true,
+            automatic_uploads: true,
 
-        setup: function (editor) {
-            editor.on('change', function () {
-                editor.save(); // syncs HTML back into the underlying <textarea> before form submit
-            });
-        }
-    });
-</script>
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                });
+            }
+        });
+    </script>
 @endpush
