@@ -33,6 +33,7 @@ Route::post('/save-question', [QuestionBankController::class, 'saveQuestion'])->
 Route::get('/edit-question', [QuestionBankController::class, 'editQuestion'])->name('editQuestion');
 Route::post('/update-question', [QuestionBankController::class, 'updateQuestion'])->name('updateQuestion');
 Route::post('/delete-question', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
+Route::post('/next-question-type', [QuestionBankController::class, 'nextQuestionType'])->name('nextQuestionType');
 Route::get('/new-question-1', [QuestionBankController::class, 'newQuestion1'])->name('newQuestion1');
 Route::get('/new-question-2', [QuestionBankController::class, 'newQuestion2'])->name('newQuestion2');
 Route::get('/new-question-3', [QuestionBankController::class, 'newQuestion3'])->name('newQuestion3');

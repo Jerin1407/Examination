@@ -4,105 +4,121 @@
 
 @section('content')
 
-<div class="container">
- 
-    <h3>Add New</h3>
- 
-    <div class="row">
-        <form method="post" id="qf" action="">
-            @csrf
- 
-            <div class="col-md-12">
-                <br>
-                <div class="login-panel panel panel-default">
-                    <div class="panel-body">
- 
-                        <div class="form-group">
-                            Multiple Choice Multiple Answer
-                        </div>
- 
-                        <div class="form-group">
-                            <label for="cid">Select Category</label>
-                            <select class="form-control" name="cid" id="cid">
+    <div class="container">
+
+        <h3>Add New</h3>
+
+        <div class="row">
+            <form method="post" id="qf" action="">
+                @csrf
+
+                <div class="col-md-12">
+                    <br>
+                    <div class="login-panel panel panel-default">
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                Multiple Choice Multiple Answer
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cid">Select Category</label>
+                                <select class="form-control" name="cid" id="cid">
                                     <option value="">category_name</option>
-                            </select>
-                        </div>
- 
-                        <div class="form-group">
-                            <label for="lid">Select Level</label>
-                            <select class="form-control" name="lid" id="lid">
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lid">Select Level</label>
+                                <select class="form-control" name="lid" id="lid">
                                     <option value="">level_name</option>
-                            </select>
-                        </div>
- 
+                                </select>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="paragraph">Paragraph : English</label>
+                                    <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="question">Question : English</label>
+                                    <textarea id="question" name="question" class="form-control tinymce_textarea"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="description">Description : English</label>
+                                    <textarea id="description" name="description" class="form-control tinymce_textarea"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="paragraph">Paragraph : English</label>
-                                        <textarea id="paragraph" name="paragraph" class="form-control">{{ old('paragraph', isset($qp) ? $qp['paragraph'] : '') }}</textarea>
+                                        <label>Options 1) : English</label> <br>
+
+                                        <input type="checkbox" name="score[]" value="0"> Select Correct Option
+                                        <br>
+
+                                        <textarea name="option" class="form-control tinymce_textarea"></textarea>
                                     </div>
                                 </div>
- 
-                        @foreach ($lang as $lkey => $val)
-                            @php $lno = $lkey == 0 ? '' : $lkey; @endphp
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="question{{ $lno }}">{{ __('lang.question') }} : {{ $val }}</label>
-                                    <textarea id="question{{ $lno }}" name="question{{ $lno }}" class="form-control">{{ old('question' . $lno) }}</textarea>
-                                </div>
                             </div>
-                        @endforeach
- 
-                        @foreach ($lang as $lkey => $val)
-                            @php $lno = $lkey == 0 ? '' : $lkey; @endphp
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="description{{ $lno }}">{{ __('lang.description') }} : {{ $val }}</label>
-                                    <textarea id="description{{ $lno }}" name="description{{ $lno }}" class="form-control">{{ old('description' . $lno) }}</textarea>
-                                </div>
-                            </div>
-                        @endforeach
- 
-                        @for ($i = 1; $i <= $nop; $i++)
-                            <div class="row">
-                                @foreach ($lang as $lkey => $val)
-                                    @php $lno = $lkey == 0 ? '' : $lkey; @endphp
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label>{{ __('lang.options') }} {{ $i }}) : {{ $val }}</label> <br>
- 
-                                            @if ($lkey == 0)
-                                                <input type="checkbox" name="score[]" value="{{ $i - 1 }}"
-                                                       @checked(in_array($i - 1, old('score', [0])))> Select Correct Option
-                                            @endif
-                                            <br>
- 
-                                            <textarea name="option{{ $lno }}[]" class="form-control">{{ old("option{$lno}." . ($i - 1)) }}</textarea>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endfor
- 
-                        <input type="hidden" name="parag" id="parag" value="0">
-                        <button class="btn btn-default" type="submit">{{ __('lang.submit') }}</button>
- 
-                        @if ($para == 1)
-                            <button class="btn btn-default" type="button" onclick="javascript:parags();">{{ __('lang.submit&add') }}</button>
-                        @endif
- 
+
+                            <input type="hidden" name="parag" id="parag" value="0">
+                            <button class="btn btn-default" type="submit">Submit</button>
+
+                            <button class="btn btn-default" type="button" onclick="javascript:parags();">Submit & Add new
+                                with same paragraph</button>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+
     </div>
- 
-</div>
- 
-<script>
-    function parags() {
-        $('#parag').val('1');
-        $('#qf').submit();
-    }
-</script>
+
+    <script>
+        function parags() {
+            $('#parag').val('1');
+            $('#qf').submit();
+        }
+    </script>
+
+    @push('scripts')
+        <script>
+            tinymce.init({
+                selector: '.tinymce_textarea',
+                height: 300,
+                promotion: false,
+                branding: false,
+                menubar: 'file edit insert view format table tools',
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste help wordcount emoticons codesample'
+                ],
+                toolbar: 'undo redo | blocks | bold italic | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | link image | ' +
+                    'print preview fullscreen forecolor backcolor emoticons codesample help',
+                toolbar_mode: 'sliding',
+
+                images_upload_credentials: true,
+                automatic_uploads: true,
+
+                setup: function(editor) {
+                    editor.on('change', function() {
+                        editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                    });
+                }
+            });
+        </script>
+    @endpush
 
 @endsection

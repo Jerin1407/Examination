@@ -9,7 +9,7 @@
         <h3>Add New Question</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('nextQuestionType') }}">
                 @csrf
 
                 <div class="col-md-8">
@@ -21,6 +21,11 @@
                                 <label>Select Question Type</label>
                                 <select class="form-control" name="question_type" onchange="hidenop(this.value);">
                                     <option value="0">Select Question Type</option>
+                                    <option value="1">Multiple Choice Single Answer</option>
+                                    <option value="2">Multiple Choice Multiple Answer</option>
+                                    <option value="3">Match the Column</option>
+                                    <option value="4">Short Answer</option>
+                                    <option value="5">Long Answer</option>
                                 </select>
                             </div>
 
@@ -31,7 +36,7 @@
                             </div>
 
                             <div class="form-group">
-                                <input type="checkbox" name="with_paragraph">
+                                <input type="checkbox" name="with_paragraph" id="with_paragraph">
                                 <label for="with_paragraph">With Paragraph</label>
                             </div>
 

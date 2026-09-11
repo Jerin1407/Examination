@@ -89,6 +89,30 @@ class QuestionBankController extends Controller
         }
     }
 
+    public function nextQuestionType(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $questionType  = $request->input('question_type');
+        $nop           = (int) $request->input('nop', 4);
+        $withParagraph = $request->has('with_paragraph');
+
+        switch ($questionType) {
+            case '1': // Multiple Choice Single Answer
+                return view('question_bank.new_question_1', [
+                    'nop'           => $nop,
+                    'withParagraph' => $withParagraph,
+                ]);
+
+                // case '2', '3', '4', '5' can be added later for the other question types
+
+            default:
+                return back()->withErrors(['question_type' => 'Please select a valid question type.']);
+        }
+    }
+
     public function newQuestion1(Request $request)
     {
         if (!session()->has('uid')) {
