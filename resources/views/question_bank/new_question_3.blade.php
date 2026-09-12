@@ -35,10 +35,14 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="paragraph">Paragraph</label>
-                                <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
-                            </div>
+                            @if ($withParagraph ?? false)
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="paragraph">Paragraph : English</label>
+                                        <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                    </div>
+                                </div>
+                            @endif
 
                             <div class="form-group">
                                 <label for="question">Question</label>
@@ -50,18 +54,23 @@
                                 <textarea id="description" name="description" class="form-control tinymce_textarea"></textarea>
                             </div>
 
-                            <div class="form-group">
-                                <label>Options 1)</label> <br>
-                                <input type="text" name="option[]" value="">
-                                =
-                                <input type="text" name="option2[]" value="">
-                            </div>
+                            @for ($i = 1; $i <= ($nop ?? 4); $i++)
+                                <div class="form-group">
+                                    <label>Options {{ $i }})</label> <br>
+                                    <input type="text" name="option[]" value="">
+                                    =
+                                    <input type="text" name="option2[]" value="">
+                                </div>
+                            @endfor
 
                             <input type="hidden" name="parag" id="parag" value="0">
                             <button class="btn btn-default" type="submit">Submit</button>
 
-                            <button class="btn btn-default" type="button" onclick="javascript:parags();">Submit & Add new
-                                with same paragraph</button>
+                            @if ($withParagraph ?? false)
+                                <button class="btn btn-default" type="button" onclick="parags();">
+                                    Submit & Add new with same paragraph
+                                </button>
+                            @endif
 
                         </div>
                     </div>

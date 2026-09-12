@@ -35,10 +35,14 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="paragraph">Paragraph</label>
-                                <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
-                            </div>
+                            @if ($withParagraph ?? false)
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="paragraph">Paragraph : English</label>
+                                        <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                    </div>
+                                </div>
+                            @endif
 
                             <div class="form-group">
                                 <label for="question">Question</label>
@@ -59,8 +63,11 @@
                             <input type="hidden" name="parag" id="parag" value="0">
                             <button class="btn btn-default" type="submit">Submit</button>
 
-                            <button class="btn btn-default" type="button" onclick="javascript:parags();">Submit & Add new
-                                with same paragraph</button>
+                            @if ($withParagraph ?? false)
+                                <button class="btn btn-default" type="button" onclick="parags();">
+                                    Submit & Add new with same paragraph
+                                </button>
+                            @endif
 
                         </div>
                     </div>

@@ -106,7 +106,27 @@ class QuestionBankController extends Controller
                     'withParagraph' => $withParagraph,
                 ]);
 
-                // case '2', '3', '4', '5' can be added later for the other question types
+            case '2': // Multiple Choice Multiple Answer
+                return view('question_bank.new_question_2', [
+                    'nop'           => $nop,
+                    'withParagraph' => $withParagraph,
+                ]);
+
+            case '3': // Match the Column
+                return view('question_bank.new_question_3', [
+                    'nop'           => $nop,
+                    'withParagraph' => $withParagraph,
+                ]);
+
+            case '4': // Short Answer
+                return view('question_bank.new_question_4', [
+                    'withParagraph' => $withParagraph,
+                ]);
+
+            case '5': // Long Answer
+                return view('question_bank.new_question_5', [
+                    'withParagraph' => $withParagraph,
+                ]);
 
             default:
                 return back()->withErrors(['question_type' => 'Please select a valid question type.']);

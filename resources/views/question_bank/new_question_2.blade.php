@@ -35,12 +35,14 @@
                                 </select>
                             </div>
 
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="paragraph">Paragraph : English</label>
-                                    <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                            @if ($withParagraph ?? false)
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="paragraph">Paragraph : English</label>
+                                        <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -57,23 +59,30 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Options 1) : English</label> <br>
+                                @for ($i = 1; $i <= ($nop ?? 4); $i++)
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>Options {{ $i }}) : English</label> <br>
 
-                                        <input type="checkbox" name="score[]" value="0"> Select Correct Option
-                                        <br>
+                                            <input type="radio" name="score" value="{{ $i }}"
+                                                {{ old('score') == $i ? 'checked' : '' }}>
+                                            Select Correct Option
+                                            <br>
 
-                                        <textarea name="option" class="form-control tinymce_textarea"></textarea>
+                                            <textarea name="option{{ $i }}" class="form-control"></textarea>
+                                        </div>
                                     </div>
-                                </div>
+                                @endfor
                             </div>
 
                             <input type="hidden" name="parag" id="parag" value="0">
                             <button class="btn btn-default" type="submit">Submit</button>
 
-                            <button class="btn btn-default" type="button" onclick="javascript:parags();">Submit & Add new
-                                with same paragraph</button>
+                            @if ($withParagraph ?? false)
+                                <button class="btn btn-default" type="button" onclick="parags();">
+                                    Submit & Add new with same paragraph
+                                </button>
+                            @endif
 
                         </div>
                     </div>
