@@ -6,14 +6,10 @@
 
 <div class="container">
  
-    @php
-        $lang = config('app.question_lang');
-    @endphp
- 
-    <h3>{{ $title }}</h3>
+    <h3>Edit Exam</h3>
  
     <div class="row">
-        <form method="post" action="{{ route('qbank.edit_question_1', $question['qid']) }}">
+        <form method="post" action="">
             @csrf
  
             <div class="col-md-12">
@@ -21,71 +17,49 @@
                 <div class="login-panel panel panel-default">
                     <div class="panel-body">
  
-                        @if (session('message'))
-                            {!! session('message') !!}
-                        @endif
- 
                         <div class="form-group">
-                            {{ __('lang.multiple_choice_single_answer') }}
+                            Multiple Choice Single Answer
                         </div>
  
                         <div class="form-group">
-                            <label for="cid">{{ __('lang.select_category') }}</label>
+                            <label for="cid">Select Category</label>
                             <select class="form-control" name="cid" id="cid">
-                                @foreach ($category_list as $val)
-                                    <option value="{{ $val['cid'] }}" @selected(old('cid', $question['cid']) == $val['cid'])>{{ $val['category_name'] }}</option>
-                                @endforeach
+                                    <option value="">category_name</option>
                             </select>
                         </div>
  
                         <div class="form-group">
-                            <label for="lid">{{ __('lang.select_level') }}</label>
+                            <label for="lid">Select Level</label>
                             <select class="form-control" name="lid" id="lid">
-                                @foreach ($level_list as $val)
-                                    <option value="{{ $val['lid'] }}" @selected(old('lid', $question['lid']) == $val['lid'])>{{ $val['level_name'] }}</option>
-                                @endforeach
+                                    <option value="">level_name</option>
                             </select>
                         </div>
  
-                        @if (strip_tags($question['paragraph']) != '')
-                            @foreach ($lang as $lkey => $val)
-                                @php $lno = $lkey == 0 ? '' : $lkey; @endphp
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="paragraph{{ $lno }}">{{ __('lang.paragraph') }} : {{ $val }}</label>
-                                        <textarea id="paragraph{{ $lno }}" name="paragraph{{ $lno }}" class="form-control">{{ old('paragraph' . $lno, $question['paragraph' . $lno]) }}</textarea>
+                                        <label for="paragraph">Paragraph : English</label>
+                                        <textarea id="paragraph" name="paragraph" class="form-control"></textarea>
                                     </div>
                                 </div>
-                            @endforeach
-                        @endif
  
-                        @foreach ($lang as $lkey => $val)
-                            @php $lno = $lkey == 0 ? '' : $lkey; @endphp
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="question{{ $lno }}">{{ __('lang.question') }} : {{ $val }}</label>
-                                    <textarea id="question{{ $lno }}" name="question{{ $lno }}" class="form-control">{{ old('question' . $lno, $question['question' . $lno]) }}</textarea>
+                                    <label for="question">Question : English</label>
+                                    <textarea id="question" name="question" class="form-control"></textarea>
                                 </div>
                             </div>
-                        @endforeach
  
-                        @foreach ($lang as $lkey => $val)
-                            @php $lno = $lkey == 0 ? '' : $lkey; @endphp
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="description{{ $lno }}">{{ __('lang.description') }} : {{ $val }}</label>
-                                    <textarea id="description{{ $lno }}" name="description{{ $lno }}" class="form-control">{{ old('description' . $lno, $question['description' . $lno]) }}</textarea>
+                                    <label for="description">Description : English</label>
+                                    <textarea id="description" name="description" class="form-control"></textarea>
                                 </div>
                             </div>
-                        @endforeach
  
-                        @foreach ($options as $key => $val)
                             <div class="row">
-                                @foreach ($lang as $lkey => $la)
-                                    @php $lno = $lkey == 0 ? '' : $lkey; @endphp
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label>{{ __('lang.options') }} {{ $key + 1 }}) : {{ $la }}</label> <br>
+                                            <label>Options 1) : English</label> <br>
  
                                             @if ($lkey == 0)
                                                 <input type="radio" name="score" value="{{ $key }}" @checked(old('score', array_search(1, array_column($options, 'score'))) == $key)>
