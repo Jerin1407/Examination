@@ -64,13 +64,49 @@ class QuestionBankController extends Controller
         return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
-    public function editQuestion(Request $request)
+    public function editQuestion1(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit');
+        return view('question_bank.edit_question_1');
+    }
+
+    public function editQuestion2(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('question_bank.edit_question_2');
+    }
+
+    public function editQuestion3(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('question_bank.edit_question_3');
+    }
+
+    public function editQuestion4(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('question_bank.edit_question_4');
+    }
+
+    public function editQuestion5(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('question_bank.edit_question_5');
     }
 
     public function updateQuestion(Request $request)

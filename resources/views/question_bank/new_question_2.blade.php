@@ -69,7 +69,7 @@
                                             Select Correct Option
                                             <br>
 
-                                            <textarea name="option{{ $i }}" class="form-control"></textarea>
+                                            <textarea name="option{{ $i }}" class="form-control tinymce_textarea"></textarea>
                                         </div>
                                     </div>
                                 @endfor

@@ -30,7 +30,11 @@ Route::get('/appointment', [DashboardController::class, 'showAppointment'])->nam
 Route::get('/list-question', [QuestionBankController::class, 'listQuestion'])->name('listQuestion');
 Route::get('/add-question', [QuestionBankController::class, 'addQuestion'])->name('addQuestion');
 Route::post('/save-question', [QuestionBankController::class, 'saveQuestion'])->name('saveQuestion');
-Route::get('/edit-question', [QuestionBankController::class, 'editQuestion'])->name('editQuestion');
+Route::get('/edit-question-1', [QuestionBankController::class, 'editQuestion1'])->name('editQuestion1');
+Route::get('/edit-question-2', [QuestionBankController::class, 'editQuestion2'])->name('editQuestion2');
+Route::get('/edit-question-3', [QuestionBankController::class, 'editQuestion3'])->name('editQuestion3');
+Route::get('/edit-question-4', [QuestionBankController::class, 'editQuestion4'])->name('editQuestion4');
+Route::get('/edit-question-5', [QuestionBankController::class, 'editQuestion5'])->name('editQuestion5');
 Route::post('/update-question', [QuestionBankController::class, 'updateQuestion'])->name('updateQuestion');
 Route::post('/delete-question', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
 Route::post('/next-question-type', [QuestionBankController::class, 'nextQuestionType'])->name('nextQuestionType');
