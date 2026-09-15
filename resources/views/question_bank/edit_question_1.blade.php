@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Exam')
+@section('title', 'Edit Question')
 
 @section('content')
 
     <div class="container">
 
-        <h3>Edit Exam</h3>
+        <h3>Edit Question</h3>
 
         <div class="row">
             <form method="post" action="">

@@ -9,7 +9,9 @@ use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizModel;
 use App\Models\SavsoftUsersModel;
+use App\Models\StudyMaterialModel;
 use Illuminate\Http\Request;
+
 class DashboardController extends Controller
 {
     public function index()
@@ -436,6 +438,9 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
+                $groups = SavsoftGroupModel::all();
+
+
         return view('study_material.add');
     }
 
@@ -445,7 +450,25 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('study_material.list');
+        $search = $request->input('search');
+
+        $query = StudyMaterialModel::leftJoin('savsoft_category', 'study_material.cid', '=', 'savsoft_category.cid')
+            ->select('study_material.*', 'savsoft_category.category_name');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('study_material.title', 'like', '%' . $search . '%')
+                    ->orWhere('study_material.study_description', 'like', '%' . $search . '%')
+                    ->orWhere('savsoft_category.category_name', 'like', '%' . $search . '%');
+            });
+        }
+
+        $studyMaterials = $query->orderBy('study_material.stid', 'desc')->paginate(10)->withQueryString();
+
+        return view('study_material.list', [
+            'studyMaterials' => $studyMaterials,
+            'search'         => $search,
+        ]);
     }
 
     public function editStudyMaterial(Request $request)

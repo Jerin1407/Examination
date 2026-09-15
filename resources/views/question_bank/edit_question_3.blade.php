@@ -1,96 +1,120 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Exam')
+@section('title', 'Edit Question')
 
 @section('content')
 
-<div class="container">
- 
-    <h3>Edit Exam</h3>
- 
-    <div class="row">
-        <form method="post" action="{{ route('qbank.edit_question_3', $question['qid']) }}">
-            @csrf
- 
-            <div class="col-md-8">
-                <br>
-                <div class="login-panel panel panel-default">
-                    <div class="panel-body">
- 
-                        @if (session('message'))
-                            {!! session('message') !!}
-                        @endif
- 
-                        <div class="form-group">
-                            {{ __('lang.match_the_column') }}
-                        </div>
- 
-                        <div class="form-group">
-                            <label for="cid">{{ __('lang.select_category') }}</label>
-                            <select class="form-control" name="cid" id="cid">
-                                @foreach ($category_list as $val)
-                                    <option value="{{ $val['cid'] }}" @selected(old('cid', $question['cid']) == $val['cid'])>{{ $val['category_name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
- 
-                        <div class="form-group">
-                            <label for="lid">{{ __('lang.select_level') }}</label>
-                            <select class="form-control" name="lid" id="lid">
-                                @foreach ($level_list as $val)
-                                    <option value="{{ $val['lid'] }}" @selected(old('lid', $question['lid']) == $val['lid'])>{{ $val['level_name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
- 
-                        {{-- Same single-language pattern as new_question_3: no $lang loop
-                             here either, consistent with match-the-column being
-                             single-language-only in the "new question" form too. --}}
- 
-                        @if (strip_tags($question['paragraph']) != '')
+    <div class="container">
+
+        <h3>Edit Question</h3>
+
+        <div class="row">
+            <form method="post" action="">
+                @csrf
+
+                <div class="col-md-8">
+                    <br>
+                    <div class="login-panel panel panel-default">
+                        <div class="panel-body">
+
                             <div class="form-group">
-                                <label for="paragraph">{{ __('lang.paragraph') }}</label>
-                                <textarea id="paragraph" name="paragraph" class="form-control">{{ old('paragraph', $question['paragraph']) }}</textarea>
+                                Match the Column
                             </div>
-                        @endif
- 
-                        <div class="form-group">
-                            <label for="question">{{ __('lang.question') }}</label>
-                            <textarea id="question" name="question" class="form-control">{{ old('question', $question['question']) }}</textarea>
-                        </div>
- 
-                        <div class="form-group">
-                            <label for="description">{{ __('lang.description') }}</label>
-                            <textarea id="description" name="description" class="form-control">{{ old('description', $question['description']) }}</textarea>
-                        </div>
- 
-                        @foreach ($options as $key => $val)
+
                             <div class="form-group">
-                                <label>{{ __('lang.options') }} {{ $key + 1 }})</label> <br>
-                                <input type="text" name="option[]" value="{{ old('option.' . $key, $val['q_option']) }}">
+                                <label for="cid">Select Category</label>
+                                <select class="form-control" name="cid" id="cid">
+                                    <option value="">category_name</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lid">Select Level</label>
+                                <select class="form-control" name="lid" id="lid">
+                                    <option value="">level_name</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paragraph">Paragraph</label>
+                                <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="question">Question</label>
+                                <textarea id="question" name="question" class="form-control tinymce_textarea"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" class="form-control tinymce_textarea"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Options 1)</label> <br>
+                                <input type="text" name="option[]" value="">
                                 =
-                                <input type="text" name="option2[]" value="{{ old('option2.' . $key, $val['q_option_match']) }}">
+                                <input type="text" name="option2[]" value="">
                             </div>
-                        @endforeach
- 
-                        <button class="btn btn-default" type="submit">{{ __('lang.submit') }}</button>
- 
+
+                            <button class="btn btn-default" type="submit">Submit</button>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
- 
-        <div class="col-md-3">
-            <div class="form-group">
-                <table class="table table-bordered">
-                    <tr><td>{{ __('lang.no_times_corrected') }}</td><td>{{ $question['no_time_corrected'] }}</td></tr>
-                    <tr><td>{{ __('lang.no_times_incorrected') }}</td><td>{{ $question['no_time_incorrected'] }}</td></tr>
-                    <tr><td>{{ __('lang.no_times_unattempted') }}</td><td>{{ $question['no_time_unattempted'] }}</td></tr>
-                </table>
+            </form>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>No. of Times Correct</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>No. of Times Incorrect</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>No. of Times Unattempted</td>
+                            <td>0</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
+
     </div>
- 
-</div>
+
+    @push('scripts')
+        <script>
+            tinymce.init({
+                selector: '.tinymce_textarea',
+                height: 300,
+                promotion: false,
+                branding: false,
+                menubar: 'file edit insert view format table tools',
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste help wordcount emoticons codesample'
+                ],
+                toolbar: 'undo redo | blocks | bold italic | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | link image | ' +
+                    'print preview fullscreen forecolor backcolor emoticons codesample help',
+                toolbar_mode: 'sliding',
+
+                images_upload_credentials: true,
+                automatic_uploads: true,
+
+                setup: function(editor) {
+                    editor.on('change', function() {
+                        editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                    });
+                }
+            });
+        </script>
+    @endpush
 
 @endsection

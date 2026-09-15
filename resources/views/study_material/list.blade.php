@@ -10,10 +10,10 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <form method="post" action="">
-                    @csrf
+                <form method="get" action="{{ route('listStudyMaterial') }}">
                     <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="Search...">
+                        <input type="text" class="form-control" name="search" placeholder="Search..."
+                            value="{{ $search ?? '' }}">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Search</button>
                         </span>
@@ -37,24 +37,30 @@
                         <th>Action</th>
                     </tr>
 
-                    {{-- <tr>
-                        <td colspan="6">No records found</td>
-                    </tr> --}}
+                    @forelse ($studyMaterials as $index => $material)
+                        <tr>
+                            <td>{{ $studyMaterials->firstItem() + $index }}</td>
+                            <td>{{ $material->title }}</td>
+                            <td>{{ \Illuminate\Support\Str::words(strip_tags($material->study_description), 6, '...') }}
+                            </td>
+                            <td>{{ $material->category_name ?? 'N/A' }}</td>
+                            <td>
+                                <a href="{{ route('editStudyMaterial') }}">Edit</a>
 
-                    <tr>
-                        <td>1</td>
-                        <td>Study Material 1</td>
-                        <td>Study Material 1 Description</td>
-                        <td>Category 1</td>
-                        <td>
-                            <a href="{{ route('editStudyMaterial') }}">Edit</a>
+                                <a href="{{ route('viewStudyMaterial') }}">View</a>
 
-                            <a href="{{ route('viewStudyMaterial') }}">View</a>
-
-                            <a href="">Remove</a>
-                        </td>
-                    </tr>
+                                <a href=""
+                                    onclick="return confirm('Are you sure you want to remove this study material?');">Remove</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5">No records found</td>
+                        </tr>
+                    @endforelse
                 </table>
+
+                {{ $studyMaterials->links() }}
             </div>
         </div>
 
