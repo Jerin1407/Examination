@@ -45,9 +45,9 @@
                             </td>
                             <td>{{ $material->category_name ?? 'N/A' }}</td>
                             <td>
-                                <a href="{{ route('editStudyMaterial') }}">Edit</a>
+                                <a href="{{ route('editStudyMaterial', $material->stid) }}">Edit</a>
 
-                                <a href="{{ route('viewStudyMaterial') }}">View</a>
+                                <a href="{{ route('viewStudyMaterial', $material->stid) }}">View</a>
 
                                 <a href=""
                                     onclick="return confirm('Are you sure you want to remove this study material?');">Remove</a>
@@ -70,4 +70,50 @@
 
     </div>
 
+    <script>
+
+        // alert success for add study material
+        @if (session('success_add'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_add') }}'
+            });
+        @endif
+
+        // alert success for update study material
+        @if (session('success_update'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_update') }}'
+            });
+        @endif
+    </script>
 @endsection

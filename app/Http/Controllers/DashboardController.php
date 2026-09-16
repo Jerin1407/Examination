@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountTypeModel;
 use App\Models\AppointmentRequestModel;
+use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
@@ -438,10 +439,43 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-                $groups = SavsoftGroupModel::all();
+        $groups = SavsoftGroupModel::all();
+        $categories = SavsoftCategoryModel::all();
 
+        return view('study_material.add', [
+            'groups' => $groups,
+            'categories' => $categories
+        ]);
+    }
 
-        return view('study_material.add');
+    public function saveStudyMaterial(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'title'             => 'required|string|max:255',
+            'study_description' => 'nullable|string',
+            'cid'               => 'required|integer',
+            'gid'               => 'nullable|array',
+            'gid.*'             => 'integer',
+            'userfile'          => 'required|file|max:10240', // 10MB, adjust as needed
+        ]);
+
+        $path = $request->file('userfile')->store('study_materials', 'public');
+
+        StudyMaterialModel::create([
+            'title'             => $request->input('title'),
+            'study_description' => $request->input('study_description'),
+            'gids'              => json_encode($request->input('gid', [])),
+            'cid'               => $request->input('cid'),
+            'created_date'      => now(),
+            'created_by'        => session('uid'),
+            'attachment'        => $path,
+        ]);
+
+        return redirect()->route('listStudyMaterial')->with('success_add', 'Study material added successfully.');
     }
 
     public function listStudyMaterial(Request $request)
@@ -471,22 +505,111 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function editStudyMaterial(Request $request)
+    public function editStudyMaterial(Request $request, $stid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('study_material.edit');
+        $studyMaterial = StudyMaterialModel::findOrFail($stid);
+        $groups = SavsoftGroupModel::all();
+        $categories = SavsoftCategoryModel::all();
+
+        $rawGids = $studyMaterial->gids;
+        $selectedGids = [];
+
+        if (!empty($rawGids)) {
+            $decoded = json_decode($rawGids, true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $selectedGids = $decoded;
+            } else {
+                // fallback: stored as comma-separated string, e.g. "3,7,12"
+                $selectedGids = array_filter(explode(',', $rawGids));
+            }
+        }
+
+        // normalize to int so in_array comparisons are consistent
+        $selectedGids = array_map('intval', $selectedGids);
+
+        return view('study_material.edit', [
+            'studyMaterial' => $studyMaterial,
+            'groups' => $groups,
+            'categories' => $categories,
+            'selectedGids' => $selectedGids,
+        ]);
     }
 
-    public function viewStudyMaterial(Request $request)
+    public function updateStudyMaterial(Request $request, $id)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('study_material.view');
+        $request->validate([
+            'title'             => 'required|string|max:255',
+            'study_description' => 'nullable|string',
+            'cid'               => 'required|integer',
+            'gid'               => 'nullable|array',
+            'gid.*'             => 'integer',
+            'userfile'          => 'nullable|file|max:10240', // 10MB, adjust as needed
+        ]);
+
+        $studyMaterial = StudyMaterialModel::findOrFail($id);
+
+        $studyMaterial->title             = $request->input('title');
+        $studyMaterial->study_description = $request->input('study_description');
+        $studyMaterial->cid               = $request->input('cid');
+        $studyMaterial->gids              = json_encode($request->input('gid', []));
+
+        // if ($request->hasFile('userfile')) {
+        //     // delete old file if present
+        //     if ($studyMaterial->attachment && \Storage::disk('public')->exists($studyMaterial->attachment)) {
+        //         \Storage::disk('public')->delete($studyMaterial->attachment);
+        //     }
+
+        $path = $request->file('userfile')->store('study_materials', 'public');
+        $studyMaterial->attachment = $path;
+        // }
+
+        $studyMaterial->save();
+
+        return redirect()->route('listStudyMaterial')
+            ->with('success_update', 'Study material updated successfully.');
+    }
+
+    public function viewStudyMaterial(Request $request, $stid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $studyMaterial = StudyMaterialModel::findOrFail($stid);
+
+        $category = SavsoftCategoryModel::find($studyMaterial->cid);
+
+        $rawGids = $studyMaterial->gids;
+        $selectedGids = [];
+
+        if (!empty($rawGids)) {
+            $decoded = json_decode($rawGids, true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $selectedGids = $decoded;
+            } else {
+                $selectedGids = array_filter(explode(',', $rawGids));
+            }
+        }
+
+        $selectedGids = array_map('intval', $selectedGids);
+
+        $groupNames = SavsoftGroupModel::whereIn('gid', $selectedGids)->pluck('group_name');
+
+        return view('study_material.view', [
+            'studyMaterial' => $studyMaterial,
+            'category'      => $category,
+            'groupNames'    => $groupNames,
+        ]);
     }
 
     public function editSetting(Request $request)

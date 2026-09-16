@@ -56,10 +56,12 @@ Route::post('/delete-exam', [DashboardController::class, 'deleteExam'])->name('d
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
 
 // Study Material Routes
-Route::get('/add-study-material', [DashboardController::class, 'addStudyMaterial'])->name('addStudyMaterial');
 Route::get('/list-study-material', [DashboardController::class, 'listStudyMaterial'])->name('listStudyMaterial');
-Route::get('/edit-study-material', [DashboardController::class, 'editStudyMaterial'])->name('editStudyMaterial');
-Route::get('/view-study-material', [DashboardController::class, 'viewStudyMaterial'])->name('viewStudyMaterial');
+Route::get('/add-study-material', [DashboardController::class, 'addStudyMaterial'])->name('addStudyMaterial');
+Route::post('/save-study-material', [DashboardController::class, 'saveStudyMaterial'])->name('saveStudyMaterial');
+Route::get('/edit-study-material/{stid}', [DashboardController::class, 'editStudyMaterial'])->name('editStudyMaterial');
+Route::post('/update-study-material/{stid}', [DashboardController::class, 'updateStudyMaterial'])->name('updateStudyMaterial');
+Route::get('/view-study-material/{stid}', [DashboardController::class, 'viewStudyMaterial'])->name('viewStudyMaterial');
 
 // Setting Routes
 Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('editSetting');
