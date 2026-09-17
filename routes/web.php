@@ -8,7 +8,7 @@ use App\Http\Controllers\QuestionBankController;
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
 Route::post('/login-user', [AuthController::class, 'login'])->name('login');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('showRegister');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard Routes

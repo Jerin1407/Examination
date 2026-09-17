@@ -10,10 +10,11 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <form method="post" action="">
+                <form method="get" action="{{ route('listNotification') }}">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="Search...">
+                        <input type="text" class="form-control" name="search" placeholder="Search... "
+                            value="{{ $search ?? '' }}">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Search</button>
                         </span>
@@ -38,19 +39,27 @@
                         <th>Date</th>
                     </tr>
 
-                    {{-- <tr>
-                        <td colspan="6">No records found!</td>
-                    </tr> --}}
-
-                    <tr>
-                        <td>1</td>
-                        <td><a href="" target="fcmclick">Developer</a></td>
-                        <td>Hello</td>
-                        <td>https..</td>
-                        <td>All users</td>
-                        <td>22-08-2026</td>
-                    </tr>
+                    @forelse ($notifications as $index => $notification)
+                        <tr>
+                            <td>{{ $notifications->firstItem() + $index }}</td>
+                            <td>
+                                <a href="{{ $notification->click_action ?: '#' }}" target="fcmclick">
+                                    {{ $notification->title }}
+                                </a>
+                            </td>
+                            <td>{{ $notification->message }}</td>
+                            <td>{{ $notification->click_action }}</td>
+                            <td>All users</td>
+                            <td>{{ $notification->notification_date }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6">No records found!</td>
+                        </tr>
+                    @endforelse
                 </table>
+
+                {{ $notifications->links() }}
             </div>
         </div>
 

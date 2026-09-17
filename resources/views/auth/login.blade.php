@@ -83,7 +83,7 @@
                                     <hr>
 
                                     <div class="text-center">
-                                        <a class="btn btn-danger btn-user btn-block" href="">Register a new
+                                        <a class="btn btn-danger btn-user btn-block" href="{{ route('showRegister') }}">Register a new
                                             account</a>
                                     </div>
 

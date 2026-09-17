@@ -6,6 +6,7 @@ use App\Models\AccountTypeModel;
 use App\Models\AppointmentRequestModel;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
+use App\Models\SavsoftNotificationModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizModel;
@@ -627,7 +628,21 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('notification.list');
+        $search = $request->input('search');
+
+        $notifications = SavsoftNotificationModel::query()
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%");
+            })
+            ->orderBy('nid', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('notification.list', [
+            'notifications' => $notifications,
+            'search'        => $search,
+        ]);
     }
 
     public function addNotification(Request $request)
