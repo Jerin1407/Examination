@@ -6,6 +6,7 @@ use App\Models\AccountTypeModel;
 use App\Models\AppointmentRequestModel;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
+use App\Models\SavsoftLevelModel;
 use App\Models\SavsoftNotificationModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
@@ -654,13 +655,42 @@ class DashboardController extends Controller
         return view('notification.add');
     }
 
+    public function saveNotification(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'title'           => 'required|string|max:255',
+            'message'         => 'required|string',
+            'click_action'    => 'required|string|max:255',
+            'notification_to' => 'required|string|max:255',
+        ]);
+
+        SavsoftNotificationModel::create([
+            'notification_date' => now(),
+            'title'             => $request->input('title'),
+            'message'           => $request->input('message'),
+            'click_action'      => $request->input('click_action'),
+            'notification_to'   => $request->input('notification_to'),
+            'response'          => null,
+            'uid'               => session('uid'),
+            'viewed'            => 0,
+        ]);
+
+        return redirect()->route('listNotification')->with('success_add', 'Notification created successfully.');
+    }
+
     public function listUserGroup(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('user_group.list');
+        $groups = SavsoftGroupModel::orderBy('gid')->get();
+
+        return view('user_group.list', compact('groups'));
     }
 
     public function addUserGroup(Request $request)
@@ -672,13 +702,71 @@ class DashboardController extends Controller
         return view('user_group.add');
     }
 
-    public function editUserGroup(Request $request)
+    public function saveUserGroup(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('user_group.edit');
+        $request->validate([
+            'group_name'     => 'required|string|max:255',
+            'description'    => 'nullable|string',
+            'price'          => 'required|numeric|min:0',
+            'valid_for_days' => 'required|integer|min:0',
+        ]);
+
+        SavsoftGroupModel::create([
+            'group_name'     => $request->input('group_name'),
+            'description'    => $request->input('description'),
+            'price'          => $request->input('price'),
+            'valid_for_days' => $request->input('valid_for_days'),
+        ]);
+
+        return redirect()->route('listUserGroup')->with('success_add', 'User group created successfully.');
+    }
+
+    public function editUserGroup(Request $request, $gid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $group = SavsoftGroupModel::findOrFail($gid);
+
+        return view('user_group.edit', compact('group'));
+    }
+
+    public function updateUserGroup(Request $request, $gid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'group_name'     => 'required|string|max:255',
+            'description'    => 'nullable|string',
+            'price'          => 'required|numeric|min:0',
+            'valid_for_days' => 'required|integer|min:0',
+        ]);
+
+        $group = SavsoftGroupModel::findOrFail($gid);
+
+        $group->group_name     = $request->input('group_name');
+        $group->description    = $request->input('description');
+        $group->price          = $request->input('price');
+        $group->valid_for_days = $request->input('valid_for_days');
+        $group->save();
+
+        return redirect()->route('listUserGroup')->with('success_update', 'User group updated successfully.');
+    }
+
+    public function deleteUserGroup(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listUserGroup')->with('success_delete', 'User group deleted successfully.');
     }
 
     public function listCategory(Request $request)
@@ -687,7 +775,53 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('category.list');
+        $categories = SavsoftCategoryModel::orderBy('cid', 'desc')->get();
+
+        return view('category.list', compact('categories'));
+    }
+
+    public function saveCategory(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+        ]);
+
+        SavsoftCategoryModel::create([
+            'category_name' => $request->input('category_name'),
+        ]);
+
+        return redirect()->route('listCategory')->with('success_add', 'Category created successfully.');
+    }
+
+    public function updateCategory(Request $request, $cid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+        ]);
+
+        $category = SavsoftCategoryModel::findOrFail($cid);
+
+        $category->category_name = $request->input('category_name');
+        $category->save();
+
+        return redirect()->route('listCategory')->with('success_update', 'Category updated successfully.');
+    }
+
+    public function deleteCategory(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listCategory')->with('success_delete', 'Category deleted successfully.');
     }
 
     public function listLevel(Request $request)
@@ -696,7 +830,53 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('level.list');
+        $levels = SavsoftLevelModel::orderBy('lid', 'desc')->get();
+
+        return view('level.list', compact('levels'));
+    }
+
+    public function saveLevel(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'level_name' => 'required|string|max:255',
+        ]);
+
+        SavsoftLevelModel::create([
+            'level_name' => $request->input('level_name'),
+        ]);
+
+        return redirect()->route('listLevel')->with('success_add', 'Level created successfully.');
+    }
+
+    public function updateLevel(Request $request, $lid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'level_name' => 'required|string|max:255',
+        ]);
+
+        $level = SavsoftLevelModel::findOrFail($lid);
+
+        $level->level_name = $request->input('level_name');
+        $level->save();
+
+        return redirect()->route('listLevel')->with('success_update', 'Level updated successfully.');
+    }
+
+    public function deleteLevel(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listLevel')->with('success_delete', 'Level deleted successfully.');
     }
 
     public function listAccountType(Request $request)

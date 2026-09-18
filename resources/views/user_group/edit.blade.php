@@ -9,7 +9,7 @@
         <h3>Edit User Group</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('updateUserGroup', $group->gid) }}">
                 @csrf
 
                 <div class="col-md-8">
@@ -20,24 +20,24 @@
                             <div class="form-group">
                                 <label for="group_name">Group Name</label>
                                 <input type="text" required id="group_name" name="group_name" class="form-control"
-                                    value="">
+                                    value="{{ old('group_name', $group->group_name) }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control"></textarea>
+                                <textarea id="description" name="description" class="form-control tinymce_textarea">{{ old('description', $group->description) }}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="price">Price (numeric only)</label>
                                 <input type="text" required id="price" name="price" class="form-control"
-                                    value="{{ old('price', 0) }}"> <br>
+                                    value="{{ old('price', $group->price) }}"> <br>
                             </div>
 
                             <div class="form-group">
                                 <label for="valid_for_days">Valid for days, 0 = unlimited</label>
                                 <input type="text" required id="valid_for_days" name="valid_for_days"
-                                    class="form-control" value="{{ old('valid_for_days', 0) }}">
+                                    class="form-control" value="{{ old('valid_for_days', $group->valid_for_days) }}">
                             </div>
 
                             <button class="btn btn-default" type="submit">Submit</button>
@@ -49,5 +49,36 @@
         </div>
 
     </div>
+
+    @push('scripts')
+        <script>
+            tinymce.init({
+                selector: '.tinymce_textarea',
+                height: 300,
+                promotion: false,
+                branding: false,
+                menubar: 'file edit insert view format table tools',
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste help wordcount emoticons codesample'
+                ],
+                toolbar: 'undo redo | blocks | bold italic | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | link image | ' +
+                    'print preview fullscreen forecolor backcolor emoticons codesample help',
+                toolbar_mode: 'sliding',
+
+                images_upload_credentials: true,
+                automatic_uploads: true,
+
+                setup: function(editor) {
+                    editor.on('change', function() {
+                        editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                    });
+                }
+            });
+        </script>
+    @endpush
 
 @endsection

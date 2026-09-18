@@ -69,19 +69,27 @@ Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('
 // Notification Routes
 Route::get('/list-notification', [DashboardController::class, 'listNotification'])->name('listNotification');
 Route::get('/add-notification', [DashboardController::class, 'addNotification'])->name('addNotification');
+Route::post('/save-notification', [DashboardController::class, 'saveNotification'])->name('saveNotification');
 
 // User Group Routes
 Route::get('/list-user-group', [DashboardController::class, 'listUserGroup'])->name('listUserGroup');
 Route::get('/add-user-group', [DashboardController::class, 'addUserGroup'])->name('addUserGroup');
-Route::get('/edit-user-group', [DashboardController::class, 'editUserGroup'])->name('editUserGroup');
+Route::post('/save-user-group', [DashboardController::class, 'saveUserGroup'])->name('saveUserGroup');
+Route::get('/edit-user-group/{gid}', [DashboardController::class, 'editUserGroup'])->name('editUserGroup');
+Route::post('/update-user-group/{gid}', [DashboardController::class, 'updateUserGroup'])->name('updateUserGroup');
+Route::post('/delete-user-group', [DashboardController::class, 'deleteUserGroup'])->name('deleteUserGroup');
 
 // Category Routes
 Route::get('/list-category', [DashboardController::class, 'listCategory'])->name('listCategory');
 Route::post('/save-category', [DashboardController::class, 'saveCategory'])->name('saveCategory');
+Route::post('/update-category/{cid}', [DashboardController::class, 'updateCategory'])->name('updateCategory');
+Route::post('/delete-category', [DashboardController::class, 'deleteCategory'])->name('deleteCategory');
 
 // Level Routes
 Route::get('/list-level', [DashboardController::class, 'listLevel'])->name('listLevel');
 Route::post('/save-level', [DashboardController::class, 'saveLevel'])->name('saveLevel');
+Route::post('/update-level/{lid}', [DashboardController::class, 'updateLevel'])->name('updateLevel');
+Route::post('/delete-level', [DashboardController::class, 'deleteLevel'])->name('deleteLevel');
 
 // Account Type Routes
 Route::get('/list-account-type', [DashboardController::class, 'listAccountType'])->name('listAccountType');

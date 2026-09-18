@@ -14,19 +14,14 @@
 
                 <div id="message"></div>
 
-                <form method="post" action="">
-                    @csrf
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Action</th>
+                    </tr>
 
-                    <table class="table table-bordered">
-                        <tr>
-                            <th>Category Name</th>
-                            <th>Action</th>
-                        </tr>
-
-                        {{-- <tr>
-                            <td colspan="3">No record found!</td>
-                        </tr> --}}
-
+                    <form method="post" action="{{ route('saveCategory') }}">
+                        @csrf
                         <tr>
                             <td>
                                 <input type="text" class="form-control" name="category_name" value=""
@@ -36,21 +31,84 @@
                                 <button class="btn btn-default" type="submit">Add New</button>
                             </td>
                         </tr>
+                    </form>
 
+                    @forelse ($categories as $category)
                         <tr>
                             <td>
-                                <input type="text" class="form-control" value="">
+                                <form method="post" action="{{ route('updateCategory', $category->cid) }}"
+                                    class="form-inline">
+                                    @csrf
+                                    <input type="text" class="form-control" name="category_name"
+                                        value="{{ $category->category_name }}" required
+                                        style="display:inline-block; width:80%;">
                             </td>
                             <td>
-                                <a href=""><img src="{{ asset('images/cross.png') }}"></a>
+                                <button class="btn btn-default btn-sm" type="submit">Save</button>
+                                </form>
+
+                                <a href="{{ route('deleteCategory') }}"
+                                    onclick="return confirm('Are you sure you want to remove this category?');">
+                                    <img src="{{ asset('images/cross.png') }}">
+                                </a>
                             </td>
                         </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2">No record found!</td>
+                        </tr>
+                    @endforelse
 
-                    </table>
-                </form>
+                </table>
             </div>
         </div>
 
     </div>
+
+    <script>
+        // alert success for add category
+        @if (session('success_add'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_add') }}'
+            });
+        @endif
+
+        // alert success for update category
+        @if (session('success_update'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_update') }}'
+            });
+        @endif
+    </script>
 
 @endsection

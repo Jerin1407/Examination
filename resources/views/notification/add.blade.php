@@ -9,7 +9,7 @@
         <h3>Send New Notification</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('saveNotification') }}">
                 @csrf
 
                 <div class="col-md-8">
@@ -20,13 +20,13 @@
                             <div class="form-group">
                                 <label for="title">Title</label>
                                 <input type="text" required id="title" name="title" class="form-control"
-                                    value="">
+                                    value="{{ old('title') }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="message">Message</label>
                                 <input type="text" required id="message" name="message" class="form-control"
-                                    value="">
+                                    value="{{ old('message') }}">
                             </div>
 
                             <div class="form-group">
@@ -44,7 +44,9 @@
                         @else --}}
 
                             Send to :
-                            All Users<br><br>
+                            All Users
+                            <input type="hidden" name="notification_to" value="All Users">
+                            <br><br>
 
                             {{-- <input type="hidden" required name="notification_to[]" value="{{ $nuser->web_token }}">
                             <input type="hidden" required name="notification_to[]" value="{{ $nuser->android_token }}">
@@ -59,5 +61,5 @@
         </div>
 
     </div>
-
-@endsection
+    
+    @endsection
