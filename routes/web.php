@@ -95,8 +95,8 @@ Route::post('/delete-level', [DashboardController::class, 'deleteLevel'])->name(
 Route::get('/list-account-type', [DashboardController::class, 'listAccountType'])->name('listAccountType');
 Route::get('/add-account-type', [DashboardController::class, 'addAccountType'])->name('addAccountType');
 Route::post('/save-account-type', [DashboardController::class, 'saveAccountType'])->name('saveAccountType');
-Route::get('/edit-account-type', [DashboardController::class, 'editAccountType'])->name('editAccountType');
-Route::get('/update-account-type', [DashboardController::class, 'updateAccountType'])->name('updateAccountType');
+Route::get('/edit-account-type/{account_id}', [DashboardController::class, 'editAccountType'])->name('editAccountType');
+Route::post('/update-account-type/{account_id}', [DashboardController::class, 'updateAccountType'])->name('updateAccountType');
 
 // Custom Registration Fields Routes
 Route::get('/list-custom-fields', [DashboardController::class, 'listCustomFields'])->name('listCustomFields');

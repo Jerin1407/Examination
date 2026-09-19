@@ -885,16 +885,111 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('account_type.list');
+        $accountTypes = AccountTypeModel::orderBy('account_id', 'desc')->get();
+
+        return view('account_type.list', compact('accountTypes'));
     }
 
-    public function editAccountType(Request $request)
+    public function addAccountType(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('account_type.edit');
+        return view('account_type.add');
+    }
+
+    public function saveAccountType(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'users'             => 'nullable|array',
+            'quiz'              => 'nullable|array',
+            'results'           => 'nullable|array',
+            'questions'         => 'nullable|array',
+            'study_material'    => 'nullable|array',
+            'appointment'       => 'nullable|array',
+            'setting'           => 'nullable|string',
+        ]);
+
+        AccountTypeModel::create([
+            'account_name'   => $request->input('name'),
+            'users'          => json_encode($request->input('users', [])),
+            'quiz'           => json_encode($request->input('quiz', [])),
+            'results'        => json_encode($request->input('results', [])),
+            'questions'      => json_encode($request->input('questions', [])),
+            'study_material' => json_encode($request->input('study_material', [])),
+            'appointment'    => json_encode($request->input('appointment', [])),
+            'setting'        => $request->input('setting', ''),
+        ]);
+
+        return redirect()->route('listAccountType')->with('success_add', 'Account type created successfully.');
+    }
+
+    public function editAccountType(Request $request, $account_id)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $accountType = AccountTypeModel::findOrFail($account_id);
+
+        $decode = function ($value) {
+            if (empty($value)) {
+                return [];
+            }
+            $decoded = json_decode($value, true);
+            return (json_last_error() === JSON_ERROR_NONE && is_array($decoded))
+                ? $decoded
+                : array_filter(explode(',', $value));
+        };
+
+        $selected = [
+            'users'          => $decode($accountType->users),
+            'quiz'           => $decode($accountType->quiz),
+            'results'        => $decode($accountType->results),
+            'questions'      => $decode($accountType->questions),
+            'study_material' => $decode($accountType->study_material),
+            'appointment'    => $decode($accountType->appointment),
+        ];
+
+        return view('account_type.edit', compact('accountType', 'selected'));
+    }
+
+    public function updateAccountType(Request $request, $account_id)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'users'          => 'nullable|array',
+            'quiz'           => 'nullable|array',
+            'results'        => 'nullable|array',
+            'questions'      => 'nullable|array',
+            'study_material' => 'nullable|array',
+            'appointment'    => 'nullable|array',
+            'setting'        => 'nullable|string',
+        ]);
+
+        $accountType = AccountTypeModel::findOrFail($account_id);
+
+        $accountType->account_name    = $request->input('name');
+        $accountType->users           = json_encode($request->input('users', []));
+        $accountType->quiz            = json_encode($request->input('quiz', []));
+        $accountType->results         = json_encode($request->input('results', []));
+        $accountType->questions       = json_encode($request->input('questions', []));
+        $accountType->study_material  = json_encode($request->input('study_material', []));
+        $accountType->appointment     = json_encode($request->input('appointment', []));
+        $accountType->setting         = $request->input('setting', '');
+        $accountType->save();
+
+        return redirect()->route('listAccountType')->with('success_update', 'Account type updated successfully.');
     }
 
     public function listCustomFields(Request $request)

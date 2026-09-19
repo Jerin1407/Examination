@@ -4,16 +4,13 @@
 
 @section('content')
 
-    {{-- @if (session('message'))
-    {!! session('message') !!}
-@endif --}}
     <br><br>
 
     <div class="container">
 
         <h3>List Account Type</h3><br>
 
-        <a href="" class="btn btn-success">Add New</a><br><br>
+        <a href="{{ route('addAccountType') }}" class="btn btn-success">Add New</a><br><br>
 
         <div class="row">
             <div class="col-md-12">
@@ -28,19 +25,70 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>account - 1</td>
-                            <td>
-                                <a href="{{ route('editAccountType') }}">
-                                    <img src="{{ asset('images/edit.png') }}">
-                                </a>
-                            </td>
-                        </tr>
+                        @forelse ($accountTypes as $accountType)
+                            <tr>
+                                <td>{{ $accountType->account_name }}</td>
+                                <td>
+                                    <a href="{{ route('editAccountType', $accountType->account_id) }}"><img
+                                            src="{{ asset('images/edit.png') }}"></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2">No records found!</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
     </div>
+
+    <script>
+        // alert success for add account type
+        @if (session('success_add'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_add') }}'
+            });
+        @endif
+
+        // alert success for update account type
+        @if (session('success_update'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_update') }}'
+            });
+        @endif
+    </script>
 
 @endsection
