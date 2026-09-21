@@ -10,6 +10,7 @@ use App\Models\SavsoftLevelModel;
 use App\Models\SavsoftNotificationModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
+use App\Models\SavsoftQuizCustomFormModel;
 use App\Models\SavsoftQuizModel;
 use App\Models\SavsoftUsersModel;
 use App\Models\StudyMaterialModel;
@@ -998,10 +999,83 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('custom_fields.list');
+        $fields = SavsoftQuizCustomFormModel::orderBy('field_id', 'desc')->get();
+
+        return view('custom_fields.list', compact('fields'));
     }
 
     public function addCustomFields(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('custom_fields.add');
+    }
+
+    public function saveCustomFields(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'field_title'    => 'required|string|max:255',
+            'field_type'     => 'required|in:text,password',
+            'field_validate' => 'nullable|string|max:255',
+            'field_value'    => 'nullable|string|max:255',
+            'display_at'     => 'required|in:Registration,Result',
+        ]);
+
+        SavsoftQuizCustomFormModel::create([
+            'field_title'    => $request->input('field_title'),
+            'field_type'     => $request->input('field_type'),
+            'field_validate' => $request->input('field_validate'),
+            'field_value'    => $request->input('field_value'),
+            'display_at'     => $request->input('display_at'),
+        ]);
+
+        return redirect()->route('listCustomFields')->with('success_add', 'Custom Registration Field created successfully.');
+    }
+
+    public function editCustomFields(Request $request, $field_id)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $field = SavsoftQuizCustomFormModel::findOrFail($field_id);
+
+        return view('custom_fields.edit', compact('field'));
+    }
+
+    public function updateCustomFields(Request $request, $field_id)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate([
+            'field_title'    => 'required|string|max:255',
+            'field_type'     => 'required|in:text,password',
+            'field_validate' => 'nullable|string|max:255',
+            'field_value'    => 'nullable|string|max:255',
+            'display_at'     => 'required|in:Registration,Result',
+        ]);
+
+        $field = SavsoftQuizCustomFormModel::findOrFail($field_id);
+
+        $field->field_title    = $request->input('field_title');
+        $field->field_type     = $request->input('field_type');
+        $field->field_validate = $request->input('field_validate');
+        $field->field_value    = $request->input('field_value');
+        $field->display_at     = $request->input('display_at');
+        $field->save();
+
+        return redirect()->route('listCustomFields')->with('success_update', 'Custom Registration Field updated successfully.');
+    }
+
+    public function deleteCustomFields(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');

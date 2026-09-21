@@ -102,3 +102,6 @@ Route::post('/update-account-type/{account_id}', [DashboardController::class, 'u
 Route::get('/list-custom-fields', [DashboardController::class, 'listCustomFields'])->name('listCustomFields');
 Route::get('/add-custom-fields', [DashboardController::class, 'addCustomFields'])->name('addCustomFields');
 Route::post('/save-custom-fields', [DashboardController::class, 'saveCustomFields'])->name('saveCustomFields');
+Route::get('/edit-custom-fields/{field_id}', [DashboardController::class, 'editCustomFields'])->name('editCustomFields');
+Route::post('/update-custom-fields/{field_id}', [DashboardController::class, 'updateCustomFields'])->name('updateCustomFields');
+Route::post('/delete-custom-fields', [DashboardController::class, 'deleteCustomFields'])->name('deleteCustomFields');
