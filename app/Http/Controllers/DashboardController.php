@@ -427,6 +427,15 @@ class DashboardController extends Controller
         }
     }
 
+    public function attemptExam(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('exam.exam_detail');
+    }
+
     public function listMark(Request $request)
     {
         if (!session()->has('uid')) {

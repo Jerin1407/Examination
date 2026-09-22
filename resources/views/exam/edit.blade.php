@@ -200,7 +200,7 @@
                             </div>
                             <br><br>
 
-                            {{-- <div class="alert alert-warning">Questions added in to this exam</div>
+                            <h3>Questions added in to this exam</h3>
                             <a href="" class="btn btn-danger">Add questions into exam</a>
 
                             <table class="table table-bordered" style="margin-top:10px;">
@@ -231,20 +231,20 @@
                                     <td>
                                         <a href="" title=""><img src="{{ asset('images/cross.png') }}"></a>
 
-                                        <img src="{{ asset('images/empty.png') }}" title="">
+                                        {{-- <img src="{{ asset('images/empty.png') }}" title="">
                                         <a href="javascript:cancelmove('Up','');">
                                             <img src="{{ asset('images/up.png') }}" title="">
                                         </a>
 
                                         <a href="javascript:cancelmove('Down','');">
                                             <img src="{{ asset('images/down.png') }}" title="">
-                                        </a>
+                                        </a> --}}
                                     </td>
                                 </tr>
                             </table>
                             <div class="alert alert-warning">Warning! Your exam doesn't have any question.</div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <select name="cid[]">
                                     <option value="0">select
                                         category name</option>
@@ -291,7 +291,7 @@
                                     value="0">
                             </div> --}}
 
-                            <a class="btn btn-success" href="{{ route('dashboard') }}">Back</a>
+                            <a class="btn btn-success" href="{{ route('listExam') }}">Back</a>
                             <button class="btn btn-success" type="submit">Update Exam</button>
 
                             <br><br><br>

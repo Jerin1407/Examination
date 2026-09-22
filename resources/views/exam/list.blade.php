@@ -110,7 +110,7 @@
                             <td>{{ $exam->noq }}</td>
                             <td>
                                 @if ($rowStatus === 'active')
-                                    <a href="" class="btn btn-success">Attempt</a>
+                                    <a href="{{ route('attemptExam') }}" class="btn btn-success">Attempt</a>
                                 @elseif ($rowStatus === 'expired')
                                     <a href="#" class="btn btn-warning disabled">Expired</a>
                                 @else
