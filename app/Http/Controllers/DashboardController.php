@@ -433,7 +433,7 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('exam.exam_detail');
+        return view('exam.attempt_exam');
     }
 
     public function listMark(Request $request)

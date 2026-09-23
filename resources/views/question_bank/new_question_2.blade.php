@@ -24,14 +24,24 @@
                             <div class="form-group">
                                 <label for="cid">Select Category</label>
                                 <select class="form-control" name="cid" id="cid">
-                                    <option value="">category_name</option>
+                                    <option value="0">Select Category</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->cid }}">
+                                            {{ $category->category_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label for="lid">Select Level</label>
                                 <select class="form-control" name="lid" id="lid">
-                                    <option value="">level_name</option>
+                                    <option value="0">Select Level</option>
+                                    @foreach ($levels as $level)
+                                        <option value="{{ $level->lid }}">
+                                            {{ $level->level_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 

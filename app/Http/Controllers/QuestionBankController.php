@@ -135,33 +135,46 @@ class QuestionBankController extends Controller
         $nop           = (int) $request->input('nop', 4);
         $withParagraph = $request->has('with_paragraph');
 
+        $categories = SavsoftCategoryModel::all();
+        $levels = SavsoftLevelModel::all();
+
         switch ($questionType) {
             case '1': // Multiple Choice Single Answer
                 return view('question_bank.new_question_1', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
+                    'categories'    => $categories,
+                    'levels'        => $levels
                 ]);
 
             case '2': // Multiple Choice Multiple Answer
                 return view('question_bank.new_question_2', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
+                    'categories'    => $categories,
+                    'levels'        => $levels
                 ]);
 
             case '3': // Match the Column
                 return view('question_bank.new_question_3', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
+                    'categories'    => $categories,
+                    'levels'        => $levels
                 ]);
 
             case '4': // Short Answer
                 return view('question_bank.new_question_4', [
                     'withParagraph' => $withParagraph,
+                    'categories'    => $categories,
+                    'levels'        => $levels
                 ]);
 
             case '5': // Long Answer
                 return view('question_bank.new_question_5', [
                     'withParagraph' => $withParagraph,
+                    'categories'    => $categories,
+                    'levels'        => $levels
                 ]);
 
             default:
@@ -169,7 +182,7 @@ class QuestionBankController extends Controller
         }
     }
 
-    public function newQuestion1(Request $request)
+    public function saveNewQuestion1(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
@@ -178,7 +191,7 @@ class QuestionBankController extends Controller
         return view('question_bank.new_question_1');
     }
 
-    public function newQuestion2(Request $request)
+    public function saveNewQuestion2(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
@@ -187,7 +200,7 @@ class QuestionBankController extends Controller
         return view('question_bank.new_question_2');
     }
 
-    public function newQuestion3(Request $request)
+    public function saveNewQuestion3(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
@@ -196,7 +209,7 @@ class QuestionBankController extends Controller
         return view('question_bank.new_question_3');
     }
 
-    public function newQuestion4(Request $request)
+    public function saveNewQuestion4(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
@@ -205,7 +218,7 @@ class QuestionBankController extends Controller
         return view('question_bank.new_question_4');
     }
 
-    public function newQuestion5(Request $request)
+    public function saveNewQuestion5(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
