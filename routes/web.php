@@ -38,11 +38,11 @@ Route::get('/edit-question-5', [QuestionBankController::class, 'editQuestion5'])
 Route::post('/update-question', [QuestionBankController::class, 'updateQuestion'])->name('updateQuestion');
 Route::post('/delete-question', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
 Route::post('/next-question-type', [QuestionBankController::class, 'nextQuestionType'])->name('nextQuestionType');
-Route::get('/new-question-1', [QuestionBankController::class, 'newQuestion1'])->name('newQuestion1');
-Route::get('/new-question-2', [QuestionBankController::class, 'newQuestion2'])->name('newQuestion2');
-Route::get('/new-question-3', [QuestionBankController::class, 'newQuestion3'])->name('newQuestion3');
-Route::get('/new-question-4', [QuestionBankController::class, 'newQuestion4'])->name('newQuestion4');
-Route::get('/new-question-5', [QuestionBankController::class, 'newQuestion5'])->name('newQuestion5');
+Route::post('/save-new-question-1', [QuestionBankController::class, 'saveNewQuestion1'])->name('saveNewQuestion1');
+Route::post('/save-new-question-2', [QuestionBankController::class, 'saveNewQuestion2'])->name('saveNewQuestion2');
+Route::post('/save-new-question-3', [QuestionBankController::class, 'saveNewQuestion3'])->name('saveNewQuestion3');
+Route::post('/save-new-question-4', [QuestionBankController::class, 'saveNewQuestion4'])->name('saveNewQuestion4');
+Route::post('/save-new-question-5', [QuestionBankController::class, 'saveNewQuestion5'])->name('saveNewQuestion5');
 
 // Exam Routes
 Route::get('/list-exam', [DashboardController::class, 'listExam'])->name('listExam');

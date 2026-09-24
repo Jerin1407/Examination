@@ -9,8 +9,10 @@
         <h3>Add New</h3>
 
         <div class="row">
-            <form method="post" id="qf" action="">
+            <form method="post" id="qf" action="{{ route('saveNewQuestion1') }}">
                 @csrf
+
+                <input type="hidden" name="nop" value="{{ $nop ?? 4 }}">
 
                 <div class="col-md-12">
                     <br>
@@ -26,7 +28,8 @@
                                 <select class="form-control" name="cid" id="cid">
                                     <option value="0">Select Category</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->cid }}">
+                                        <option value="{{ $category->cid }}"
+                                            {{ isset($selectedCid) && $selectedCid == $category->cid ? 'selected' : '' }}>
                                             {{ $category->category_name }}
                                         </option>
                                     @endforeach
@@ -38,10 +41,12 @@
                                 <select class="form-control" name="lid" id="lid">
                                     <option value="0">Select Level</option>
                                     @foreach ($levels as $level)
-                                        <option value="{{ $level->lid }}">
+                                        <option value="{{ $level->lid }}"
+                                            {{ isset($selectedLid) && $selectedLid == $level->lid ? 'selected' : '' }}>
                                             {{ $level->level_name }}
                                         </option>
                                     @endforeach
+                                </select>
                                 </select>
                             </div>
 
@@ -49,7 +54,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="paragraph">Paragraph : English</label>
-                                        <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                        <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea">{{ $paragraphVal ?? '' }}</textarea>
                                     </div>
                                 </div>
                             @endif

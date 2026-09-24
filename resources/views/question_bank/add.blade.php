@@ -19,13 +19,22 @@
 
                             <div class="form-group">
                                 <label>Select Question Type</label>
-                                <select class="form-control" name="question_type" onchange="hidenop(this.value);">
+                                <select class="form-control" name="question_type" id="question_type"
+                                    onchange="toggleNop(this.value);">
                                     <option value="0">Select Question Type</option>
-                                    <option value="1">Multiple Choice Single Answer</option>
-                                    <option value="2">Multiple Choice Multiple Answer</option>
-                                    <option value="3">Match the Column</option>
-                                    <option value="4">Short Answer</option>
-                                    <option value="5">Long Answer</option>
+                                    <option value="Multiple Choice Single Answer"
+                                        {{ old('question_type') == 'Multiple Choice Single Answer' ? 'selected' : '' }}>
+                                        Multiple Choice Single Answer</option>
+                                    <option value="Multiple Choice Multiple Answer"
+                                        {{ old('question_type') == 'Multiple Choice Multiple Answer' ? 'selected' : '' }}>
+                                        Multiple Choice Multiple Answer</option>
+                                    <option value="Match the Column"
+                                        {{ old('question_type') == 'Match the Column' ? 'selected' : '' }}>Match the Column
+                                    </option>
+                                    <option value="Short Answer"
+                                        {{ old('question_type') == 'Short Answer' ? 'selected' : '' }}>Short Answer</option>
+                                    <option value="Long Answer"
+                                        {{ old('question_type') == 'Long Answer' ? 'selected' : '' }}>Long Answer</option>
                                 </select>
                             </div>
 
@@ -49,5 +58,21 @@
         </div>
 
     </div>
+
+    <script>
+        function toggleNop(questionType) {
+            var nopDiv = document.getElementById('nop');
+            if (questionType === 'Short Answer' || questionType === 'Long Answer') {
+                nopDiv.style.display = 'none';
+            } else {
+                nopDiv.style.display = '';
+            }
+        }
+
+        // Re-run on load so a validation-error redisplay (old('question_type')) shows the correct state
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleNop(document.getElementById('question_type').value);
+        });
+    </script>
 
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftLevelModel;
+use App\Models\SavsoftOptionsModel;
 use App\Models\SavsoftQbankModel;
 
 class QuestionBankController extends Controller
@@ -139,7 +140,7 @@ class QuestionBankController extends Controller
         $levels = SavsoftLevelModel::all();
 
         switch ($questionType) {
-            case '1': // Multiple Choice Single Answer
+            case 'Multiple Choice Single Answer':
                 return view('question_bank.new_question_1', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
@@ -147,7 +148,7 @@ class QuestionBankController extends Controller
                     'levels'        => $levels
                 ]);
 
-            case '2': // Multiple Choice Multiple Answer
+            case 'Multiple Choice Multiple Answer':
                 return view('question_bank.new_question_2', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
@@ -155,7 +156,7 @@ class QuestionBankController extends Controller
                     'levels'        => $levels
                 ]);
 
-            case '3': // Match the Column
+            case 'Match the Column':
                 return view('question_bank.new_question_3', [
                     'nop'           => $nop,
                     'withParagraph' => $withParagraph,
@@ -163,14 +164,14 @@ class QuestionBankController extends Controller
                     'levels'        => $levels
                 ]);
 
-            case '4': // Short Answer
+            case 'Short Answer':
                 return view('question_bank.new_question_4', [
                     'withParagraph' => $withParagraph,
                     'categories'    => $categories,
                     'levels'        => $levels
                 ]);
 
-            case '5': // Long Answer
+            case 'Long Answer':
                 return view('question_bank.new_question_5', [
                     'withParagraph' => $withParagraph,
                     'categories'    => $categories,
@@ -188,7 +189,56 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.new_question_1');
+        $request->validate([
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'score'    => 'required|integer|min:1',
+            'nop'      => 'required|integer|min:2',
+        ]);
+
+        // Create the question
+        $qbank = SavsoftQbankModel::create([
+            'question_type'   => 'Multiple Choice Single Answer',
+            'question'        => $request->input('question'),
+            'description'     => $request->input('description'),
+            'cid'             => $request->input('cid'),
+            'lid'             => $request->input('lid'),
+            'paragraph'       => $request->input('paragraph'),
+            'inserted_by'     => session('uid'),
+            'inserted_by_name' => session('first_name') . ' ' . session('last_name'),
+            'is_upload'       => 0,
+            'parent_id'        => 0,
+        ]);
+
+        // Create each option row
+        $nop         = (int) $request->input('nop');
+        $correctOpt  = (int) $request->input('score');
+
+        for ($i = 1; $i <= $nop; $i++) {
+            SavsoftOptionsModel::create([
+                'qid'      => $qbank->qid,
+                'q_option' => $request->input('option' . $i),
+                'q_option1' => '',
+                'q_option_match1' => '',
+                'score'    => ($i === $correctOpt) ? 1 : 0,
+            ]);
+        }
+
+        // "Submit & Add new with same paragraph" — redisplay the form, same cid/lid/paragraph
+        if ($request->input('parag') === '1') {
+            return view('question_bank.new_question_1', [
+                'nop'           => $nop,
+                'withParagraph' => true,
+                'categories'    => SavsoftCategoryModel::all(),
+                'levels'        => SavsoftLevelModel::all(),
+                'selectedCid'   => $request->input('cid'),
+                'selectedLid'   => $request->input('lid'),
+                'paragraphVal'  => $request->input('paragraph'),
+            ])->with('success', 'Question added. Add another with the same paragraph.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
     public function saveNewQuestion2(Request $request)
