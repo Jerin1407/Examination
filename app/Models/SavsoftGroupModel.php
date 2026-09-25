@@ -14,6 +14,7 @@ class SavsoftGroupModel extends Model
         'group_name',
         'price',
         'valid_for_days',
-        'description'
+        'description',
+        'is_active'
     ];
 }

@@ -47,16 +47,24 @@
                                 <a href="">send new notification</a>
                             </td>
                             <td>
-                                <a href="{{ route('viewUser', $user->uid) }}"><i class="fa fa-eye"
-                                        title="View Profile"></i></a>
+                                <div class="d-flex align-items-center" style="gap: 10px;">
+                                    <a href="{{ route('viewUser', $user->uid) }}" title="View Profile">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
 
-                                <a href="{{ route('editUser', $user->uid) }}">
-                                    <img src="{{ asset('images/edit.png') }}">
-                                </a>
+                                    <a href="{{ route('editUser', $user->uid) }}" title="Edit">
+                                        <img src="{{ asset('images/edit.png') }}" style="width:16px; height:16px;">
+                                    </a>
 
-                                <a href="" onclick="return confirm('Are you sure you want to delete this user?');">
-                                    <img src="{{ asset('images/cross.png') }}">
-                                </a>
+                                    <form action="{{ route('deleteUser', $user->uid) }}" method="POST"
+                                        class="d-inline m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="delete-btn border-0 bg-transparent p-0">
+                                            <img src="{{ asset('images/cross.png') }}" style="width:16px; height:16px;">
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -83,7 +91,6 @@
     </div>
 
     <script>
-
         // alert success for add user
         @if (session('success_add'))
             const Toast = Swal.mixin({
@@ -127,6 +134,52 @@
                 title: '{{ session('success_update') }}'
             });
         @endif
-        
+
+        // Delete Alert
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let form = this.closest('form');
+
+                Swal.fire({
+                    position: 'top',
+                    title: 'Are you sure?',
+                    text: 'You want to delete this user?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete!',
+                    cancelButtonText: 'Cancel',
+                    width: '380px',
+                    toast: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Success Alert
+        @if (session('success_delete'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                background: '#10B981', // green color
+                color: '#fff',
+                iconColor: '#fff',
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session('success_delete') }}'
+            });
+        @endif
     </script>
 @endsection

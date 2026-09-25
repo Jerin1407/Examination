@@ -11,6 +11,7 @@ class SavsoftLevelModel extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'level_name'
+        'level_name',
+        'is_active'
     ];
 }

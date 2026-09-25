@@ -27,6 +27,7 @@ class SavsoftQbankModel extends Model
         'paragraph',
         'paragraph1',
         'parent_id',
-        'is_upload'
+        'is_upload',
+        'is_active'
     ];
 }

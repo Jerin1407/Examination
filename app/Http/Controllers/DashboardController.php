@@ -97,6 +97,7 @@ class DashboardController extends Controller
         $search = $request->input('search');
 
         $users = SavsoftUsersModel::query()
+            ->where('is_active', 1)
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('email', 'like', "%{$search}%")
@@ -190,13 +191,19 @@ class DashboardController extends Controller
         return redirect()->route('listUser', $id)->with('success_update', 'User updated successfully.');
     }
 
-    public function deleteUser(Request $request)
+    public function deleteUser(Request $request, $id)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        // Logic to delete a user
+        $user = SavsoftUsersModel::find($id);
+
+        // Updating is_active to 0
+        $user->is_active = 0;
+        $user->save();
+
+        return redirect()->back()->with('success_delete', 'User deleted successfully.');
     }
 
     public function showAppointment(Request $request)
@@ -233,7 +240,8 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $query = SavsoftQuizModel::query();
+        $query = SavsoftQuizModel::query()
+            ->where('savsoft_quiz.is_active', 1);
 
         if ($request->filled('search')) {
             $query->where('quiz_name', 'like', '%' . $request->search . '%');
@@ -256,14 +264,17 @@ class DashboardController extends Controller
             ->withQueryString();
 
         // Counts for the summary cards
-        $activeCount = SavsoftQuizModel::where('start_date', '<=', $now)
+        $activeCount = SavsoftQuizModel::where('is_active', 1)
+            ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->count();
 
-        $upcomingCount = SavsoftQuizModel::where('start_date', '>', $now)
+        $upcomingCount = SavsoftQuizModel::where('is_active', 1)
+            ->where('start_date', '>', $now)
             ->count();
 
-        $archivedCount = SavsoftQuizModel::where('end_date', '<', $now)
+        $archivedCount = SavsoftQuizModel::where('is_active', 1)
+            ->where('end_date', '<', $now)
             ->count();
 
         return view('exam.list', compact('exams', 'activeCount', 'upcomingCount', 'archivedCount', 'status'));
@@ -420,11 +431,19 @@ class DashboardController extends Controller
         return redirect()->route('listExam', $id)->with('success_update', 'Exam updated successfully.');
     }
 
-    public function deleteExam(Request $request)
+    public function deleteExam(Request $request, $id)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $exam = SavsoftQuizModel::find($id);
+
+        // Updating is_active to 0
+        $exam->is_active = 0;
+        $exam->save();
+
+        return redirect()->back()->with('success_delete', 'Exam deleted successfully.');
     }
 
     public function attemptExam(Request $request)
@@ -622,6 +641,21 @@ class DashboardController extends Controller
             'category'      => $category,
             'groupNames'    => $groupNames,
         ]);
+    }
+
+    public function deleteStudyMaterial(Request $request, $stid)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $material = StudyMaterialModel::find($stid);
+
+        // Updating is_active to 0
+        $material->is_active = 0;
+        $material->save();
+
+        return redirect()->back()->with('success_delete', 'Study Material deleted successfully.');
     }
 
     public function editSetting(Request $request)

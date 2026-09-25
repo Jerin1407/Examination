@@ -17,6 +17,7 @@ class StudyMaterialModel extends Model
         'cid',
         'created_date',
         'created_by',
-        'attachment'
+        'attachment',
+        'is_active'
     ];
 }

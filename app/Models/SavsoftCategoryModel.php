@@ -11,6 +11,7 @@ class SavsoftCategoryModel extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'category_name'
+        'category_name',
+        'is_active'
     ];
 }

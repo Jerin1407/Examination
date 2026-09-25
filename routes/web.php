@@ -21,7 +21,7 @@ Route::post('/save-user', [DashboardController::class, 'saveUser'])->name('saveU
 Route::get('/view-user/{id}', [DashboardController::class, 'viewUser'])->name('viewUser');
 Route::get('/edit-user/{id}', [DashboardController::class, 'editUser'])->name('editUser');
 Route::post('/update-user/{id}', [DashboardController::class, 'updateUser'])->name('updateUser');
-Route::post('/delete-user', [DashboardController::class, 'deleteUser'])->name('deleteUser');
+Route::delete('/delete-user/{id}', [DashboardController::class, 'deleteUser'])->name('deleteUser');
 
 // Appointment Routes
 Route::get('/appointment', [DashboardController::class, 'showAppointment'])->name('showAppointment');
@@ -36,7 +36,7 @@ Route::get('/edit-question-3', [QuestionBankController::class, 'editQuestion3'])
 Route::get('/edit-question-4', [QuestionBankController::class, 'editQuestion4'])->name('editQuestion4');
 Route::get('/edit-question-5', [QuestionBankController::class, 'editQuestion5'])->name('editQuestion5');
 Route::post('/update-question', [QuestionBankController::class, 'updateQuestion'])->name('updateQuestion');
-Route::post('/delete-question', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
+Route::delete('/delete-question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name('deleteQuestion');
 Route::post('/next-question-type', [QuestionBankController::class, 'nextQuestionType'])->name('nextQuestionType');
 Route::post('/save-new-question-1', [QuestionBankController::class, 'saveNewQuestion1'])->name('saveNewQuestion1');
 Route::post('/save-new-question-2', [QuestionBankController::class, 'saveNewQuestion2'])->name('saveNewQuestion2');
@@ -50,7 +50,7 @@ Route::get('/add-exam', [DashboardController::class, 'addExam'])->name('addExam'
 Route::post('/save-exam', [DashboardController::class, 'saveExam'])->name('saveExam');
 Route::get('/edit-exam/{id}', [DashboardController::class, 'editExam'])->name('editExam');
 Route::post('/update-exam/{id}', [DashboardController::class, 'updateExam'])->name('updateExam');
-Route::post('/delete-exam', [DashboardController::class, 'deleteExam'])->name('deleteExam');
+Route::delete('/delete-exam/{id}', [DashboardController::class, 'deleteExam'])->name('deleteExam');
 Route::get('/attempt-exam', [DashboardController::class, 'attemptExam'])->name('attemptExam');
 
 // Valuation Routes
@@ -63,6 +63,7 @@ Route::post('/save-study-material', [DashboardController::class, 'saveStudyMater
 Route::get('/edit-study-material/{stid}', [DashboardController::class, 'editStudyMaterial'])->name('editStudyMaterial');
 Route::post('/update-study-material/{stid}', [DashboardController::class, 'updateStudyMaterial'])->name('updateStudyMaterial');
 Route::get('/view-study-material/{stid}', [DashboardController::class, 'viewStudyMaterial'])->name('viewStudyMaterial');
+Route::delete('/delete-study-material/{stid}', [DashboardController::class, 'deleteStudyMaterial'])->name('deleteStudyMaterial');
 
 // Setting Routes
 Route::get('/edit-setting', [DashboardController::class, 'editSetting'])->name('editSetting');

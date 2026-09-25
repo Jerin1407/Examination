@@ -35,6 +35,7 @@ class SavsoftQuizModel extends Model
         'inserted_by',
         'inserted_by_name',
         'show_chart_rank',
-        'quiz_price'
+        'quiz_price',
+        'is_active'
     ];
 }

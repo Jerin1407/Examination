@@ -24,6 +24,7 @@ class QuestionBankController extends Controller
         $lid = $request->input('lid');
 
         $questions = SavsoftQbankModel::query()
+            ->where('savsoft_qbank.is_active', 1)
             ->leftJoin('savsoft_category', 'savsoft_category.cid', '=', 'savsoft_qbank.cid')
             ->leftJoin('savsoft_level', 'savsoft_level.lid', '=', 'savsoft_qbank.lid')
             ->select(
@@ -119,11 +120,19 @@ class QuestionBankController extends Controller
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
 
-    public function deleteQuestion(Request $request)
+    public function deleteQuestion(Request $request, $id)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $question = SavsoftQbankModel::find($id);
+
+        // Updating is_active to 0
+        $question->is_active = 0;
+        $question->save();
+
+        return redirect()->back()->with('success_delete', 'Question deleted successfully.');
     }
 
     public function nextQuestionType(Request $request)

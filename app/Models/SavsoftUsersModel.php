@@ -26,6 +26,7 @@ class SavsoftUsersModel extends Model
         'registered_date',
         'photo',
         'user_status',
+        'is_active',
         'web_token',
         'android_token',
         'skype_id',
