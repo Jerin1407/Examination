@@ -78,38 +78,27 @@
                             </span>
                         </td>
                         <td>question_type</td>
-                        <td>{{ $val['category_name'] }} / <span style="font-size:12px;">{{ $val['level_name'] }}</span></td>
+                        <td>Category_name / <span style="font-size:12px;">Level_name </span></td>
                         <td>
-                            @if ($val['no_time_served'] != '0')
-                                @php $perc = ($val['no_time_corrected'] / $val['no_time_served']) * 100; @endphp
                                 <div style="background:#eeeeee;width:100%;height:10px;">
-                                    <div style="background:#449d44;width:{{ intval($perc) }}%;height:10px;"></div>
-                                    <span style="font-size:10px;">{{ intval($perc) }}%</span>
+                                    <div style="background:#449d44;width:0%;height:10px;"></div>
+                                    <span style="font-size:10px;">0%</span>
                                 </div>
-                            @else
-                                {{ __('lang.not_used') }}
-                            @endif
+                                {{-- Not used --}}
                         </td>
                         <td>
-                            <a href="javascript:addquestion('{{ $quid }}','{{ $val['qid'] }}');" class="btn btn-primary" id="q{{ $val['qid'] }}">
-                                {{ in_array($val['qid'], $quizQids) ? __('lang.added') : __('lang.add') }}
+                            <a href="javascript:addquestion('','');" class="btn btn-primary" id="q">
+                                Add / Added
                             </a>
                         </td>
                     </tr>
-                @endforeach
             </table>
         </div>
     </div>
  
-    @php
-        $rowsPerPage = config('app.number_of_rows');
-        $back = ($limit - $rowsPerPage) >= 0 ? $limit - $rowsPerPage : 0;
-        $next = $limit + $rowsPerPage;
-    @endphp
- 
-    <a href="{{ route('quiz.add_question', [$quid, $back, $cid, $lid]) }}" class="btn btn-primary">{{ __('lang.back') }}</a>
+    <a href="" class="btn btn-primary">Back</a>
     &nbsp;&nbsp;
-    <a href="{{ route('quiz.add_question', [$quid, $next, $cid, $lid]) }}" class="btn btn-primary">{{ __('lang.next') }}</a>
+    <a href="" class="btn btn-primary">Next</a>
  
 </div>
 

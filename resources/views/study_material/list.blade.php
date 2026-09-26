@@ -45,18 +45,24 @@
                             </td>
                             <td>{{ $material->category_name ?? 'N/A' }}</td>
                             <td>
-                                <a href="{{ route('editStudyMaterial', $material->stid) }}">Edit</a>
+                                <div class="d-flex align-items-center" style="gap: 10px;">
+                                    <a href="{{ route('viewStudyMaterial', $material->stid) }}" title="View Profile">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
 
-                                <a href="{{ route('viewStudyMaterial', $material->stid) }}">View</a>
+                                    <a href="{{ route('editStudyMaterial', $material->stid) }}" title="Edit">
+                                        <img src="{{ asset('images/edit.png') }}" style="width:16px; height:16px;">
+                                    </a>
 
-                                <form action="{{ route('deleteStudyMaterial', $material->stid) }}" method="POST"
-                                    class="d-inline m-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="delete-btn border-0 bg-transparent p-0">
-                                        <a href="">Remove</a>
-                                    </button>
-                                </form>
+                                    <form action="{{ route('deleteStudyMaterial', $material->stid) }}" method="POST"
+                                        class="d-inline m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="delete-btn border-0 bg-transparent p-0">
+                                            <img src="{{ asset('images/cross.png') }}" style="width:16px; height:16px;">
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

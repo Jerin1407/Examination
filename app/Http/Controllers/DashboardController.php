@@ -455,6 +455,15 @@ class DashboardController extends Controller
         return view('exam.attempt_exam');
     }
 
+    public function addQuestionIntoExam(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return view('exam.add_question');
+    }
+
     public function listMark(Request $request)
     {
         if (!session()->has('uid')) {
@@ -518,7 +527,8 @@ class DashboardController extends Controller
         $search = $request->input('search');
 
         $query = StudyMaterialModel::leftJoin('savsoft_category', 'study_material.cid', '=', 'savsoft_category.cid')
-            ->select('study_material.*', 'savsoft_category.category_name');
+            ->select('study_material.*', 'savsoft_category.category_name')
+            ->where('study_material.is_active', 1);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -732,7 +742,9 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $groups = SavsoftGroupModel::orderBy('gid')->get();
+        $groups = SavsoftGroupModel::where('is_active', 1)
+            ->orderBy('gid')
+            ->get();
 
         return view('user_group.list', compact('groups'));
     }
@@ -804,11 +816,17 @@ class DashboardController extends Controller
         return redirect()->route('listUserGroup')->with('success_update', 'User group updated successfully.');
     }
 
-    public function deleteUserGroup(Request $request)
+    public function deleteUserGroup(Request $request, $gid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $group = SavsoftGroupModel::find($gid);
+
+        // Updating is_active to 0
+        $group->is_active = 0;
+        $group->save();
 
         return redirect()->route('listUserGroup')->with('success_delete', 'User group deleted successfully.');
     }
@@ -819,7 +837,9 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $categories = SavsoftCategoryModel::orderBy('cid', 'desc')->get();
+        $categories = SavsoftCategoryModel::where('is_active', 1)
+            ->orderBy('cid', 'desc')
+            ->get();
 
         return view('category.list', compact('categories'));
     }
@@ -859,11 +879,17 @@ class DashboardController extends Controller
         return redirect()->route('listCategory')->with('success_update', 'Category updated successfully.');
     }
 
-    public function deleteCategory(Request $request)
+    public function deleteCategory(Request $request, $cid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $category = SavsoftCategoryModel::find($cid);
+
+        // Updating is_active to 0
+        $category->is_active = 0;
+        $category->save();
 
         return redirect()->route('listCategory')->with('success_delete', 'Category deleted successfully.');
     }
@@ -874,7 +900,9 @@ class DashboardController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $levels = SavsoftLevelModel::orderBy('lid', 'desc')->get();
+        $levels = SavsoftLevelModel::where('is_active', 1)
+            ->orderBy('lid', 'desc')
+            ->get();
 
         return view('level.list', compact('levels'));
     }
@@ -914,11 +942,17 @@ class DashboardController extends Controller
         return redirect()->route('listLevel')->with('success_update', 'Level updated successfully.');
     }
 
-    public function deleteLevel(Request $request)
+    public function deleteLevel(Request $request, $lid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $level = SavsoftLevelModel::find($lid);
+
+        // Updating is_active to 0
+        $level->is_active = 0;
+        $level->save();
 
         return redirect()->route('listLevel')->with('success_delete', 'Level deleted successfully.');
     }

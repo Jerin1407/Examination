@@ -52,6 +52,7 @@ Route::get('/edit-exam/{id}', [DashboardController::class, 'editExam'])->name('e
 Route::post('/update-exam/{id}', [DashboardController::class, 'updateExam'])->name('updateExam');
 Route::delete('/delete-exam/{id}', [DashboardController::class, 'deleteExam'])->name('deleteExam');
 Route::get('/attempt-exam', [DashboardController::class, 'attemptExam'])->name('attemptExam');
+Route::get('/add-question-into-exam', [DashboardController::class, 'addQuestionIntoExam'])->name('addQuestionIntoExam');
 
 // Valuation Routes
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');
@@ -79,19 +80,19 @@ Route::get('/add-user-group', [DashboardController::class, 'addUserGroup'])->nam
 Route::post('/save-user-group', [DashboardController::class, 'saveUserGroup'])->name('saveUserGroup');
 Route::get('/edit-user-group/{gid}', [DashboardController::class, 'editUserGroup'])->name('editUserGroup');
 Route::post('/update-user-group/{gid}', [DashboardController::class, 'updateUserGroup'])->name('updateUserGroup');
-Route::post('/delete-user-group', [DashboardController::class, 'deleteUserGroup'])->name('deleteUserGroup');
+Route::delete('/delete-user-group/{gid}', [DashboardController::class, 'deleteUserGroup'])->name('deleteUserGroup');
 
 // Category Routes
 Route::get('/list-category', [DashboardController::class, 'listCategory'])->name('listCategory');
 Route::post('/save-category', [DashboardController::class, 'saveCategory'])->name('saveCategory');
 Route::post('/update-category/{cid}', [DashboardController::class, 'updateCategory'])->name('updateCategory');
-Route::post('/delete-category', [DashboardController::class, 'deleteCategory'])->name('deleteCategory');
+Route::delete('/delete-category/{cid}', [DashboardController::class, 'deleteCategory'])->name('deleteCategory');
 
 // Level Routes
 Route::get('/list-level', [DashboardController::class, 'listLevel'])->name('listLevel');
 Route::post('/save-level', [DashboardController::class, 'saveLevel'])->name('saveLevel');
 Route::post('/update-level/{lid}', [DashboardController::class, 'updateLevel'])->name('updateLevel');
-Route::post('/delete-level', [DashboardController::class, 'deleteLevel'])->name('deleteLevel');
+Route::delete('/delete-level/{lid}', [DashboardController::class, 'deleteLevel'])->name('deleteLevel');
 
 // Account Type Routes
 Route::get('/list-account-type', [DashboardController::class, 'listAccountType'])->name('listAccountType');

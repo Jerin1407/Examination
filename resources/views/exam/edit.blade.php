@@ -201,7 +201,7 @@
                             <br><br>
 
                             <h3>Questions added in to this exam</h3>
-                            <a href="" class="btn btn-danger">Add questions into exam</a>
+                            <a href="{{ route('addQuestionIntoExam') }}" class="btn btn-danger">Add questions into exam</a>
 
                             <table class="table table-bordered" style="margin-top:10px;">
                                 <tr>
