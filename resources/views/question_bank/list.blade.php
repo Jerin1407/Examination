@@ -100,10 +100,14 @@
                             <td>{{ $question->question_type }}</td>
                             <td>{{ $question->category_name ?? '—' }} / {{ $question->level_name ?? '—' }}</td>
                             <td>
-                                <div style="background:#eeeeee;width:100%;height:10px;">
-                                    <div style="background:#449d44;width:{{ $percentCorrected }}%;height:10px;"></div>
-                                    <span style="font-size:10px;">{{ $percentCorrected }}%</span>
-                                </div>
+                                @if ($question->no_time_corrected == 0 && $question->no_time_incorrected == 0 && $question->no_time_unattempted == 0)
+                                    Not used
+                                @else
+                                    <div style="background:#eeeeee;width:100%;height:10px;">
+                                        <div style="background:#449d44;width:{{ $percentCorrected }}%;height:10px;"></div>
+                                        <span style="font-size:10px;">{{ $percentCorrected }}%</span>
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 <div class="d-flex align-items-center" style="gap: 10px;">

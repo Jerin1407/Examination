@@ -52,7 +52,8 @@ Route::get('/edit-exam/{id}', [DashboardController::class, 'editExam'])->name('e
 Route::post('/update-exam/{id}', [DashboardController::class, 'updateExam'])->name('updateExam');
 Route::delete('/delete-exam/{id}', [DashboardController::class, 'deleteExam'])->name('deleteExam');
 Route::get('/attempt-exam', [DashboardController::class, 'attemptExam'])->name('attemptExam');
-Route::get('/add-question-into-exam', [DashboardController::class, 'addQuestionIntoExam'])->name('addQuestionIntoExam');
+Route::get('/add-question-into-exam/{quid}', [DashboardController::class, 'addQuestionIntoExam'])->name('addQuestionIntoExam');
+Route::post('/add-question-into-exam/{quid}/add/{qid}', [DashboardController::class, 'addQuestionToExam'])->name('addQuestionToExam');
 
 // Valuation Routes
 Route::get('/list-mark', [DashboardController::class, 'listMark'])->name('listMark');

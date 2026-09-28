@@ -201,7 +201,8 @@
                             <br><br>
 
                             <h3>Questions added in to this exam</h3>
-                            <a href="{{ route('addQuestionIntoExam') }}" class="btn btn-danger">Add questions into exam</a>
+                            <a href="{{ route('addQuestionIntoExam', $quiz->quid) }}" class="btn btn-danger">Add
+                                questions into exam</a>
 
                             <table class="table table-bordered" style="margin-top:10px;">
                                 <tr>
@@ -215,34 +216,37 @@
                                     <th>Action</th>
                                 </tr>
 
-                                <tr>
-                                    <td>1</td>
-                                    <td>Question 1
-                                    </td>
-                                    <td>short answer</td>
-                                    <td>catogory</td>
-                                    <td>level</td>
-                                    <td>
-                                        <input type="text" style="width:60px;" name="i_correct[]" value="">
-                                    </td>
-                                    <td>
-                                        <input type="text" style="width:60px;" name="i_incorrect[]" value="">
-                                    </td>
-                                    <td>
-                                        <a href="" title=""><img src="{{ asset('images/cross.png') }}"></a>
-
-                                        {{-- <img src="{{ asset('images/empty.png') }}" title="">
-                                        <a href="javascript:cancelmove('Up','');">
-                                            <img src="{{ asset('images/up.png') }}" title="">
-                                        </a>
-
-                                        <a href="javascript:cancelmove('Down','');">
-                                            <img src="{{ asset('images/down.png') }}" title="">
-                                        </a> --}}
-                                    </td>
-                                </tr>
+                                @forelse ($examQuestions as $index => $question)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ \Illuminate\Support\Str::words(strip_tags($question->question), 10, '...') }}
+                                        </td>
+                                        <td>{{ $question->question_type }}</td>
+                                        <td>{{ $question->category_name ?? '—' }}</td>
+                                        <td>{{ $question->level_name ?? '—' }}</td>
+                                        <td>
+                                            <input type="text" style="width:60px;" name="i_correct[]"
+                                                value="{{ $quiz->correct_score }}">
+                                        </td>
+                                        <td>
+                                            <input type="text" style="width:60px;" name="i_incorrect[]"
+                                                value="{{ $quiz->incorrect_score }}">
+                                        </td>
+                                        <td>
+                                            <a href="" title="Remove"><img
+                                                    src="{{ asset('images/cross.png') }}"></a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8">No questions added yet.</td>
+                                    </tr>
+                                @endforelse
                             </table>
-                            <div class="alert alert-warning">Warning! Your exam doesn't have any question.</div>
+
+                            @if ($examQuestions->isEmpty())
+                                <div class="alert alert-warning">Warning! Your exam doesn't have any question.</div>
+                            @endif
 
                             {{-- <div class="form-group">
                                 <select name="cid[]">

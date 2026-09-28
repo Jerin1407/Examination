@@ -368,7 +368,25 @@ class DashboardController extends Controller
         $selectedGroupIds = $quiz->gids ? explode(',', $quiz->gids) : [];
         $selectedUserIds  = $quiz->uids ? explode(',', $quiz->uids) : [];
 
-        return view('exam.edit', compact('groups', 'users', 'quiz', 'selectedGroupIds', 'selectedUserIds'));
+        $qids = $quiz->qids ? explode(',', $quiz->qids) : [];
+
+        $fetched = SavsoftQbankModel::query()
+            ->leftJoin('savsoft_category', 'savsoft_category.cid', '=', 'savsoft_qbank.cid')
+            ->leftJoin('savsoft_level', 'savsoft_level.lid', '=', 'savsoft_qbank.lid')
+            ->whereIn('savsoft_qbank.qid', $qids)
+            ->select(
+                'savsoft_qbank.*',
+                'savsoft_category.category_name',
+                'savsoft_level.level_name'
+            )
+            ->get()
+            ->keyBy('qid');
+
+        $examQuestions = collect($qids)
+            ->map(fn($qid) => $fetched->get($qid))
+            ->filter();
+
+        return view('exam.edit', compact('groups', 'users', 'quiz', 'selectedGroupIds', 'selectedUserIds', 'qids', 'fetched', 'examQuestions'));
     }
 
     public function updateExam(Request $request, $id)
@@ -455,13 +473,66 @@ class DashboardController extends Controller
         return view('exam.attempt_exam');
     }
 
-    public function addQuestionIntoExam(Request $request)
+    public function addQuestionIntoExam(Request $request, $quid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('exam.add_question');
+        $quiz = SavsoftQuizModel::findOrFail($quid);
+
+        $categories = SavsoftCategoryModel::all();
+        $levels = SavsoftLevelModel::all();
+
+        $search = $request->input('search');
+        $cid = $request->input('cid');
+        $lid = $request->input('lid');
+
+        $questions = SavsoftQbankModel::query()
+            ->where('savsoft_qbank.is_active', 1)
+            ->leftJoin('savsoft_category', 'savsoft_category.cid', '=', 'savsoft_qbank.cid')
+            ->leftJoin('savsoft_level', 'savsoft_level.lid', '=', 'savsoft_qbank.lid')
+            ->select(
+                'savsoft_qbank.*',
+                'savsoft_category.category_name',
+                'savsoft_level.level_name'
+            )
+            ->when($search, function ($query, $search) {
+                $query->where('savsoft_qbank.question', 'like', "%{$search}%");
+            })
+            ->when($cid, function ($query, $cid) {
+                $query->where('savsoft_qbank.cid', $cid);
+            })
+            ->when($lid, function ($query, $lid) {
+                $query->where('savsoft_qbank.lid', $lid);
+            })
+            ->orderBy('savsoft_qbank.qid', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        $addedQids = $quiz->qids ? explode(',', $quiz->qids) : [];
+
+        return view('exam.add_question', compact('categories', 'levels', 'questions', 'search', 'cid', 'lid', 'addedQids', 'quiz'));
+    }
+
+    public function addQuestionToExam(Request $request, $quid, $qid)
+    {
+        if (!session()->has('uid')) {
+            return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
+        }
+
+        $quiz = SavsoftQuizModel::findOrFail($quid);
+
+        $qids = $quiz->qids ? explode(',', $quiz->qids) : [];
+
+        if (!in_array($qid, $qids)) {
+            $qids[] = $qid;
+            $quiz->qids = implode(',', $qids);
+            $quiz->noq = count($qids);
+            $quiz->save();
+        }
+
+        return response()->json(['status' => 'added']);
     }
 
     public function listMark(Request $request)
