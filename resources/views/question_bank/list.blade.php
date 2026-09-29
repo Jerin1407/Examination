@@ -112,9 +112,31 @@
                             <td>
                                 <div class="d-flex align-items-center" style="gap: 10px;">
 
-                                    <a href="">
-                                        <img src="{{ asset('images/edit.png') }}">
-                                    </a>
+                                    @if ($question->question_type === 'Multiple Choice Single Answer')
+                                        <a href="{{ route('editQuestion1', $question->qid) }}">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @elseif ($question->question_type === 'Multiple Choice Multiple Answer')
+                                        <a href="{{ route('editQuestion2', $question->qid) }}">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @elseif ($question->question_type === 'Match the Column')
+                                        <a href="{{ route('editQuestion3', $question->qid) }}">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @elseif ($question->question_type === 'Short Answer')
+                                        <a href="{{ route('editQuestion4', $question->qid) }}">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @elseif ($question->question_type === 'Long Answer')
+                                        <a href="{{ route('editQuestion5', $question->qid) }}">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @else
+                                        <a href="javascript:void(0);">
+                                            <img src="{{ asset('images/edit.png') }}">
+                                        </a>
+                                    @endif
 
                                     <form action="{{ route('deleteQuestion', $question->qid) }}" method="POST"
                                         class="d-inline m-0">

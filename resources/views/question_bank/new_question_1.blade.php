@@ -47,7 +47,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                </select>
                             </div>
 
                             @if ($withParagraph ?? false)
@@ -109,11 +108,15 @@
                                 @endfor
                             </div>
 
-                            <input type="hidden" name="parag" id="parag" value="0">
+                            {{-- <input type="hidden" name="parag" id="parag" value="0"> --}}
+
                             <button class="btn btn-default" type="submit">Submit</button>
 
                             @if ($withParagraph ?? false)
-                                <button class="btn btn-default" type="button" onclick="parags();">
+                                {{-- <button class="btn btn-default" type="button" onclick="parags();">
+                                    Submit & Add new with same paragraph
+                                </button> --}}
+                                <button class="btn btn-default" type="submit" name="parag" value="1">
                                     Submit & Add new with same paragraph
                                 </button>
                             @endif
@@ -126,12 +129,12 @@
 
     </div>
 
-    <script>
+    {{-- <script>
         function parags() {
             $('#parag').val('1');
             $('#qf').submit();
         }
-    </script>
+    </script> --}}
 
     @push('scripts')
         <script>

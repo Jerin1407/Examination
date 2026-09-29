@@ -66,49 +66,108 @@ class QuestionBankController extends Controller
         return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
-    public function editQuestion1(Request $request)
+    public function editQuestion1(Request $request, $qid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit_question_1');
+        $question = SavsoftQbankModel::where('qid', $qid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        if ($question->question_type !== 'Multiple Choice Single Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
+        $categories = SavsoftCategoryModel::all();
+        $levels     = SavsoftLevelModel::all();
+
+        return view('question_bank.edit_question_1', compact('question', 'options', 'categories', 'levels'));
     }
 
-    public function editQuestion2(Request $request)
+    public function editQuestion2(Request $request, $qid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit_question_2');
+        $question = SavsoftQbankModel::where('qid', $qid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        if ($question->question_type !== 'Multiple Choice Multiple Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
+        $categories = SavsoftCategoryModel::all();
+        $levels     = SavsoftLevelModel::all();
+
+        return view('question_bank.edit_question_2', compact('question', 'options', 'categories', 'levels'));
     }
 
-    public function editQuestion3(Request $request)
+    public function editQuestion3(Request $request, $qid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit_question_3');
+        $question = SavsoftQbankModel::where('qid', $qid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        if ($question->question_type !== 'Match the Column') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
+        $categories = SavsoftCategoryModel::all();
+        $levels     = SavsoftLevelModel::all();
+
+        return view('question_bank.edit_question_3', compact('question', 'options', 'categories', 'levels'));
     }
 
-    public function editQuestion4(Request $request)
+    public function editQuestion4(Request $request, $qid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit_question_4');
+        $question = SavsoftQbankModel::where('qid', $qid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        if ($question->question_type !== 'Short Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $option     = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->first();
+        $categories = SavsoftCategoryModel::all();
+        $levels     = SavsoftLevelModel::all();
+
+        return view('question_bank.edit_question_4', compact('question', 'option', 'categories', 'levels'));
     }
 
-    public function editQuestion5(Request $request)
+    public function editQuestion5(Request $request, $qid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.edit_question_5');
+        $question = SavsoftQbankModel::where('qid', $qid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        if ($question->question_type !== 'Long Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $categories = SavsoftCategoryModel::all();
+        $levels     = SavsoftLevelModel::all();
+
+        return view('question_bank.edit_question_5', compact('question', 'categories', 'levels'));
     }
 
     public function updateQuestion(Request $request)
@@ -235,7 +294,7 @@ class QuestionBankController extends Controller
         }
 
         // "Submit & Add new with same paragraph" — redisplay the form, same cid/lid/paragraph
-        if ($request->input('parag') === '1') {
+        if ($request->input('parag') == '1') {
             return view('question_bank.new_question_1', [
                 'nop'           => $nop,
                 'withParagraph' => true,
@@ -244,7 +303,8 @@ class QuestionBankController extends Controller
                 'selectedCid'   => $request->input('cid'),
                 'selectedLid'   => $request->input('lid'),
                 'paragraphVal'  => $request->input('paragraph'),
-            ])->with('success', 'Question added. Add another with the same paragraph.');
+                'success'       => 'Question added. Add another with the same paragraph.',
+            ]);
         }
 
         return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');

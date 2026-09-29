@@ -12,6 +12,8 @@
             <form method="post" action="">
                 @csrf
 
+                <input type="hidden" name="qid" value="{{ $question->qid }}">
+
                 <div class="col-md-8">
                     <br>
                     <div class="login-panel panel panel-default">
@@ -24,30 +26,42 @@
                             <div class="form-group">
                                 <label for="cid">Select Category</label>
                                 <select class="form-control" name="cid" id="cid">
-                                    <option value="">category_name</option>
+                                    <option value="0">Select Category</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->cid }}"
+                                            {{ $question->cid == $category->cid ? 'selected' : '' }}>
+                                            {{ $category->category_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label for="lid">Select Level</label>
                                 <select class="form-control" name="lid" id="lid">
-                                    <option value="">level_name</option>
+                                    <option value="0">Select Level</option>
+                                    @foreach ($levels as $level)
+                                        <option value="{{ $level->lid }}"
+                                            {{ $question->lid == $level->lid ? 'selected' : '' }}>
+                                            {{ $level->level_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label for="paragraph">Paragraph</label>
-                                <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea"></textarea>
+                                <textarea id="paragraph" name="paragraph" class="form-control tinymce_textarea">{{ $question->paragraph }}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="question">Question</label>
-                                <textarea id="question" name="question" class="form-control tinymce_textarea"></textarea>
+                                <textarea id="question" name="question" class="form-control tinymce_textarea">{{ $question->question }}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control tinymce_textarea"></textarea>
+                                <textarea id="description" name="description" class="form-control tinymce_textarea">{{ $question->description }}</textarea>
                             </div>
 
                             <button class="btn btn-default" type="submit">Submit</button>
@@ -62,15 +76,15 @@
                     <table class="table table-bordered">
                         <tr>
                             <td>No. of Times Correct</td>
-                            <td>0</td>
+                            <td>{{ $question->no_time_corrected }}</td>
                         </tr>
                         <tr>
                             <td>No. of Times Incorrect</td>
-                            <td>0</td>
+                            <td>{{ $question->no_time_incorrected }}</td>
                         </tr>
                         <tr>
                             <td>No. of Times Unattempted</td>
-                            <td>0</td>
+                            <td>{{ $question->no_time_unattempted }}</td>
                         </tr>
                     </table>
                 </div>
