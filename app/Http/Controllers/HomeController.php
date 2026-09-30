@@ -16,7 +16,7 @@ use App\Models\SavsoftUsersModel;
 use App\Models\StudyMaterialModel;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class HomeController extends Controller
 {
     public function index()
     {

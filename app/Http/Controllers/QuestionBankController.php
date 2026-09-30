@@ -170,7 +170,43 @@ class QuestionBankController extends Controller
         return view('question_bank.edit_question_5', compact('question', 'categories', 'levels'));
     }
 
-    public function updateQuestion(Request $request)
+    public function updateQuestion1(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
+    }
+
+    public function updateQuestion2(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
+    }
+
+    public function updateQuestion3(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
+    }
+
+    public function updateQuestion4(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
+    }
+
+    public function updateQuestion5(Request $request)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
