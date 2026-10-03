@@ -7,6 +7,7 @@ use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftLevelModel;
 use App\Models\SavsoftOptionsModel;
 use App\Models\SavsoftQbankModel;
+use Illuminate\Support\Facades\DB;
 
 class QuestionBankController extends Controller
 {
@@ -16,8 +17,8 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $categories = SavsoftCategoryModel::all();
-        $levels = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels = SavsoftLevelModel::where('is_active', 1)->get();
 
         $search = $request->input('search');
         $cid = $request->input('cid');
@@ -81,8 +82,8 @@ class QuestionBankController extends Controller
         }
 
         $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
-        $categories = SavsoftCategoryModel::all();
-        $levels     = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels     = SavsoftLevelModel::where('is_active', 1)->get();
 
         return view('question_bank.edit_question_1', compact('question', 'options', 'categories', 'levels'));
     }
@@ -102,8 +103,8 @@ class QuestionBankController extends Controller
         }
 
         $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
-        $categories = SavsoftCategoryModel::all();
-        $levels     = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels     = SavsoftLevelModel::where('is_active', 1)->get();
 
         return view('question_bank.edit_question_2', compact('question', 'options', 'categories', 'levels'));
     }
@@ -123,8 +124,8 @@ class QuestionBankController extends Controller
         }
 
         $options    = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->get();
-        $categories = SavsoftCategoryModel::all();
-        $levels     = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels     = SavsoftLevelModel::where('is_active', 1)->get();
 
         return view('question_bank.edit_question_3', compact('question', 'options', 'categories', 'levels'));
     }
@@ -144,8 +145,8 @@ class QuestionBankController extends Controller
         }
 
         $option     = SavsoftOptionsModel::where('qid', $qid)->orderBy('oid')->first();
-        $categories = SavsoftCategoryModel::all();
-        $levels     = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels     = SavsoftLevelModel::where('is_active', 1)->get();
 
         return view('question_bank.edit_question_4', compact('question', 'option', 'categories', 'levels'));
     }
@@ -164,8 +165,8 @@ class QuestionBankController extends Controller
             return redirect()->route('listQuestion');
         }
 
-        $categories = SavsoftCategoryModel::all();
-        $levels     = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels     = SavsoftLevelModel::where('is_active', 1)->get();
 
         return view('question_bank.edit_question_5', compact('question', 'categories', 'levels'));
     }
@@ -240,8 +241,8 @@ class QuestionBankController extends Controller
         $nop           = (int) $request->input('nop', 4);
         $withParagraph = $request->has('with_paragraph');
 
-        $categories = SavsoftCategoryModel::all();
-        $levels = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels = SavsoftLevelModel::where('is_active', 1)->get();
 
         switch ($questionType) {
             case 'Multiple Choice Single Answer':
@@ -352,7 +353,49 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.new_question_2');
+        $request->validate([
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'score'    => 'required|array|min:1',
+            'score.*'  => 'integer|min:1',
+            'nop'      => 'required|integer|min:2',
+        ]);
+
+        $nop        = (int) $request->input('nop');
+        $correctOpt = array_map('intval', $request->input('score', []));
+
+        DB::transaction(function () use ($request, $nop, $correctOpt) {
+
+            $qbank = SavsoftQbankModel::create([
+                'question_type'    => 'Multiple Choice Multiple Answer',
+                'question'         => $request->input('question'),
+                'description'      => $request->input('description'),
+                'cid'              => $request->input('cid'),
+                'lid'              => $request->input('lid'),
+                'paragraph'        => $request->input('paragraph'),
+                'inserted_by'      => session('uid'),
+                'inserted_by_name' => session('first_name') . ' ' . session('last_name'),
+                'is_upload'        => 0,
+                'parent_id'        => 0,
+            ]);
+
+            // Each correct option gets an equal share of 1 point (Savsoft behaviour)
+            $perOption = 1 / count($correctOpt);
+
+            for ($i = 1; $i <= $nop; $i++) {
+                SavsoftOptionsModel::create([
+                    'qid'             => $qbank->qid,
+                    'q_option'        => $request->input('option' . $i) ?? '',
+                    'q_option1'       => '',
+                    'q_option_match'  => '',
+                    'q_option_match1' => '',
+                    'score'           => in_array($i, $correctOpt, true) ? $perOption : 0,
+                ]);
+            }
+        });
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
     public function saveNewQuestion3(Request $request)
@@ -361,7 +404,54 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.new_question_3');
+        $request->validate([
+            'cid'        => 'required|integer|min:1',
+            'lid'        => 'required|integer|min:1',
+            'question'   => 'required|string',
+            'option'     => 'required|array|min:2',
+            'option.*'   => 'required|string',
+            'option2'    => 'required|array|min:2',
+            'option2.*'  => 'required|string',
+        ], [
+            'option.*.required'  => 'Please fill in every left column option.',
+            'option2.*.required' => 'Please fill in every right column option.',
+        ]);
+
+        $left  = array_values($request->input('option', []));
+        $right = array_values($request->input('option2', []));
+        $count = count($left);
+
+        DB::transaction(function () use ($request, $left, $right, $count) {
+
+            $qbank = SavsoftQbankModel::create([
+                'question_type'    => 'Match the Column',
+                'question'         => $request->input('question'),
+                'description'      => $request->input('description'),
+                'cid'              => $request->input('cid'),
+                'lid'              => $request->input('lid'),
+                'paragraph'        => $request->input('paragraph'),
+                'inserted_by'      => session('uid'),
+                'inserted_by_name' => session('first_name') . ' ' . session('last_name'),
+                'is_upload'        => 0,
+                'parent_id'        => 0,
+            ]);
+
+            // Each pair carries an equal share of 1 point (Savsoft behaviour)
+            $perPair = 1 / $count;
+
+            foreach ($left as $i => $leftValue) {
+                SavsoftOptionsModel::create([
+                    'qid'             => $qbank->qid,
+                    'q_option'        => $leftValue,
+                    'q_option_match'  => $right[$i] ?? '',
+                    'q_option1'       => '',
+                    'q_option_match1' => '',
+                    'score'           => $perPair,
+                ]);
+            }
+        });
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
     public function saveNewQuestion4(Request $request)
@@ -370,7 +460,42 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.new_question_4');
+        $request->validate([
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'option'   => 'required|array|min:1',
+            'option.0' => 'required|string',
+        ], [
+            'option.0.required' => 'Please enter the answer.',
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            $qbank = SavsoftQbankModel::create([
+                'question_type'    => 'Short Answer',
+                'question'         => $request->input('question'),
+                'description'      => $request->input('description'),
+                'cid'              => $request->input('cid'),
+                'lid'              => $request->input('lid'),
+                'paragraph'        => $request->input('paragraph'),
+                'inserted_by'      => session('uid'),
+                'inserted_by_name' => session('first_name') . ' ' . session('last_name'),
+                'is_upload'        => 0,
+                'parent_id'        => 0,
+            ]);
+
+            SavsoftOptionsModel::create([
+                'qid'             => $qbank->qid,
+                'q_option'        => trim($request->input('option.0')),
+                'q_option1'       => '',
+                'q_option_match'  => '',
+                'q_option_match1' => '',
+                'score'           => 1,
+            ]);
+        });
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 
     public function saveNewQuestion5(Request $request)
@@ -379,6 +504,25 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('question_bank.new_question_5');
+        $request->validate([
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+        ]);
+
+        SavsoftQbankModel::create([
+            'question_type'    => 'Long Answer',
+            'question'         => $request->input('question'),
+            'description'      => $request->input('description'),
+            'cid'              => $request->input('cid'),
+            'lid'              => $request->input('lid'),
+            'paragraph'        => $request->input('paragraph'),
+            'inserted_by'      => session('uid'),
+            'inserted_by_name' => session('first_name') . ' ' . session('last_name'),
+            'is_upload'        => 0,
+            'parent_id'        => 0,
+        ]);
+
+        return redirect()->route('listQuestion')->with('success_add', 'Question added successfully.');
     }
 }

@@ -9,8 +9,10 @@
         <h3>Add New</h3>
 
         <div class="row">
-            <form method="post" id="qf" action="">
+            <form method="post" id="qf" action="{{ route('saveNewQuestion2') }}">
                 @csrf
+
+                <input type="hidden" name="nop" value="{{ $nop ?? 4 }}">
 
                 <div class="col-md-12">
                     <br>
@@ -26,7 +28,8 @@
                                 <select class="form-control" name="cid" id="cid">
                                     <option value="0">Select Category</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->cid }}">
+                                        <option value="{{ $category->cid }}"
+                                            {{ isset($selectedCid) && $selectedCid == $category->cid ? 'selected' : '' }}>
                                             {{ $category->category_name }}
                                         </option>
                                     @endforeach
@@ -38,7 +41,8 @@
                                 <select class="form-control" name="lid" id="lid">
                                     <option value="0">Select Level</option>
                                     @foreach ($levels as $level)
-                                        <option value="{{ $level->lid }}">
+                                        <option value="{{ $level->lid }}"
+                                            {{ isset($selectedLid) && $selectedLid == $level->lid ? 'selected' : '' }}>
                                             {{ $level->level_name }}
                                         </option>
                                     @endforeach
@@ -74,8 +78,8 @@
                                         <div class="form-group">
                                             <label>Options {{ $i }}) : English</label> <br>
 
-                                            <input type="radio" name="score" value="{{ $i }}"
-                                                {{ old('score') == $i ? 'checked' : '' }}>
+                                            <input type="checkbox" name="score[]" value="{{ $i }}"
+                                                {{ in_array($i, old('score', [])) ? 'checked' : '' }}>
                                             Select Correct Option
                                             <br>
 
@@ -85,11 +89,10 @@
                                 @endfor
                             </div>
 
-                            <input type="hidden" name="parag" id="parag" value="0">
                             <button class="btn btn-default" type="submit">Submit</button>
 
                             @if ($withParagraph ?? false)
-                                <button class="btn btn-default" type="button" onclick="parags();">
+                                <button class="btn btn-default" type="submit" name="parag" value="1">
                                     Submit & Add new with same paragraph
                                 </button>
                             @endif
@@ -101,13 +104,6 @@
         </div>
 
     </div>
-
-    <script>
-        function parags() {
-            $('#parag').val('1');
-            $('#qf').submit();
-        }
-    </script>
 
     @push('scripts')
         <script>

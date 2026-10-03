@@ -9,7 +9,7 @@
         <h3>Add New</h3>
 
         <div class="row">
-            <form method="post" id="qf" action="">
+            <form method="post" id="qf" action="{{ route('saveNewQuestion3') }}">
                 @csrf
 
                 <div class="col-md-8">
@@ -26,7 +26,8 @@
                                 <select class="form-control" name="cid" id="cid">
                                     <option value="0">Select Category</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->cid }}">
+                                        <option value="{{ $category->cid }}"
+                                            {{ isset($selectedCid) && $selectedCid == $category->cid ? 'selected' : '' }}>
                                             {{ $category->category_name }}
                                         </option>
                                     @endforeach
@@ -38,7 +39,8 @@
                                 <select class="form-control" name="lid" id="lid">
                                     <option value="0">Select Level</option>
                                     @foreach ($levels as $level)
-                                        <option value="{{ $level->lid }}">
+                                        <option value="{{ $level->lid }}"
+                                            {{ isset($selectedLid) && $selectedLid == $level->lid ? 'selected' : '' }}>
                                             {{ $level->level_name }}
                                         </option>
                                     @endforeach
@@ -67,17 +69,16 @@
                             @for ($i = 1; $i <= ($nop ?? 4); $i++)
                                 <div class="form-group">
                                     <label>Options {{ $i }})</label> <br>
-                                    <input type="text" name="option[]" value="">
+                                    <input type="text" name="option[]" value="{{ old('option.' . ($i - 1)) }}">
                                     =
-                                    <input type="text" name="option2[]" value="">
+                                    <input type="text" name="option2[]" value="{{ old('option2.' . ($i - 1)) }}">
                                 </div>
                             @endfor
 
-                            <input type="hidden" name="parag" id="parag" value="0">
                             <button class="btn btn-default" type="submit">Submit</button>
 
                             @if ($withParagraph ?? false)
-                                <button class="btn btn-default" type="button" onclick="parags();">
+                                <button class="btn btn-default" type="submit" name="parag" value="1">
                                     Submit & Add new with same paragraph
                                 </button>
                             @endif
@@ -89,13 +90,6 @@
         </div>
 
     </div>
-
-    <script>
-        function parags() {
-            $('#parag').val('1');
-            $('#qf').submit();
-        }
-    </script>
 
     @push('scripts')
         <script>

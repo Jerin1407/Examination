@@ -139,7 +139,9 @@
                             <tbody>
                                 @forelse ($recentUsers as $user)
                                     <tr>
-                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <a href="{{ route('editUser', $user->uid) }}">{{ $user->email }}</a>
+                                        </td>
                                         <td class="text-xs-right">{{ $user->first_name }} {{ $user->last_name }}</td>
                                         <td class="text-xs-right">{{ $user->group_name ?? '—' }}</td>
                                         <td class="text-xs-right">{{ $user->contact_no }}</td>
@@ -168,7 +170,6 @@
         </script>
 
         <script>
-            
             // alert success for login
             @if (session('success_login'))
                 const Toast = Swal.mixin({

@@ -481,8 +481,8 @@ class HomeController extends Controller
 
         $quiz = SavsoftQuizModel::findOrFail($quid);
 
-        $categories = SavsoftCategoryModel::all();
-        $levels = SavsoftLevelModel::all();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
+        $levels = SavsoftLevelModel::where('is_active', 1)->get();
 
         $search = $request->input('search');
         $cid = $request->input('cid');
@@ -550,8 +550,8 @@ class HomeController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        $groups = SavsoftGroupModel::all();
-        $categories = SavsoftCategoryModel::all();
+        $groups = SavsoftGroupModel::where('is_active', 1)->get();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
 
         return view('study_material.add', [
             'groups' => $groups,
@@ -624,8 +624,8 @@ class HomeController extends Controller
         }
 
         $studyMaterial = StudyMaterialModel::findOrFail($stid);
-        $groups = SavsoftGroupModel::all();
-        $categories = SavsoftCategoryModel::all();
+        $groups = SavsoftGroupModel::where('is_active', 1)->get();
+        $categories = SavsoftCategoryModel::where('is_active', 1)->get();
 
         $rawGids = $studyMaterial->gids;
         $selectedGids = [];
