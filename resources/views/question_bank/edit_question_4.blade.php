@@ -9,7 +9,7 @@
         <h3>Edit Question</h3>
 
         <div class="row">
-            <form method="post" action="">
+            <form method="post" action="{{ route('updateQuestion4') }}">
                 @csrf
 
                 <input type="hidden" name="qid" value="{{ $question->qid }}">

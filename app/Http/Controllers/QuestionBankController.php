@@ -177,6 +177,51 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
+        $request->validate([
+            'qid'      => 'required|integer',
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'score'    => 'required|integer|min:1',
+            'option'   => 'required|array|min:2',
+            'option.*' => 'nullable|string',
+        ]);
+
+        $question = SavsoftQbankModel::where('qid', $request->input('qid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // This method only handles Multiple Choice Single Answer
+        if ($question->question_type !== 'Multiple Choice Single Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options    = SavsoftOptionsModel::where('qid', $question->qid)->orderBy('oid')->get();
+        $correctOpt = (int) $request->input('score');
+
+        if ($correctOpt > $options->count()) {
+            return back()->withInput()->withErrors(['score' => 'Please select a valid correct option.']);
+        }
+
+        DB::transaction(function () use ($request, $question, $options, $correctOpt) {
+
+            $question->update([
+                'question'    => $request->input('question'),
+                'description' => $request->input('description'),
+                'cid'         => $request->input('cid'),
+                'lid'         => $request->input('lid'),
+                'paragraph'   => $request->input('paragraph'),
+            ]);
+
+            // option[] arrives in the same order the edit page listed them (by oid)
+            foreach ($options as $i => $option) {
+                $option->update([
+                    'q_option' => $request->input('option.' . $i) ?? '',
+                    'score'    => (($i + 1) === $correctOpt) ? 1 : 0,
+                ]);
+            }
+        });
+
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
 
@@ -185,6 +230,56 @@ class QuestionBankController extends Controller
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $request->validate([
+            'qid'      => 'required|integer',
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'score'    => 'required|array|min:1',
+            'score.*'  => 'integer|min:1',
+            'option'   => 'required|array|min:2',
+            'option.*' => 'nullable|string',
+        ]);
+
+        $question = SavsoftQbankModel::where('qid', $request->input('qid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // This method only handles Multiple Choice Multiple Answer
+        if ($question->question_type !== 'Multiple Choice Multiple Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options    = SavsoftOptionsModel::where('qid', $question->qid)->orderBy('oid')->get();
+        $correctOpt = array_values(array_unique(array_map('intval', $request->input('score', []))));
+
+        // Every ticked option number must exist
+        if (max($correctOpt) > $options->count()) {
+            return back()->withInput()->withErrors(['score' => 'Please select valid correct options.']);
+        }
+
+        DB::transaction(function () use ($request, $question, $options, $correctOpt) {
+
+            $question->update([
+                'question'    => $request->input('question'),
+                'description' => $request->input('description'),
+                'cid'         => $request->input('cid'),
+                'lid'         => $request->input('lid'),
+                'paragraph'   => $request->input('paragraph'),
+            ]);
+
+            // Each correct option gets an equal share of 1 point, same as the add method
+            $perOption = 1 / count($correctOpt);
+
+            // option[] arrives in the same order the edit page listed them (by oid)
+            foreach ($options as $i => $option) {
+                $option->update([
+                    'q_option' => $request->input('option.' . $i) ?? '',
+                    'score'    => in_array($i + 1, $correctOpt, true) ? $perOption : 0,
+                ]);
+            }
+        });
 
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
@@ -195,6 +290,54 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
+        $request->validate([
+            'qid'       => 'required|integer',
+            'cid'       => 'required|integer|min:1',
+            'lid'       => 'required|integer|min:1',
+            'question'  => 'required|string',
+            'option'    => 'required|array|min:2',
+            'option.*'  => 'required|string',
+            'option2'   => 'required|array|min:2',
+            'option2.*' => 'required|string',
+        ], [
+            'option.*.required'  => 'Please fill in every left column option.',
+            'option2.*.required' => 'Please fill in every right column option.',
+        ]);
+
+        $question = SavsoftQbankModel::where('qid', $request->input('qid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // This method only handles Match the Column
+        if ($question->question_type !== 'Match the Column') {
+            return redirect()->route('listQuestion');
+        }
+
+        $options = SavsoftOptionsModel::where('qid', $question->qid)->orderBy('oid')->get();
+
+        DB::transaction(function () use ($request, $question, $options) {
+
+            $question->update([
+                'question'    => $request->input('question'),
+                'description' => $request->input('description'),
+                'cid'         => $request->input('cid'),
+                'lid'         => $request->input('lid'),
+                'paragraph'   => $request->input('paragraph'),
+            ]);
+
+            // Each pair carries an equal share of 1 point, same as the add method
+            $perPair = 1 / max($options->count(), 1);
+
+            // option[] and option2[] arrive in the same order the edit page listed them (by oid)
+            foreach ($options as $i => $option) {
+                $option->update([
+                    'q_option'       => $request->input('option.' . $i) ?? '',
+                    'q_option_match' => $request->input('option2.' . $i) ?? '',
+                    'score'          => $perPair,
+                ]);
+            }
+        });
+
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
 
@@ -204,6 +347,59 @@ class QuestionBankController extends Controller
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
+        $request->validate([
+            'qid'      => 'required|integer',
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+            'option'   => 'required|array|min:1',
+            'option.0' => 'required|string',
+        ], [
+            'option.0.required' => 'Please enter the answer.',
+        ]);
+
+        $question = SavsoftQbankModel::where('qid', $request->input('qid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // This method only handles Short Answer
+        if ($question->question_type !== 'Short Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $answer = trim($request->input('option.0'));
+
+        DB::transaction(function () use ($request, $question, $answer) {
+
+            $question->update([
+                'question'    => $request->input('question'),
+                'description' => $request->input('description'),
+                'cid'         => $request->input('cid'),
+                'lid'         => $request->input('lid'),
+                'paragraph'   => $request->input('paragraph'),
+            ]);
+
+            // Short Answer keeps its accepted answers in a single option row
+            $option = SavsoftOptionsModel::where('qid', $question->qid)->orderBy('oid')->first();
+
+            if ($option) {
+                $option->update([
+                    'q_option' => $answer,
+                    'score'    => 1,
+                ]);
+            } else {
+                // Safety net: the question had no option row, so create one
+                SavsoftOptionsModel::create([
+                    'qid'             => $question->qid,
+                    'q_option'        => $answer,
+                    'q_option1'       => '',
+                    'q_option_match'  => '',
+                    'q_option_match1' => '',
+                    'score'           => 1,
+                ]);
+            }
+        });
+
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
 
@@ -212,6 +408,30 @@ class QuestionBankController extends Controller
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
+
+        $request->validate([
+            'qid'      => 'required|integer',
+            'cid'      => 'required|integer|min:1',
+            'lid'      => 'required|integer|min:1',
+            'question' => 'required|string',
+        ]);
+
+        $question = SavsoftQbankModel::where('qid', $request->input('qid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // This method only handles Long Answer
+        if ($question->question_type !== 'Long Answer') {
+            return redirect()->route('listQuestion');
+        }
+
+        $question->update([
+            'question'    => $request->input('question'),
+            'description' => $request->input('description'),
+            'cid'         => $request->input('cid'),
+            'lid'         => $request->input('lid'),
+            'paragraph'   => $request->input('paragraph'),
+        ]);
 
         return redirect()->route('listQuestion')->with('success_update', 'Question updated successfully.');
     }
