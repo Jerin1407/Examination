@@ -12,6 +12,8 @@
             <form method="post" id="quiz_detail" action="">
                 @csrf
 
+                <input type="hidden" name="quid" value="{{ $exam->quid }}">
+
                 <div class="col-md-12">
                     <br>
                     <div class="login-panel panel panel-default">
@@ -20,41 +22,42 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <td>Exam Name</td>
-                                    <td></td>
+                                    <td>{{ $exam->quiz_name }}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">Description<br></td>
+                                    <td>Description</td>
+                                    <td>{!! $exam->description !!}</td>
                                 </tr>
                                 <tr>
                                     <td>Start Date (Exam can be attempted after this date. YYYY-MM-DD HH:II:SS )</td>
-                                    <td></td>
+                                    <td>{{ \Carbon\Carbon::createFromTimestamp($exam->start_date)->format('Y-m-d H:i:s') }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>End Date (Exam can be attempted before this date. eg. 2017-12-31 23:59:00 )</td>
-                                    <td></td>
+                                    <td>{{ \Carbon\Carbon::createFromTimestamp($exam->end_date)->format('Y-m-d H:i:s') }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Duration (in min.)</td>
-                                    <td></td>
+                                    <td>{{ $exam->duration }}</td>
                                 </tr>
                                 <tr>
                                     <td>Allow Maximum Attempts</td>
-                                    <td></td>
+                                    <td>{{ $exam->maximum_attempts }}</td>
                                 </tr>
                                 <tr>
                                     <td>Minimum Percentage Required to Pass</td>
-                                    <td></td>
+                                    <td>{{ $exam->pass_percentage }}</td>
                                 </tr>
-
                                 <tr>
                                     <td>Correct Score</td>
-                                    <td></td>
+                                    <td>{{ $exam->correct_score }}</td>
                                 </tr>
                                 <tr>
                                     <td>InCorrect Score</td>
-                                    <td></td>
+                                    <td>{{ $exam->incorrect_score }}</td>
                                 </tr>
-
                                 <tr>
                                     <td>Select Language</td>
                                     <td>
@@ -65,14 +68,14 @@
                                 </tr>
                             </table>
 
-                            <div style="color:#ff0000;">camera_instructions</div>
+                            {{-- <div style="color:#ff0000;">camera_instructions</div>
                             <div id="my_photo"
                                 style="width:500px;height:500px;background:#212121;padding:2px;border:1px solid #666666;color:red">
                             </div>
                             <br><br>
 
                             <script type="text/javascript" src="{{ asset('js/webcamjs/webcam.js') }}"></script>
-                            {{-- <script language="JavaScript">
+                            <script language="JavaScript">
                                 Webcam.set({
                                     width: 500,
                                     height: 500,
@@ -102,19 +105,18 @@
                                     void(take_snapshot());
                                     upload_photo();
                                 }
-                            </script> --}}
+                            </script>
 
                             <button class="btn btn-success" type="button"
                                 onclick="javascript:capturephoto();">capture_start_quiz</button>
-                            <button class="btn btn-success" type="submit">start_quiz</button>
+                            <button class="btn btn-success" type="submit">start_quiz</button> --}}
 
                             <button class="btn btn-success" type="submit">Start Exam</button>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="">Back</a>
 
-                            <div class="alert alert-danger">login_required</div>
+                            {{-- <div class="alert alert-danger">login_required</div>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="">Back</a>
+                            <a href="">Back</a> --}}
 
                         </div>
                     </div>

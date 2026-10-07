@@ -464,13 +464,24 @@ class HomeController extends Controller
         return redirect()->back()->with('success_delete', 'Exam deleted successfully.');
     }
 
-    public function attemptExam(Request $request)
+    public function attemptExam(Request $request, $quid)
     {
         if (!session()->has('uid')) {
             return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('exam.attempt_exam');
+        $exam = SavsoftQuizModel::where('quid', $quid)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // Only active exams (inside the start/end window) can be attempted
+        $now = now()->timestamp;
+
+        if ($exam->start_date > $now || $exam->end_date < $now) {
+            return redirect()->route('listExam');
+        }
+
+        return view('exam.attempt_exam', compact('exam'));
     }
 
     public function addQuestionIntoExam(Request $request, $quid)
@@ -533,6 +544,24 @@ class HomeController extends Controller
         }
 
         return response()->json(['status' => 'added']);
+    }
+
+    public function startExam(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
+        }
+
+        return view('exam.start_exam');
+    }
+
+    public function viewResult(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
+        }
+
+        return view('exam.view_result');
     }
 
     public function listMark(Request $request)
