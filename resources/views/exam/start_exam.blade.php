@@ -1,71 +1,178 @@
-<!-- Template javascript -->
-<script src="{{ asset('js/basic.js?q=' . time()) }}"></script>
-<style>
-    td {
-        font-size: 14px;
-        padding: 4px;
-    }
+<!DOCTYPE html>
+<html lang="en">
 
-    .row {
-        margin: 0px;
-    }
-</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@yield('title', 'Start Exam')</title>
 
-<script>
-    var Timer;
-    var TotalSeconds;
+    <!-- Custom fonts for this template -->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+    <!-- custom css -->
+    <link href="{{ asset('css/style.css?q=' . time()) }}" rel="stylesheet">
 
-    function CreateTimer(TimerID, Time) {
-        Timer = document.getElementById(TimerID);
-        TotalSeconds = Time;
+    <!-- Custom styles for this template -->
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
 
-        UpdateTimer()
-        window.setTimeout("Tick()", 1000);
-    }
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('js/select2.min.js') }}"></script>
 
-    function Tick() {
-        if (TotalSeconds <= 0) {
-            alert("Time's up!");
-            return;
+    <!-- TinyMCE Text Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        html,
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        p,
+        div,
+        span,
+        ul,
+        li,
+        a {
+            direction: {{ config('app.direction', 'ltr') }};
         }
 
-        TotalSeconds -= 1;
+        .btn-default {
+            border: 1px solid #c8c4c4;
+        }
 
-        UpdateTimer()
-        window.setTimeout("Tick()", 1000);
-    }
+        form {
+            width: 100%;
+        }
 
-    function UpdateTimer() {
-        var Seconds = TotalSeconds;
+        .logo {
+            font-size: 20px;
+            line-height: 50px;
+            text-align: center;
+            margin-top: 10px;
+            padding: 0 10px;
+            width: 100%;
+            font-family: 'Kaushan Script', cursive;
+            font-weight: 400;
+            height: 48px;
+            display: block;
+            background-color: #367fa9;
+            color: #f9f9f9;
+            box-sizing: border-box;
+        }
 
-        var Days = Math.floor(Seconds / 86400);
-        Seconds -= Days * 86400;
+        .sidebar {
+            width: 16rem !important;
+        }
 
-        var Hours = Math.floor(Seconds / 3600);
-        Seconds -= Hours * (3600);
+        .logo-style {
+            width: 173px;
+            float: left;
+            margin: 10px 2px 0;
+        }
+    </style>
 
-        var Minutes = Math.floor(Seconds / 60);
-        Seconds -= Minutes * (60);
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-        var TimeStr = ((Days > 0) ? Days + " days " : "") + LeadingZero(Hours) + ":" + LeadingZero(Minutes) + ":" +
-            LeadingZero(Seconds)
+    <!-- Core plugin JavaScript -->
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
-        Timer.innerHTML = TimeStr;
-    }
+    <!-- Custom scripts for all pages -->
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
-    function LeadingZero(Time) {
-        return (Time < 10) ? "0" + Time : +Time;
-    }
+    <!-- Page level plugins -->
+    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
 
-    setTimeout(submitform, '');
+    <script>
+        var base_url = "{{ url('/') }}";
+    </script>
 
-    // function submitform() {
-    //     alert('Time Over');
-    //     window.location = "{{ route('viewResult') }}";
-    // }
-</script>
+    @if (request()->segment(1) . '/' . request()->segment(2) != 'quiz/attempt')
+        <!-- custom javascript -->
+        <script src="{{ asset('js/basic.js?q=' . time()) }}"></script>
+    @endif
 
-<div class=" ">
+    <!-- firebase messaging manifest.json -->
+    <link rel="manifest" href="{{ asset('js/manifest.json') }}">
+
+    <!-- Template javascript -->
+    <script src="{{ asset('js/basic.js?q=' . time()) }}"></script>
+    <style>
+        td {
+            font-size: 14px;
+            padding: 4px;
+        }
+
+        .row {
+            margin: 0px;
+        }
+    </style>
+
+    <script>
+        var Timer;
+        var TotalSeconds;
+
+        function CreateTimer(TimerID, Time) {
+            Timer = document.getElementById(TimerID);
+            TotalSeconds = Time;
+
+            UpdateTimer()
+            window.setTimeout("Tick()", 1000);
+        }
+
+        function Tick() {
+            if (TotalSeconds <= 0) {
+                alert("Time's up!");
+                return;
+            }
+
+            TotalSeconds -= 1;
+
+            UpdateTimer()
+            window.setTimeout("Tick()", 1000);
+        }
+
+        function UpdateTimer() {
+            var Seconds = TotalSeconds;
+
+            var Days = Math.floor(Seconds / 86400);
+            Seconds -= Days * 86400;
+
+            var Hours = Math.floor(Seconds / 3600);
+            Seconds -= Hours * (3600);
+
+            var Minutes = Math.floor(Seconds / 60);
+            Seconds -= Minutes * (60);
+
+            var TimeStr = ((Days > 0) ? Days + " days " : "") + LeadingZero(Hours) + ":" + LeadingZero(Minutes) + ":" +
+                LeadingZero(Seconds)
+
+            Timer.innerHTML = TimeStr;
+        }
+
+        function LeadingZero(Time) {
+            return (Time < 10) ? "0" + Time : +Time;
+        }
+
+        setTimeout(submitform, '');
+
+        // function submitform() {
+        //     alert('Time Over');
+        //     window.location = "{{ route('viewResult') }}";
+        // }
+    </script>
+</head>
+
+<body>
+
+    <div class=" ">
 
     <div style="background:#3D4A5D;padding:4px;color:#ffffff;">
         <div class="save_answer_signal" id="save_answer_signal2"></div>
@@ -259,203 +366,6 @@
         Exam</button>
 </div>
 
-{{-- <script>
-    $("#nextbtn").click(function() {
-        if ($(".answer-submit").is(":visible")) {
-            var id = $('.answer-submit:visible').val();
-            saveExam(id);
-        }
-        show_next_question();
-    })
+</body>
 
-    var ctime = 0;
-    var ind_time = new Array();
-
-    @php
-        $ind_time = explode(',', $quiz['individual_time']);
-    @endphp
-    @for ($ct = 0; $ct < $quiz['noq']; $ct++)
-        ind_time[{{ $ct }}] = {{ $ind_time[$ct] ?? 0 }};
-    @endfor
-
-    noq = "{{ $quiz['noq'] }}";
-    show_question('0');
-
-    function increasectime() {
-        ctime += 1;
-    }
-    setInterval(increasectime, 1000);
-    setInterval(setIndividual_time, 30000);
-</script> --}}
-
-<div id="warning_div"
-    style="padding:10px; position:fixed;z-index:100;display:none;width:100%;border-radius:5px;height:200px; border:1px solid #dddddd;left:4px;top:70px;background:#ffffff;">
-    <center>
-        <b>{{ __('lang.really_Want_to_submit') }}</b> <br><br>
-        <span id="processing"></span>
-
-        <a href="javascript:cancelmove();" class="btn btn-danger" style="cursor:pointer;">{{ __('lang.cancel') }}</a>
-        &nbsp; &nbsp; &nbsp; &nbsp;
-        <a href="javascript:submit_quiz();" class="btn btn-info"
-            style="cursor:pointer;">{{ __('lang.submit_quiz') }}</a>
-    </center>
-</div>
-
-<script type="text/javascript" src="{{ asset('editor/tinymce.min.js') }}"></script>
-
-{{-- <script type="text/javascript">
-    tinymce.init({
-        selector: '.tinymce_textarea',
-        height: 100,
-        theme: 'modern',
-        plugins: [
-            'advlist autolink lists link image jbimages {{ config('app.eqneditor') ? 'eqneditor' : '' }} charmap print preview hr anchor pagebreak',
-            'searchreplace wordcount visualblocks visualchars code fullscreen',
-            'insertdatetime media nonbreaking save table contextmenu directionality',
-            'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc help'
-        ],
-        toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image |  jbimages | {{ config('app.eqneditor') ? 'eqneditor' : '' }}',
-        toolbar2: 'print preview media | forecolor backcolor emoticons | codesample help',
-        image_advtab: true,
-        templates: [{
-                title: 'Test template 1',
-                content: 'Test 1'
-            },
-            {
-                title: 'Test template 2',
-                content: 'Test 2'
-            }
-        ],
-        content_css: [
-            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-            '//www.tinymce.com/css/codepen.min.css'
-        ]
-    });
-
-    $(document).on("change", "#userfile", function() {
-        var rid = $('#rid').val();
-        var form = new FormData();
-        var file = $(this)[0].files[0];
-        form.append('userfile', file);
-        form.append('_token', '{{ csrf_token() }}');
-
-        $.ajax({
-            url: "{{ route('fileupload.do_upload') }}",
-            data: form,
-            type: "post",
-            dataType: 'json',
-            cache: false,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if (response.status == "success") {
-                    var element = $("<div class='row'>" +
-                        "<div class='col-xs-4'>" +
-                        "<div class='attachment row'>" +
-                        "<p class='pull-left'>" + response.file_name + "</p>" +
-                        "<input type='hidden' name='attachment_id[]' id='attachment_id' value = '" +
-                        response.id + "'/>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                        "<span class='pull-right'><a  class='remove-item'>X</a></span></div></div></div>"
-                    );
-                    $("#attachments").append(element);
-                    var attachment_id = [];
-                    $("#attachments input").each(function() {
-                        attachment_id.push($(this).val());
-                    });
-                }
-            }
-        });
-    });
-
-    $(".upload").click(function() {
-        var id = $('#attachment_id').val();
-        var q_id = $(this).val();
-        var rid = $('.rid').val();
-        $.ajax({
-            url: "{{ route('fileupload.user_files') }}",
-            data: {
-                id: id,
-                q_id: q_id,
-                rid: rid,
-                _token: '{{ csrf_token() }}'
-            },
-            type: "post",
-            success: function(response) {
-                $('#attachments').html("");
-                alert("Successfully uploaded....");
-            },
-            error: function() {}
-        });
-    });
-
-    $(document).ready(function() {
-        var rid = $('.rid').val();
-        $('.answer-submit').click(function() {
-            var id = $(this).val();
-            var content = tinyMCE.get('texteditor_' + id);
-            var long_answer = content.getContent()
-            $.ajax({
-                url: "{{ route('result.add_long_answer') }}",
-                data: {
-                    long_answer: long_answer,
-                    rid: rid,
-                    q_id: id,
-                    _token: '{{ csrf_token() }}'
-                },
-                type: "post",
-                success: function(response) {},
-                error: function() {}
-            });
-        });
-    });
-
-    function change_color_set(qn) {
-        var did = '#qbtn' + qn;
-        var q_type = '#q_type' + lqn;
-        var ldid = '#qbtn' + lqn;
-        var green = 0;
-        var answer_value = "#answer_value" + lqn;
-        if ($(answer_value).val() != '') {
-            $(ldid).css('backgroundColor', '#449d44');
-            $(ldid).css('color', '#ffffff');
-        }
-    }
-
-    function saveExam(id) {
-        var rid = $('.rid').val();
-        var content = tinyMCE.get('texteditor_' + id);
-
-        change_color_set(lqn);
-        var long_answer = content.getContent()
-        $.ajax({
-            url: "{{ route('result.add_long_answer') }}",
-            data: {
-                long_answer: long_answer,
-                rid: rid,
-                q_id: id,
-                _token: '{{ csrf_token() }}'
-            },
-            type: "post",
-            success: function(response) {},
-            error: function() {}
-        });
-    }
-
-    $('body').on('click', '#attachments .remove-item', function() {
-        $(this).closest('.attachment').remove();
-        window.location.reload();
-    });
-
-    $('.highlighter').click(function() {
-        var range = window.getSelection().getRangeAt(0);
-        var selectionContents = range.extractContents();
-        var span = document.createElement("span");
-        span.appendChild(selectionContents);
-        span.setAttribute("class", "uiWebviewHighlight");
-
-        span.style.backgroundColor = "orange";
-        span.style.color = "white";
-
-        range.insertNode(span);
-    });
-</script> --}}
+</html>
