@@ -58,7 +58,8 @@ Route::delete('/delete-exam/{id}', [HomeController::class, 'deleteExam'])->name(
 Route::get('/attempt-exam/{quid}', [HomeController::class, 'attemptExam'])->name('attemptExam');
 Route::get('/add-question-into-exam/{quid}', [HomeController::class, 'addQuestionIntoExam'])->name('addQuestionIntoExam');
 Route::post('/add-question-into-exam/{quid}/add/{qid}', [HomeController::class, 'addQuestionToExam'])->name('addQuestionToExam');
-Route::get('/start-exam', [HomeController::class, 'startExam'])->name('startExam');
+Route::post('/start-exam', [HomeController::class, 'startExam'])->name('startExam');
+Route::get('/start-exam', fn () => redirect()->route('listExam'));
 Route::get('/view-result', [HomeController::class, 'viewResult'])->name('viewResult');
 
 // Valuation Routes

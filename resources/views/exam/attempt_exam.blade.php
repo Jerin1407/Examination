@@ -9,7 +9,7 @@
         <h3>Attempt Exam</h3>
 
         <div class="row">
-            <form method="post" id="quiz_detail" action="">
+            <form method="post" id="quiz_detail" action="{{ route('startExam') }}">
                 @csrf
 
                 <input type="hidden" name="quid" value="{{ $exam->quid }}">

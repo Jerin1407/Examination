@@ -8,6 +8,7 @@ use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
 use App\Models\SavsoftLevelModel;
 use App\Models\SavsoftNotificationModel;
+use App\Models\SavsoftOptionsModel;
 use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizCustomFormModel;
@@ -549,10 +550,46 @@ class HomeController extends Controller
     public function startExam(Request $request)
     {
         if (!session()->has('uid')) {
-            return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
         }
 
-        return view('exam.start_exam');
+        $request->validate([
+            'quid' => 'required|integer',
+        ]);
+
+        $exam = SavsoftQuizModel::where('quid', $request->input('quid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // Only active exams (inside the start/end window) can be started
+        $now = now()->timestamp;
+
+        if ($exam->start_date > $now || $exam->end_date < $now) {
+            return redirect()->route('listExam');
+        }
+
+        // qids is a comma separated list of question ids
+        $qids = array_values(array_filter(array_map('intval', explode(',', (string) $exam->qids))));
+
+        $found = SavsoftQbankModel::whereIn('qid', $qids)
+            ->where('is_active', 1)
+            ->get()
+            ->keyBy('qid');
+
+        // Keep the order the exam was built with
+        $questions = collect($qids)
+            ->map(fn($id) => $found->get($id))
+            ->filter()
+            ->values();
+
+        $options = SavsoftOptionsModel::whereIn('qid', $qids)
+            ->orderBy('oid')
+            ->get()
+            ->groupBy('qid');
+
+        $lang = $request->input('selected_lang', 'English');
+
+        return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang'));
     }
 
     public function viewResult(Request $request)

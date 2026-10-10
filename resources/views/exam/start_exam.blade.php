@@ -7,25 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'Start Exam')</title>
 
-    <!-- Custom fonts for this template -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-    <!-- custom css -->
     <link href="{{ asset('css/style.css?q=' . time()) }}" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
-
-    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
-    <script src="{{ asset('js/select2.min.js') }}"></script>
-
-    <!-- TinyMCE Text Editor -->
-    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
-
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         html,
@@ -51,60 +38,6 @@
             width: 100%;
         }
 
-        .logo {
-            font-size: 20px;
-            line-height: 50px;
-            text-align: center;
-            margin-top: 10px;
-            padding: 0 10px;
-            width: 100%;
-            font-family: 'Kaushan Script', cursive;
-            font-weight: 400;
-            height: 48px;
-            display: block;
-            background-color: #367fa9;
-            color: #f9f9f9;
-            box-sizing: border-box;
-        }
-
-        .sidebar {
-            width: 16rem !important;
-        }
-
-        .logo-style {
-            width: 173px;
-            float: left;
-            margin: 10px 2px 0;
-        }
-    </style>
-
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript -->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages -->
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
-    <!-- Page level plugins -->
-    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
-
-    <script>
-        var base_url = "{{ url('/') }}";
-    </script>
-
-    @if (request()->segment(1) . '/' . request()->segment(2) != 'quiz/attempt')
-        <!-- custom javascript -->
-        <script src="{{ asset('js/basic.js?q=' . time()) }}"></script>
-    @endif
-
-    <!-- firebase messaging manifest.json -->
-    <link rel="manifest" href="{{ asset('js/manifest.json') }}">
-
-    <!-- Template javascript -->
-    <script src="{{ asset('js/basic.js?q=' . time()) }}"></script>
-    <style>
         td {
             font-size: 14px;
             padding: 4px;
@@ -113,199 +46,160 @@
         .row {
             margin: 0px;
         }
+
+        .qbtn {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            color: #fff;
+            background: #212121;
+            margin: 2px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .qbtn.current {
+            outline: 2px solid #3D4A5D;
+            outline-offset: 1px;
+        }
+
+        .question_div {
+            display: none;
+            padding: 10px;
+        }
+
+        .question_container {
+            margin-bottom: 15px;
+        }
+
+        .footer_buttons {
+            padding: 6px 10px;
+        }
     </style>
 
-    <script>
-        var Timer;
-        var TotalSeconds;
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-        function CreateTimer(TimerID, Time) {
-            Timer = document.getElementById(TimerID);
-            TotalSeconds = Time;
-
-            UpdateTimer()
-            window.setTimeout("Tick()", 1000);
-        }
-
-        function Tick() {
-            if (TotalSeconds <= 0) {
-                alert("Time's up!");
-                return;
-            }
-
-            TotalSeconds -= 1;
-
-            UpdateTimer()
-            window.setTimeout("Tick()", 1000);
-        }
-
-        function UpdateTimer() {
-            var Seconds = TotalSeconds;
-
-            var Days = Math.floor(Seconds / 86400);
-            Seconds -= Days * 86400;
-
-            var Hours = Math.floor(Seconds / 3600);
-            Seconds -= Hours * (3600);
-
-            var Minutes = Math.floor(Seconds / 60);
-            Seconds -= Minutes * (60);
-
-            var TimeStr = ((Days > 0) ? Days + " days " : "") + LeadingZero(Hours) + ":" + LeadingZero(Minutes) + ":" +
-                LeadingZero(Seconds)
-
-            Timer.innerHTML = TimeStr;
-        }
-
-        function LeadingZero(Time) {
-            return (Time < 10) ? "0" + Time : +Time;
-        }
-
-        setTimeout(submitform, '');
-
-        // function submitform() {
-        //     alert('Time Over');
-        //     window.location = "{{ route('viewResult') }}";
-        // }
-    </script>
+    <!-- TinyMCE Text Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 
 <body>
 
-    <div class=" ">
-
     <div style="background:#3D4A5D;padding:4px;color:#ffffff;">
-        <div class="save_answer_signal" id="save_answer_signal2"></div>
-        <div class="save_answer_signal" id="save_answer_signal1"></div>
-
-        <div style="float:right;width:150px; margin-right:10px;">
-            Time left: <span id='timer'>
-                <script type="text/javascript">
-                    window.onload = CreateTimer("timer");
-                </script>
-            </span>
+        <div style="float:right;width:200px;margin-right:10px;">
+            Time left: <span id="timer">--:--:--</span>
         </div>
-        <div style="float:left;width:150px; ">
-            <h4>exam name</h4>
+        <div style="float:left;">
+            <h4 style="margin:0;">{{ $exam->quiz_name }}</h4>
         </div>
         <div style="clear:both;"></div>
     </div>
 
-    <div style="clear:both;"></div>
-
     <div class="row" style="margin-top:0px;">
         <div class="col-md-9">
 
-            <!-- Category button -->
-            <div class="row" style="margin:2px;">
-
-                <a href="javascript:switch_category('cat_');" class="btn btn-info"
-                    style="cursor:pointer;margin-left:5px;">category</a>
-                <input type="hidden" id="cat_" value="">
-            </div>
-
             <form method="post" action="" id="quiz_form">
                 @csrf
-                <input type="hidden" name="rid" value="" class="rid">
-                <input type="hidden" name="noq" value="" class="noq">
-                <input type="hidden" name="individual_time" id="individual_time" value="">
+                <input type="hidden" name="quid" value="{{ $exam->quid }}">
+                <input type="hidden" name="selected_lang" value="{{ $lang }}">
 
-                <div id="q" class="question_div">
-                    <div class="question_container">
-                        paragraph<br>
-                        question paragraph
-                        <hr>
+                @forelse ($questions as $i => $question)
+                    @php
+                        $opts = $options->get($question->qid, collect());
+                        $useAlt = $lang !== 'English';
+                        $questionText = $useAlt && $question->question1 ? $question->question1 : $question->question;
+                        $paragraphText =
+                            $useAlt && $question->paragraph1 ? $question->paragraph1 : $question->paragraph;
+                    @endphp
 
-                        question 1)<br>
+                    <div id="q_{{ $i }}" class="question_div">
 
-                        lorem ipsum dolor sit amet,
-                    </div>
+                        <div class="question_container">
+                            @if (!empty(trim(strip_tags((string) $paragraphText))))
+                                {!! $paragraphText !!}
+                                <hr>
+                            @endif
 
-                    <div class="option_container">
-
-                        {{-- multiple choice single answer --}}
-
-                        <input type="hidden" name="question_type[]" id="q_type" value="1">
-
-                        <div class="op">
-                            <table>
-                                <tr>
-                                    <td>
-                                        abc)
-                                        <input type="radio" name="answer[][]" id="answer_value" value="">
-                                    </td>
-                                    <td>q_option</td>
-                                </tr>
-                            </table>
+                            <b>Question {{ $i + 1 }})</b><br>
+                            {!! $questionText !!}
                         </div>
 
-                        {{-- multiple choice multiple answer --}}
+                        <div class="option_container">
 
-                        <input type="hidden" name="question_type[]" id="q_type" value="2">
+                            @if ($question->question_type === 'Multiple Choice Single Answer')
+                                @foreach ($opts as $n => $option)
+                                    <div class="op">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    {{ chr(97 + $n) }})
+                                                    <input type="radio" name="answer[{{ $i }}][]"
+                                                        value="{{ $option->oid }}">
+                                                </td>
+                                                <td>{!! $useAlt && $option->q_option1 ? $option->q_option1 : $option->q_option !!}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @elseif ($question->question_type === 'Multiple Choice Multiple Answer')
+                                @foreach ($opts as $n => $option)
+                                    <div class="op">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    {{ chr(97 + $n) }})
+                                                    <input type="checkbox" name="answer[{{ $i }}][]"
+                                                        value="{{ $option->oid }}">
+                                                </td>
+                                                <td>{!! $useAlt && $option->q_option1 ? $option->q_option1 : $option->q_option !!}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @elseif ($question->question_type === 'Short Answer')
+                                <div class="op">
+                                    Answer
+                                    <input type="text" autocomplete="off" name="answer[{{ $i }}][]"
+                                        value="">
+                                </div>
+                            @elseif ($question->question_type === 'Long Answer')
+                                <div class="form-group">
+                                    <label for="long_{{ $i }}">Answer</label>
+                                    <textarea name="answer[{{ $i }}][]" id="long_{{ $i }}" class="form-control tinymce_textarea" rows="8"></textarea>
+                                </div>
+                            @elseif ($question->question_type === 'Match the Column')
+                                @php $choices = $opts->shuffle(); @endphp
+                                <div class="op">
+                                    <table>
+                                        @foreach ($opts as $n => $option)
+                                            <tr>
+                                                <td>{{ chr(97 + $n) }})
+                                                    {{ $useAlt && $option->q_option1 ? $option->q_option1 : $option->q_option }}
+                                                </td>
+                                                <td>
+                                                    <select name="answer[{{ $i }}][{{ $option->oid }}]">
+                                                        <option value="0">Select</option>
+                                                        @foreach ($choices as $choice)
+                                                            <option value="{{ $choice->oid }}">
+                                                                {{ $useAlt && $choice->q_option_match1 ? $choice->q_option_match1 : $choice->q_option_match }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @endif
 
-                        <div class="op">
-                            <table>
-                                <tr>
-                                    <td>
-                                        abc) <input type="checkbox" name="answer[][]" id="answer_value" value="">
-                                    </td>
-                                    <td>q_option</td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        {{-- short answer --}}
-
-                        <input type="hidden" name="question_type[]" id="q_type" value="4">
-
-                        <div class="op">
-                            answer
-                            <input type="text" autocomplete="off" name="answer[][]" value="" id="answer_value">
-                        </div>
-
-                        {{-- long answer --}}
-
-                        <input type="hidden" name="question_type[]" id="q_type" class="q_k" value="5">
-                        <input type="hidden" class="qu_id" value="" name="qstn_no">
-
-                        <div class="form-group">
-                            <label for="texteditor_">answer</label>
-                            <textarea name="lng_answer" id="texteditor_" class="form-control tinymce_textarea"></textarea>
-                        </div>
-                        <button class="btn btn-default answer-submit" value=""
-                            type="button">submit</button><br><br>
-                        <div class="text_data"></div>
-
-                        <div class="form-group">
-                            <label for="userfile" id="file_upl">file_upload</label>
-                            <input type="file" class="data_file" id="userfile" name="userfile">
-                            <div class="col-xs-8">
-                                <div id='attachments'></div>
-                            </div>
-                            <button class="btn btn-default upload" value="" type="button">upload</button>
-                        </div>
-
-                        {{-- match the column --}}
-
-                        <input type="hidden" name="question_type[]" id="q_type" value="3">
-
-                        <div class="op">
-                            <table>
-                                <tr>
-                                    <td>abc) 1</td>
-                                    <td>
-                                        <select name="answer[][]" id="answer_value">
-                                            <option value="0">Select</option>
-                                            <option value=""></option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
                     </div>
-                </div>
-
-                <input type="hidden" name="parag" id="parag" value="0">
+                @empty
+                    <div style="padding:20px;">No questions found in this exam.</div>
+                @endforelse
             </form>
         </div>
 
@@ -313,17 +207,19 @@
 
             <b>Navigator</b>
             <div style="max-height:60%;overflow-y:auto;">
-                <div class="qbtn" onclick="javascript:show_question('');" id="qbtn">1</div>
+                @foreach ($questions as $i => $question)
+                    <div class="qbtn" id="qbtn_{{ $i }}" onclick="showQ({{ $i }});">
+                        {{ $i + 1 }}</div>
+                @endforeach
 
                 <br><br><br>
                 <div class="op">
                     <b>Notepad</b>
-                    <textarea style="width:100%;height:100%;"></textarea><br>
+                    <textarea style="width:100%;height:100px;"></textarea><br>
                 </div>
                 <div style="clear:both;"></div>
             </div>
             <hr>
-            <div></div>
 
             <table>
                 <tr>
@@ -345,26 +241,160 @@
             <div style="clear:both;"></div>
         </div>
     </div>
-</div>
 
-<div class="footer_buttons" style="background:#3D4A5D;">
-    <button class="btn btn-warning" onclick="javascript:review_later();" style="margin-top:2px;">Flag</button>
+    <div class="footer_buttons" style="background:#3D4A5D;">
+        <button class="btn btn-warning" type="button" onclick="flagQ();" style="margin-top:2px;">Flag</button>
+        <button class="btn btn-info" type="button" onclick="clearQ();" style="margin-top:2px;">Clear</button>
+        <button class="btn btn-success" type="button" id="backbtn" style="visibility:hidden;margin-top:2px;"
+            onclick="showQ(current - 1);">Back</button>
+        <button class="btn btn-success" type="button" id="nextbtn" style="margin-top:2px;"
+            onclick="showQ(current + 1);">Save &amp; Next</button>
 
-    <button class="btn btn-info" onclick="javascript:clear_response();" style="margin-top:2px;">Clear</button>
+        <button class="btn btn-danger" type="button" onclick="endExam();" style="margin-top:2px;float:right;">End
+            Exam</button>
+    </div>
 
-    <button class="btn btn-success" id="backbtn" style="visibility:hidden;margin-top:2px;"
-        onclick="javascript:show_back_question();">Back</button>
+    <script>
+        var total = {{ $questions->count() }};
+        var current = 0;
+        var visited = {};
+        var flagged = {};
 
-    <button class="btn btn-success" id="nextbtn" style="margin-top:2px;">Save & Next</button>
+        function isAnswered(n) {
+            var box = document.getElementById('q_' + n);
+            if (!box) return false;
 
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-    <button class="btn btn-success highlighter" style="background-color:orange;" type="button" id="highlighter">
-        Highlighter
-    </button>
+            var checked = box.querySelectorAll('input[type=radio]:checked, input[type=checkbox]:checked').length > 0;
+            var typed = Array.prototype.some.call(box.querySelectorAll('input[type=text], textarea'), function(el) {
+                return el.value.trim() !== '';
+            });
+            var picked = Array.prototype.some.call(box.querySelectorAll('select'), function(el) {
+                return el.value !== '0';
+            });
 
-    <button class="btn btn-danger" onclick="javascript:cancelmove();" style="margin-top:2px;float: right;">End
-        Exam</button>
-</div>
+            return checked || typed || picked;
+        }
+
+        function refreshNav() {
+            for (var n = 0; n < total; n++) {
+                var btn = document.getElementById('qbtn_' + n);
+                var color = '#212121'; // not visited
+
+                if (flagged[n]) color = '#ec971f';
+                else if (isAnswered(n)) color = '#449d44';
+                else if (visited[n]) color = '#c9302c';
+
+                btn.style.background = color;
+                btn.classList.toggle('current', n === current);
+            }
+        }
+
+        function showQ(n) {
+            if (total === 0 || n < 0 || n > total - 1) return;
+
+            document.querySelectorAll('.question_div').forEach(function(d) {
+                d.style.display = 'none';
+            });
+
+            document.getElementById('q_' + n).style.display = 'block';
+            current = n;
+            visited[n] = true;
+
+            document.getElementById('backbtn').style.visibility = n === 0 ? 'hidden' : 'visible';
+            document.getElementById('nextbtn').textContent = n === total - 1 ? 'Save' : 'Save & Next';
+
+            refreshNav();
+        }
+
+        function flagQ() {
+            flagged[current] = !flagged[current];
+            refreshNav();
+        }
+
+        function clearQ() {
+            var box = document.getElementById('q_' + current);
+            box.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(function(el) {
+                el.checked = false;
+            });
+            box.querySelectorAll('input[type=text], textarea').forEach(function(el) {
+                el.value = '';
+            });
+            box.querySelectorAll('select').forEach(function(el) {
+                el.value = '0';
+            });
+            refreshNav();
+        }
+
+        function endExam() {
+            if (confirm('Are you sure you want to end the exam?')) {
+                window.location = "{{ route('viewResult') }}";
+            }
+        }
+
+        // Keep the navigator colours in step with the answers
+        document.getElementById('quiz_form').addEventListener('input', refreshNav);
+        document.getElementById('quiz_form').addEventListener('change', refreshNav);
+
+        // Countdown timer (exam duration is in minutes)
+        var totalSeconds = {{ (int) $exam->duration * 60 }};
+
+        function pad(t) {
+            return t < 10 ? '0' + t : t;
+        }
+
+        function tick() {
+            var s = totalSeconds;
+            var h = Math.floor(s / 3600);
+            s -= h * 3600;
+            var m = Math.floor(s / 60);
+            s -= m * 60;
+
+            document.getElementById('timer').textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+
+            if (totalSeconds <= 0) {
+                alert("Time's up!");
+                window.location = "{{ route('listExam') }}";
+                return;
+            }
+
+            totalSeconds -= 1;
+            setTimeout(tick, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            tick();
+            showQ(0);
+        });
+    </script>
+
+    <script>
+        tinymce.init({
+            selector: '.tinymce_textarea',
+            height: 300,
+            promotion: false,
+            branding: false,
+            menubar: 'file edit insert view format table tools',
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste help wordcount emoticons codesample'
+            ],
+            toolbar: 'undo redo | blocks | bold italic | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image | ' +
+                'print preview fullscreen forecolor backcolor emoticons codesample help',
+            toolbar_mode: 'sliding',
+
+            images_upload_credentials: true,
+            automatic_uploads: true,
+
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save(); // syncs HTML back into the underlying <textarea> before form submit
+                });
+            }
+        });
+    </script>
 
 </body>
 
