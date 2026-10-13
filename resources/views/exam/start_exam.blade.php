@@ -101,6 +101,14 @@
     <div class="row" style="margin-top:0px;">
         <div class="col-md-9">
 
+            <!-- Category button -->
+            <div class="row" style="margin:2px;">
+
+                {{-- <a href="javascript:switch_category('cat_');" class="btn btn-info"
+                    style="cursor:pointer;margin-left:5px;">category</a> --}}
+                <input type="hidden" id="cat_" value="">
+            </div>
+
             <form method="post" action="" id="quiz_form">
                 @csrf
                 <input type="hidden" name="quid" value="{{ $exam->quid }}">
@@ -118,6 +126,11 @@
                     <div id="q_{{ $i }}" class="question_div">
 
                         <div class="question_container">
+                            <span class="badge badge-info" style="font-size:12px;">
+                                {{ $categoryNames->get($question->cid, '—') }}
+                            </span>
+                            <br><br>
+
                             @if (!empty(trim(strip_tags((string) $paragraphText))))
                                 {!! $paragraphText !!}
                                 <hr>
@@ -166,9 +179,30 @@
                                         value="">
                                 </div>
                             @elseif ($question->question_type === 'Long Answer')
+                                <input type="hidden" name="question_type[{{ $i }}]" class="q_k"
+                                    value="5">
+                                <input type="hidden" class="qu_id" value="{{ $question->qid }}"
+                                    name="qstn_no[{{ $i }}]">
+
                                 <div class="form-group">
-                                    <label for="long_{{ $i }}">Answer</label>
-                                    <textarea name="answer[{{ $i }}][]" id="long_{{ $i }}" class="form-control tinymce_textarea" rows="8"></textarea>
+                                    <label for="texteditor_{{ $i }}">Answer</label>
+                                    <textarea name="answer[{{ $i }}][]" id="texteditor_{{ $i }}"
+                                        class="form-control tinymce_textarea"></textarea>
+                                </div>
+                                <button class="btn btn-default answer-submit" value="{{ $question->qid }}"
+                                    type="button">Submit</button><br><br>
+                                <div class="text_data"></div>
+
+                                <div class="form-group">
+                                    <label for="userfile_{{ $i }}" id="file_upl_{{ $i }}">File
+                                        Upload</label>
+                                    <input type="file" class="data_file" id="userfile_{{ $i }}"
+                                        name="userfile[{{ $i }}]">
+                                    <div class="col-xs-8">
+                                        <div id="attachments_{{ $i }}"></div>
+                                    </div>
+                                    <button class="btn btn-default upload" value="{{ $question->qid }}"
+                                        type="button">Upload</button>
                                 </div>
                             @elseif ($question->question_type === 'Match the Column')
                                 @php $choices = $opts->shuffle(); @endphp
@@ -365,9 +399,7 @@
             tick();
             showQ(0);
         });
-    </script>
 
-    <script>
         tinymce.init({
             selector: '.tinymce_textarea',
             height: 300,

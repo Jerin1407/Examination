@@ -589,7 +589,10 @@ class HomeController extends Controller
 
         $lang = $request->input('selected_lang', 'English');
 
-        return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang'));
+        $categoryNames = SavsoftCategoryModel::whereIn('cid', $questions->pluck('cid')->unique())
+            ->pluck('category_name', 'cid');
+
+        return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang', 'categoryNames'));
     }
 
     public function viewResult(Request $request)
