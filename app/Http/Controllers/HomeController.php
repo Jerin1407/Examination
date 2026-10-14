@@ -601,7 +601,15 @@ class HomeController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
         }
 
-        return view('exam.view_result');
+        $request->validate([
+            'quid' => 'required|integer',
+        ]);
+
+        $exam = SavsoftQuizModel::where('quid', $request->input('quid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        return view('exam.view_result', compact('exam'));
     }
 
     public function listMark(Request $request)

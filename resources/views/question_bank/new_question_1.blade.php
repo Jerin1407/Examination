@@ -91,8 +91,8 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                @for ($i = 1; $i <= ($nop ?? 4); $i++)
+                            @for ($i = 1; $i <= ($nop ?? 4); $i++)
+                                <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>Options {{ $i }}) : English</label> <br>
@@ -102,12 +102,11 @@
                                             Select Correct Option
                                             <br>
 
-                                            <textarea name="option{{ $i }}" class="form-control tinymce_textarea"></textarea>
+                                            <textarea name="option{{ $i }}" class="form-control tinymce_textarea option_editor"></textarea>
                                         </div>
                                     </div>
-                                @endfor
-                            </div>
-
+                                </div>
+                            @endfor
 
                             <button class="btn btn-default" type="submit">Submit</button>
 

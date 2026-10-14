@@ -284,6 +284,12 @@
         <button class="btn btn-success" type="button" id="nextbtn" style="margin-top:2px;"
             onclick="showQ(current + 1);">Save &amp; Next</button>
 
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <button class="btn btn-success highlighter" style="background-color:orange;" type="button"
+            id="highlighter">
+            Highlighter
+        </button>
+
         <button class="btn btn-danger" type="button" onclick="endExam();" style="margin-top:2px;float:right;">End
             Exam</button>
     </div>
@@ -361,7 +367,7 @@
 
         function endExam() {
             if (confirm('Are you sure you want to end the exam?')) {
-                window.location = "{{ route('viewResult') }}";
+                window.location = "{{ route('viewResult', ['quid' => $exam->quid]) }}";
             }
         }
 
@@ -387,7 +393,7 @@
 
             if (totalSeconds <= 0) {
                 alert("Time's up!");
-                window.location = "{{ route('listExam') }}";
+                window.location = "{{ route('viewResult', ['quid' => $exam->quid]) }}";
                 return;
             }
 

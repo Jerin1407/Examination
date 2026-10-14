@@ -79,7 +79,7 @@
  
             <div class="col-lg-12">
                 <center>
-                    <h2><span style="color:#e39500;">exam name</span></h2>
+                    <h2><span style="color:#e39500;">{{ $exam->quiz_name }}</span></h2>
                 </center>
             </div>
             <div class="col-lg-12">

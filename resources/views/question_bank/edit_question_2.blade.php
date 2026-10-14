@@ -71,8 +71,8 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                @foreach ($options as $option)
+                            @foreach ($options as $option)
+                                <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>Options {{ $loop->iteration }}) : English</label> <br>
@@ -85,8 +85,8 @@
                                             <textarea name="option[]" class="form-control tinymce_textarea">{{ $option->q_option }}</textarea>
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
+                                </div>
+                            @endforeach
 
                             <button class="btn btn-default" type="submit">Submit</button>
 
