@@ -19,6 +19,14 @@
                     <div class="login-panel panel panel-default">
                         <div class="panel-body">
 
+                            @if ($maxReached || session('max_attempts'))
+                                <div class="alert alert-danger">
+                                    You have reached the maximum number of attempts ({{ $exam->maximum_attempts }}) for this
+                                    exam.
+                                    You cannot start it again.
+                                </div>
+                            @endif
+
                             <table class="table table-bordered">
                                 <tr>
                                     <td>Exam Name</td>
@@ -111,8 +119,12 @@
                                 onclick="javascript:capturephoto();">capture_start_quiz</button>
                             <button class="btn btn-success" type="submit">start_quiz</button> --}}
 
-                            <button class="btn btn-success" type="submit">Start Exam</button>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @if ($maxReached)
+                                <button class="btn btn-success" type="button" disabled>Start Exam</button>
+                                <a href="{{ route('listExam') }}" class="btn btn-default">Back</a>
+                            @else
+                                <button class="btn btn-success" type="submit">Start Exam</button>
+                            @endif &nbsp;&nbsp;&nbsp;&nbsp;
 
                             {{-- <div class="alert alert-danger">login_required</div>
                             &nbsp;&nbsp;&nbsp;&nbsp;

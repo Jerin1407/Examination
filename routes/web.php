@@ -59,6 +59,8 @@ Route::get('/attempt-exam/{quid}', [HomeController::class, 'attemptExam'])->name
 Route::get('/add-question-into-exam/{quid}', [HomeController::class, 'addQuestionIntoExam'])->name('addQuestionIntoExam');
 Route::post('/add-question-into-exam/{quid}/add/{qid}', [HomeController::class, 'addQuestionToExam'])->name('addQuestionToExam');
 Route::post('/start-exam', [HomeController::class, 'startExam'])->name('startExam');
+Route::post('/save-answer', [HomeController::class, 'saveAnswer'])->name('saveAnswer');
+Route::post('/submit-exam', [HomeController::class, 'submitExam'])->name('submitExam');
 Route::get('/start-exam', fn () => redirect()->route('listExam'));
 Route::get('/view-result', [HomeController::class, 'viewResult'])->name('viewResult');
 

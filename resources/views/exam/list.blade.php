@@ -91,30 +91,44 @@
                     </tr>
 
                     @forelse ($exams as $index => $exam)
-                        @php
-                            $today = \Carbon\Carbon::now();
-                            $start = \Carbon\Carbon::createFromTimestamp($exam->start_date);
-                            $end = \Carbon\Carbon::createFromTimestamp($exam->end_date);
+                        {{-- @php
+                            // $tomorrow = now()->addDay()->startOfDay()->timestamp;
 
-                            if ($today->lt($start)) {
+                            $today = now()->timestamp;
+
+                            if ($exam->start_date >= $today) {
                                 $rowStatus = 'upcoming';
-                            } elseif ($today->gt($end)) {
+                            } elseif ($exam->end_date < $today) {
+                                $rowStatus = 'expired';
+                            } else {
+                                $rowStatus = 'active';
+                            }
+                        @endphp --}}
+
+                        @php
+                            $now = now()->timestamp;
+
+                            if ($now < $exam->start_date) {
+                                $rowStatus = 'upcoming';
+                            } elseif ($now >= $exam->end_date) {
                                 $rowStatus = 'expired';
                             } else {
                                 $rowStatus = 'active';
                             }
                         @endphp
+
                         <tr>
                             <td>{{ $exams->firstItem() + $index }}</td>
                             <td>{{ $exam->quiz_name }}</td>
                             <td>{{ $exam->noq }}</td>
                             <td>
+
                                 @if ($rowStatus === 'active')
                                     <a href="{{ route('attemptExam', $exam->quid) }}" class="btn btn-success">Attempt</a>
                                 @elseif ($rowStatus === 'expired')
-                                    <a href="#" class="btn btn-warning disabled">Expired</a>
+                                    <span class="btn btn-warning disabled">Expired</span>
                                 @else
-                                    <a href="#" class="btn btn-default disabled">Upcoming</a>
+                                    <span class="btn btn-default disabled">Upcoming</span>
                                 @endif
 
                                 @if ($exam->quiz_price > 0)

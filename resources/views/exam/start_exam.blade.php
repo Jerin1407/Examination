@@ -214,7 +214,9 @@
                                                     {{ $useAlt && $option->q_option1 ? $option->q_option1 : $option->q_option }}
                                                 </td>
                                                 <td>
-                                                    <select name="answer[{{ $i }}][{{ $option->oid }}]">
+                                                    {{-- <select name="answer[{{ $i }}][{{ $option->oid }}]"> --}}
+                                                    <select name="answer[{{ $i }}][{{ $option->oid }}]"
+                                                        data-left="{{ $option->oid }}">
                                                         <option value="0">Select</option>
                                                         @foreach ($choices as $choice)
                                                             <option value="{{ $choice->oid }}">
@@ -281,8 +283,10 @@
         <button class="btn btn-info" type="button" onclick="clearQ();" style="margin-top:2px;">Clear</button>
         <button class="btn btn-success" type="button" id="backbtn" style="visibility:hidden;margin-top:2px;"
             onclick="showQ(current - 1);">Back</button>
+        {{-- <button class="btn btn-success" type="button" id="nextbtn" style="margin-top:2px;"
+            onclick="showQ(current + 1);">Save &amp; Next</button> --}}
         <button class="btn btn-success" type="button" id="nextbtn" style="margin-top:2px;"
-            onclick="showQ(current + 1);">Save &amp; Next</button>
+            onclick="saveAndNext();">Save &amp; Next</button>
 
         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <button class="btn btn-success highlighter" style="background-color:orange;" type="button"
@@ -299,6 +303,72 @@
         var current = 0;
         var visited = {};
         var flagged = {};
+
+        var rid = {{ $rid }};
+        var qids = @json($questions->pluck('qid')->values());
+
+        function collectAnswer(n) {
+            if (window.tinymce) tinymce.triggerSave(); // copy editor text into the textarea
+
+            var box = document.getElementById('q_' + n);
+            var answer = [];
+
+            box.querySelectorAll('input[type=radio]:checked, input[type=checkbox]:checked').forEach(function(el) {
+                answer.push(el.value);
+            });
+            box.querySelectorAll('input[type=text], textarea').forEach(function(el) {
+                if (el.value.trim() !== '') answer.push(el.value);
+            });
+            box.querySelectorAll('select').forEach(function(el) {
+                if (el.value !== '0') answer.push(el.dataset.left + ':' + el.value);
+            });
+
+            return answer;
+        }
+
+        function saveAndNext() {
+            var btn = document.getElementById('nextbtn');
+            var label = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            fetch("{{ route('saveAnswer') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        rid: rid,
+                        qid: qids[current],
+                        answer: collectAnswer(current)
+                    })
+                })
+                .then(function(res) {
+                    return res.json().then(function(data) {
+                        return {
+                            ok: res.ok,
+                            data: data
+                        };
+                    });
+                })
+                .then(function(r) {
+                    btn.disabled = false;
+                    btn.textContent = label;
+
+                    if (!r.ok) {
+                        alert(r.data.message || 'Could not save the answer. Please try again.');
+                        return;
+                    }
+                    showQ(current + 1);
+                })
+                .catch(function() {
+                    btn.disabled = false;
+                    btn.textContent = label;
+                    alert('Network error. Your answer was not saved.');
+                });
+        }
 
         function isAnswered(n) {
             var box = document.getElementById('q_' + n);
@@ -365,9 +435,18 @@
             refreshNav();
         }
 
+        // function endExam() {
+        //     if (confirm('Are you sure you want to end the exam?')) {
+        //         window.location = "{{ route('viewResult', ['quid' => $exam->quid]) }}";
+        //     }
+        // }
+
         function endExam() {
             if (confirm('Are you sure you want to end the exam?')) {
-                window.location = "{{ route('viewResult', ['quid' => $exam->quid]) }}";
+                if (window.tinymce) tinymce.triggerSave(); // copy long answer text into the form
+                var form = document.getElementById('quiz_form');
+                form.action = "{{ route('submitExam') }}";
+                form.submit();
             }
         }
 
@@ -404,6 +483,71 @@
         document.addEventListener('DOMContentLoaded', function() {
             tick();
             showQ(0);
+        });
+
+        // Highlighter: select text in the question, then click the button
+        var highlightBtn = document.getElementById('highlighter');
+
+        // Keep the text selected when the button is pressed
+        highlightBtn.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+        });
+
+        highlightBtn.addEventListener('click', function() {
+            var sel = window.getSelection();
+            if (!sel.rangeCount || sel.isCollapsed) {
+                alert('Select some text in the question first.');
+                return;
+            }
+
+            var range = sel.getRangeAt(0);
+            var root = range.commonAncestorContainer;
+            var rootEl = root.nodeType === 3 ? root.parentElement : root;
+
+            // Only highlight inside the question area
+            if (!rootEl.closest('.question_container')) return;
+
+            // Collect every text node inside the selection
+            var walker = document.createTreeWalker(
+                root.nodeType === 3 ? root.parentNode : root,
+                NodeFilter.SHOW_TEXT, {
+                    acceptNode: function(n) {
+                        return range.intersectsNode(n) && n.nodeValue.trim() !== '' ?
+                            NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                    }
+                }
+            );
+
+            var nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+
+            nodes.forEach(function(node) {
+                var start = node === range.startContainer ? range.startOffset : 0;
+                var end = node === range.endContainer ? range.endOffset : node.nodeValue.length;
+                if (start >= end) return;
+
+                var r = document.createRange();
+                r.setStart(node, start);
+                r.setEnd(node, end);
+
+                var mark = document.createElement('mark');
+                mark.className = 'q-highlight';
+                mark.style.backgroundColor = 'yellow';
+                r.surroundContents(mark);
+            });
+
+            sel.removeAllRanges();
+        });
+
+        // Click a highlighted part to remove the highlight
+        document.addEventListener('click', function(e) {
+            var mark = e.target.closest ? e.target.closest('mark.q-highlight') : null;
+            if (!mark || !window.getSelection().isCollapsed) return;
+
+            var parent = mark.parentNode;
+            while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+            parent.removeChild(mark);
+            parent.normalize();
         });
 
         tinymce.init({

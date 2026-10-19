@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountTypeModel;
 use App\Models\AppointmentRequestModel;
+use App\Models\SavsoftAnswersModel;
 use App\Models\SavsoftCategoryModel;
 use App\Models\SavsoftGroupModel;
 use App\Models\SavsoftLevelModel;
@@ -13,9 +14,11 @@ use App\Models\SavsoftPaymentModel;
 use App\Models\SavsoftQbankModel;
 use App\Models\SavsoftQuizCustomFormModel;
 use App\Models\SavsoftQuizModel;
+use App\Models\SavsoftResultModel;
 use App\Models\SavsoftUsersModel;
 use App\Models\StudyMaterialModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -248,26 +251,55 @@ class HomeController extends Controller
             $query->where('quiz_name', 'like', '%' . $request->search . '%');
         }
 
+        // $status = $request->get('status');
+        // $now = now()->timestamp;
+
+        // if ($status === 'active') {
+        //     $query->where('start_date', '<=', $now)
+        //         ->where('end_date', '>=', $now);
+        // } elseif ($status === 'upcoming') {
+        //     $query->where('start_date', '>', $now);
+        // } elseif ($status === 'archived') {
+        //     $query->where('end_date', '<', $now);
+        // }
+
+        // $exams = $query->orderBy('quid', 'desc')
+        //     ->paginate(10)
+        //     ->withQueryString();
+
+        // // Counts for the summary cards
+        // $activeCount = SavsoftQuizModel::where('is_active', 1)
+        //     ->where('start_date', '<=', $now)
+        //     ->where('end_date', '>=', $now)
+        //     ->count();
+
+        // $upcomingCount = SavsoftQuizModel::where('is_active', 1)
+        //     ->where('start_date', '>', $now)
+        //     ->count();
+
+        // $archivedCount = SavsoftQuizModel::where('is_active', 1)
+        //     ->where('end_date', '<', $now)
+        //     ->count();
+
         $status = $request->get('status');
         $now = now()->timestamp;
 
         if ($status === 'active') {
             $query->where('start_date', '<=', $now)
-                ->where('end_date', '>=', $now);
+                ->where('end_date', '>', $now);
         } elseif ($status === 'upcoming') {
             $query->where('start_date', '>', $now);
         } elseif ($status === 'archived') {
-            $query->where('end_date', '<', $now);
+            $query->where('end_date', '<=', $now);
         }
 
         $exams = $query->orderBy('quid', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        // Counts for the summary cards
         $activeCount = SavsoftQuizModel::where('is_active', 1)
             ->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
+            ->where('end_date', '>', $now)
             ->count();
 
         $upcomingCount = SavsoftQuizModel::where('is_active', 1)
@@ -275,7 +307,7 @@ class HomeController extends Controller
             ->count();
 
         $archivedCount = SavsoftQuizModel::where('is_active', 1)
-            ->where('end_date', '<', $now)
+            ->where('end_date', '<=', $now)
             ->count();
 
         return view('exam.list', compact('exams', 'activeCount', 'upcomingCount', 'archivedCount', 'status'));
@@ -482,7 +514,17 @@ class HomeController extends Controller
             return redirect()->route('listExam');
         }
 
-        return view('exam.attempt_exam', compact('exam'));
+        $attemptsUsed = $this->attemptsUsed($exam->quid);
+        $maxReached   = $exam->maximum_attempts > 0 && $attemptsUsed >= $exam->maximum_attempts;
+
+        return view('exam.attempt_exam', compact('exam', 'attemptsUsed', 'maxReached'));
+    }
+
+    private function attemptsUsed($quid): int
+    {
+        return SavsoftResultModel::where('quid', $quid)
+            ->where('uid', session('uid'))
+            ->count();
     }
 
     public function addQuestionIntoExam(Request $request, $quid)
@@ -547,6 +589,59 @@ class HomeController extends Controller
         return response()->json(['status' => 'added']);
     }
 
+    // public function startExam(Request $request)
+    // {
+    //     if (!session()->has('uid')) {
+    //         return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+    //     }
+
+    //     $request->validate([
+    //         'quid' => 'required|integer',
+    //     ]);
+
+    //     $exam = SavsoftQuizModel::where('quid', $request->input('quid'))
+    //         ->where('is_active', 1)
+    //         ->firstOrFail();
+
+    //     // Only active exams (inside the start/end window) can be started
+    //     $now = now()->timestamp;
+
+    //     if ($exam->start_date > $now || $exam->end_date < $now) {
+    //         return redirect()->route('listExam');
+    //     }
+
+    //     if ($exam->maximum_attempts > 0 && $this->attemptsUsed($exam->quid) >= $exam->maximum_attempts) {
+    //         return redirect()->route('attemptExam', $exam->quid)
+    //             ->with('max_attempts', 'You have reached the maximum number of attempts for this exam.');
+    //     }
+
+    //     // qids is a comma separated list of question ids
+    //     $qids = array_values(array_filter(array_map('intval', explode(',', (string) $exam->qids))));
+
+    //     $found = SavsoftQbankModel::whereIn('qid', $qids)
+    //         ->where('is_active', 1)
+    //         ->get()
+    //         ->keyBy('qid');
+
+    //     // Keep the order the exam was built with
+    //     $questions = collect($qids)
+    //         ->map(fn($id) => $found->get($id))
+    //         ->filter()
+    //         ->values();
+
+    //     $options = SavsoftOptionsModel::whereIn('qid', $qids)
+    //         ->orderBy('oid')
+    //         ->get()
+    //         ->groupBy('qid');
+
+    //     $lang = $request->input('selected_lang', 'English');
+
+    //     $categoryNames = SavsoftCategoryModel::whereIn('cid', $questions->pluck('cid')->unique())
+    //         ->pluck('category_name', 'cid');
+
+    //     return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang', 'categoryNames'));
+    // }
+
     public function startExam(Request $request)
     {
         if (!session()->has('uid')) {
@@ -561,14 +656,52 @@ class HomeController extends Controller
             ->where('is_active', 1)
             ->firstOrFail();
 
-        // Only active exams (inside the start/end window) can be started
         $now = now()->timestamp;
 
         if ($exam->start_date > $now || $exam->end_date < $now) {
             return redirect()->route('listExam');
         }
 
-        // qids is a comma separated list of question ids
+        // Resume an unfinished attempt (page refresh) instead of using up another one
+        $result = SavsoftResultModel::where('quid', $exam->quid)
+            ->where('uid', session('uid'))
+            ->where('result_status', 'Open')
+            ->first();
+
+        if (!$result) {
+            if ($exam->maximum_attempts > 0 && $this->attemptsUsed($exam->quid) >= $exam->maximum_attempts) {
+                return redirect()->route('attemptExam', $exam->quid)
+                    ->with('max_attempts', 'You have reached the maximum number of attempts for this exam.');
+            }
+
+            $result = SavsoftResultModel::create([
+                'quid'                  => $exam->quid,
+                'uid'                   => session('uid'),
+                'result_status'         => 'Open',
+                'start_time'            => $now,
+                'end_time'              => 0,
+                'categories'            => '',
+                'category_range'        => '',
+                'r_qids'                => $exam->qids,
+                'individual_time'       => '',
+                'total_time'            => 0,
+                'score_obtained'        => 0,
+                'exam_date'             => now()->format('Y-m-d H:i:s'),
+                'percentage_obtained'   => 0,
+                'attempted_ip'          => $request->ip(),
+                'score_individual'      => '',
+                'photo'                 => '',
+                'manual_valuation'      => 0,
+                'long_answer_valuation' => '',
+                'is_valuation'          => 0,
+            ]);
+        }
+
+        $rid = $result->rid;
+
+        // Time left, so a refresh doesn't restart the timer
+        $remaining = max(0, ((int) $exam->duration * 60) - ($now - (int) $result->start_time));
+
         $qids = array_values(array_filter(array_map('intval', explode(',', (string) $exam->qids))));
 
         $found = SavsoftQbankModel::whereIn('qid', $qids)
@@ -576,7 +709,6 @@ class HomeController extends Controller
             ->get()
             ->keyBy('qid');
 
-        // Keep the order the exam was built with
         $questions = collect($qids)
             ->map(fn($id) => $found->get($id))
             ->filter()
@@ -592,7 +724,190 @@ class HomeController extends Controller
         $categoryNames = SavsoftCategoryModel::whereIn('cid', $questions->pluck('cid')->unique())
             ->pluck('category_name', 'cid');
 
-        return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang', 'categoryNames'));
+        return view('exam.start_exam', compact('exam', 'questions', 'options', 'lang', 'categoryNames', 'rid', 'remaining'));
+    }
+
+    public function saveAnswer(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return response()->json(['status' => 'error', 'message' => 'Not logged in.'], 401);
+        }
+
+        $request->validate([
+            'rid'      => 'required|integer',
+            'qid'      => 'required|integer',
+            'answer'   => 'nullable|array',
+            'answer.*' => 'nullable|string',
+        ]);
+
+        // The attempt must belong to this user and still be open
+        $result = SavsoftResultModel::where('rid', $request->input('rid'))
+            ->where('uid', session('uid'))
+            ->where('result_status', 'Open')
+            ->first();
+
+        if (!$result) {
+            return response()->json(['status' => 'error', 'message' => 'Attempt not found.'], 403);
+        }
+
+        // The question must be part of this exam
+        $qids = array_map('intval', explode(',', (string) $result->r_qids));
+        $qid  = (int) $request->input('qid');
+
+        if (!in_array($qid, $qids, true)) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid question.'], 422);
+        }
+
+        $qn       = (int) array_search($qid, $qids, true); // position in the exam, starting at 0
+        $question = SavsoftQbankModel::where('qid', $qid)->firstOrFail();
+        $answers  = array_values($request->input('answer', []));
+        $validOid = SavsoftOptionsModel::where('qid', $qid)->pluck('oid')->map(fn($v) => (int) $v)->all();
+
+        $rows = [];
+
+        foreach ($answers as $value) {
+            $value = trim((string) $value);
+            if ($value === '') continue;
+
+            switch ($question->question_type) {
+                case 'Multiple Choice Single Answer':
+                case 'Multiple Choice Multiple Answer':
+                    if (in_array((int) $value, $validOid, true)) {
+                        $rows[] = (string) (int) $value;
+                    }
+                    break;
+
+                case 'Match the Column':
+                    // "leftOid:rightOid"
+                    [$left, $right] = array_pad(explode(':', $value, 2), 2, 0);
+                    if (in_array((int) $left, $validOid, true) && in_array((int) $right, $validOid, true)) {
+                        $rows[] = (int) $left . ':' . (int) $right;
+                    }
+                    break;
+
+                default: // Short Answer, Long Answer
+                    $rows[] = $value;
+            }
+        }
+
+        // Single choice, short and long answer keep one row only
+        if (in_array($question->question_type, ['Multiple Choice Single Answer', 'Short Answer', 'Long Answer'], true)) {
+            $rows = array_slice($rows, 0, 1);
+        }
+
+        DB::transaction(function () use ($result, $qid, $qn, $rows) {
+            SavsoftAnswersModel::where('rid', $result->rid)->where('qid', $qid)->delete();
+
+            foreach ($rows as $row) {
+                SavsoftAnswersModel::create([
+                    'rid'      => $result->rid,
+                    'qid'      => $qid,
+                    'q_option' => $row,
+                    'uid'      => session('uid'),
+                    'score_u'  => 0,
+                    'qn'       => $qn,
+                ]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function submitExam(Request $request)
+    {
+        if (!session()->has('uid')) {
+            return redirect()->route('showLogin')->with('login_first', 'Please login to access the page.');
+        }
+
+        $request->validate(['quid' => 'required|integer']);
+
+        $exam = SavsoftQuizModel::where('quid', $request->input('quid'))
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        // Same question list and order that startExam showed
+        $qids = array_values(array_filter(array_map('intval', explode(',', (string) $exam->qids))));
+
+        $found = SavsoftQbankModel::whereIn('qid', $qids)->where('is_active', 1)->get()->keyBy('qid');
+
+        $questions = collect($qids)->map(fn($id) => $found->get($id))->filter()->values();
+
+        $options = SavsoftOptionsModel::whereIn('qid', $qids)->get()->groupBy('qid');
+
+        $posted = $request->input('answer', []);
+        $now    = now()->timestamp;
+
+        DB::transaction(function () use ($request, $exam, $questions, $options, $posted, $now) {
+
+            $result = SavsoftResultModel::create([
+                'quid'                  => $exam->quid,
+                'uid'                   => session('uid'),
+                'result_status'         => 'Pending',
+                'start_time'            => $now,
+                'end_time'              => $now,
+                'categories'            => '',
+                'category_range'        => '',
+                'r_qids'                => $exam->qids,
+                'individual_time'       => '',
+                'total_time'            => 0,
+                'score_obtained'        => 0,
+                'exam_date'             => now()->format('Y-m-d H:i:s'),
+                'percentage_obtained'   => 0,
+                'attempted_ip'          => $request->ip(),
+                'score_individual'      => '',
+                'photo'                 => '',
+                'manual_valuation'      => 0,
+                'long_answer_valuation' => '',
+                'is_valuation'          => 0,
+            ]);
+
+            foreach ($questions as $i => $question) {
+                $given    = $posted[$i] ?? [];
+                $validOid = $options->get($question->qid, collect())->pluck('oid')->map(fn($v) => (int) $v)->all();
+                $rows     = [];
+
+                foreach ($given as $key => $value) {
+                    $value = trim((string) $value);
+                    if ($value === '' || $value === '0') continue;
+
+                    switch ($question->question_type) {
+                        case 'Multiple Choice Single Answer':
+                        case 'Multiple Choice Multiple Answer':
+                            if (in_array((int) $value, $validOid, true)) {
+                                $rows[] = (string) (int) $value;
+                            }
+                            break;
+
+                        case 'Match the Column':
+                            // field is answer[i][leftOid] = rightOid
+                            if (in_array((int) $key, $validOid, true) && in_array((int) $value, $validOid, true)) {
+                                $rows[] = (int) $key . ':' . (int) $value;
+                            }
+                            break;
+
+                        default: // Short Answer, Long Answer
+                            $rows[] = $value;
+                    }
+                }
+
+                if (in_array($question->question_type, ['Multiple Choice Single Answer', 'Short Answer', 'Long Answer'], true)) {
+                    $rows = array_slice($rows, 0, 1);
+                }
+
+                foreach ($rows as $row) {
+                    SavsoftAnswersModel::create([
+                        'rid'      => $result->rid,
+                        'qid'      => $question->qid,
+                        'q_option' => $row,
+                        'uid'      => session('uid'),
+                        'score_u'  => 0,
+                        'qn'       => $i,
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('viewResult', ['quid' => $exam->quid]);
     }
 
     public function viewResult(Request $request)
